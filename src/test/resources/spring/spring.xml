@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+
+	<!-- 配置druid数据源 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="url" value="jdbc:mysql://localhost:3306/mybatis-extends" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+
+	<!-- MyBatis SqlSessionFactoryBean 配置 -->
+    <bean id="sqlSessionFactory" class="com.wshsoft.mybatis.spring.MybatisSqlSessionFactoryBean">
+   		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:xml/mybatis-config.xml" />
+		<property name="typeAliasesPackage" value="com.wshsoft.mybatis.test.mysql.entity;com.wshsoft.mybatis.test.mysql.entity.vo" />
+		<property name="mapperLocations" value="classpath:mysql/*Mapper.xml" />
+        <property name="plugins">
+            <array>
+                <!-- 分页插件配置 -->
+                <bean id="paginationInterceptor" class="com.wshsoft.mybatis.plugins.PaginationInterceptor">
+			         <property name="dialectType" value="mysql" />
+			    </bean>
+			    <!-- SQL 执行性能分析，开发环境使用，线上不推荐。 maxTime 指的是 sql 最大执行时长 -->
+			    <bean class="com.wshsoft.mybatis.plugins.PerformanceInterceptor">
+                     <property name="maxTime" value="1000" />
+                </bean>
+			    <!-- SQL 执行性能分析拦截器 stopProceed 发现全表执行 delete update 是否停止运行 -->
+			    <bean class="com.wshsoft.mybatis.plugins.SqlExplainInterceptor">
+			        <property name="stopProceed" value="false" />  
+			    </bean>
+			    
+            </array>
+        </property>
+	    <!-- oracle 添加
+	    <property name="dbType" value="oracle" />
+	    -->
+	    <!-- 全局表为下划线命名设置 true
+	    <property name="dbColumnUnderline" value="true" />
+	    -->
+    </bean>
+    
+    <!-- 加载 mapper.xml 接口 配置文件 -->
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.wshsoft.mybatis.test.mysql.mapper" />
+	</bean>
+	<!-- 开启动态加载 mapper.xml文件-->
+	<bean class="com.wshsoft.mybatis.spring.MybatisMapperRefresh">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
+        <constructor-arg name="mapperLocations" value="classpath*:mysql/*/*Mapper.xml"/>
+        <constructor-arg name="delaySeconds" value="10"/>
+        <constructor-arg name="sleepSeconds" value="20"/>
+        <constructor-arg name="enabled" value="true"/>
+    </bean>
+</beans>
