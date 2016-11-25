@@ -1,18 +1,19 @@
 package com.wshsoft.mybatis.test;
 
-import com.wshsoft.mybatis.mapper.Condition;
-import com.wshsoft.mybatis.mapper.EntityWrapper;
-import com.wshsoft.mybatis.test.mysql.entity.User;
-import com.wshsoft.mybatis.toolkit.TableInfoHelper;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import com.wshsoft.mybatis.mapper.Condition;
+import com.wshsoft.mybatis.mapper.EntityWrapper;
+import com.wshsoft.mybatis.test.mysql.entity.User;
+import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
 /**
  * <p>

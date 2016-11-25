@@ -1,5 +1,15 @@
 package com.wshsoft.framework.service.impl;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.jdbc.SQL;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.wshsoft.framework.service.IService;
 import com.wshsoft.mybatis.activerecord.Record;
 import com.wshsoft.mybatis.annotations.IdType;
@@ -12,14 +22,6 @@ import com.wshsoft.mybatis.toolkit.ReflectionKit;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 import com.wshsoft.mybatis.toolkit.TableInfo;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
-import org.apache.ibatis.jdbc.SQL;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -31,7 +33,7 @@ import java.util.logging.Logger;
  */
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
-	protected static final Logger logger = Logger.getLogger("ServiceImpl");
+	private static final Log logger = LogFactory.getLog(ServiceImpl.class);
 
 	@Autowired
 	protected M baseMapper;
@@ -152,7 +154,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			}
 			batchSqlSession.flushStatements();
 		} catch (Exception e) {
-			logger.warning("Error: Cannot execute insertBatch Method. Cause:" + e);
+			logger.warn("Error: Cannot execute insertBatch Method. Cause:" + e);
 			return false;
 		}
 		return true;
@@ -205,7 +207,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			}
 			batchSqlSession.flushStatements();
 		} catch (Exception e) {
-			logger.warning("Error: Cannot execute insertBatch Method. Cause:" + e);
+			logger.warn("Error: Cannot execute insertBatch Method. Cause:" + e);
 			return false;
 		}
 		return true;
@@ -232,7 +234,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (CollectionUtil.isNotEmpty(list)) {
 			int size = list.size();
 			if (size > 1) {
-				logger.warning(String.format("Warn: selectOne Method There are  %s results.", size));
+				logger.warn(String.format("Warn: selectOne Method There are  %s results.", size));
 			}
 			return list.get(0);
 		}

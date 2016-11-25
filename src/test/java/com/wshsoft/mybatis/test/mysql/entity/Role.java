@@ -1,10 +1,10 @@
 package com.wshsoft.mybatis.test.mysql.entity;
 
+import java.io.Serializable;
+
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
-
-import java.io.Serializable;
 
 /**
  * <p>

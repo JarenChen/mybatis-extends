@@ -1,11 +1,11 @@
 package com.wshsoft.mybatis.mapper;
 
+import java.text.MessageFormat;
+import java.util.Collection;
+
 import com.wshsoft.mybatis.MybatisAbstractSQL;
 import com.wshsoft.mybatis.toolkit.CollectionUtil;
 import com.wshsoft.mybatis.toolkit.StringUtils;
-
-import java.text.MessageFormat;
-import java.util.Collection;
 
 /**
  * <p>

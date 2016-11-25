@@ -1,18 +1,19 @@
 package com.wshsoft.mybatis;
 
-import com.wshsoft.mybatis.annotations.FieldStrategy;
-import com.wshsoft.mybatis.mapper.DBType;
-import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
-import com.wshsoft.mybatis.mapper.ISqlInjector;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
+
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
+import com.wshsoft.mybatis.annotations.FieldStrategy;
+import com.wshsoft.mybatis.mapper.DBType;
+import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
+import com.wshsoft.mybatis.mapper.ISqlInjector;
+import com.wshsoft.mybatis.toolkit.IOUtils;
 
 /**
  * <p>
@@ -33,11 +34,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
 		} finally {
 			ErrorContext.instance().reset();
-			try {
-				reader.close();
-			} catch (IOException e) {
-				// Intentionally ignore. Prefer previous error.
-			}
+			IOUtils.closeQuietly(reader);
 		}
 	}
 
@@ -50,11 +47,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
 		} finally {
 			ErrorContext.instance().reset();
-			try {
-				inputStream.close();
-			} catch (IOException e) {
-				// Intentionally ignore. Prefer previous error.
-			}
+			IOUtils.closeQuietly(inputStream);
 		}
 	}
 

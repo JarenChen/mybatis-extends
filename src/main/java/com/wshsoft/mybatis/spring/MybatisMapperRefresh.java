@@ -1,13 +1,23 @@
 package com.wshsoft.mybatis.spring;
 
-import com.wshsoft.mybatis.MybatisConfiguration;
-import com.wshsoft.mybatis.toolkit.SystemClock;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.parsing.XPathParser;
 import org.apache.ibatis.session.Configuration;
@@ -18,16 +28,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
+import com.wshsoft.mybatis.MybatisConfiguration;
+import com.wshsoft.mybatis.toolkit.SystemClock;
 
 /**
  * <p>
@@ -40,7 +42,7 @@ import java.util.logging.Logger;
  * @Date 2016-08-25
  */
 public class MybatisMapperRefresh implements Runnable {
-	protected final Logger logger = Logger.getLogger("MybatisMapperRefresh");
+	private static final Log logger = LogFactory.getLog(MybatisMapperRefresh.class);
 	private SqlSessionFactory sqlSessionFactory;
 	private Resource[] mapperLocations;
 	private Long beforeTime = 0L;
@@ -105,7 +107,8 @@ public class MybatisMapperRefresh implements Runnable {
 						for (Resource mapperLocation : mapperLocations) {
 							try {
 								if (ResourceUtils.isJarURL(mapperLocation.getURL())) {
-									String key = new UrlResource(ResourceUtils.extractJarFileURL(mapperLocation.getURL())).getFile().getPath();
+									String key = new UrlResource(ResourceUtils.extractJarFileURL(mapperLocation.getURL()))
+											.getFile().getPath();
 									fileSet.add(key);
 									if (jarMapper.get(key) != null) {
 										jarMapper.get(key).add(mapperLocation);
@@ -172,8 +175,7 @@ public class MybatisMapperRefresh implements Runnable {
 		this.configuration = sqlSessionFactory.getConfiguration();
 		boolean isSupper = configuration.getClass().getSuperclass() == Configuration.class;
 		try {
-			Field loadedResourcesField = isSupper
-					? configuration.getClass().getSuperclass().getDeclaredField("loadedResources")
+			Field loadedResourcesField = isSupper ? configuration.getClass().getSuperclass().getDeclaredField("loadedResources")
 					: configuration.getClass().getDeclaredField("loadedResources");
 			loadedResourcesField.setAccessible(true);
 			Set loadedResourcesSet = ((Set) loadedResourcesField.get(configuration));
@@ -195,7 +197,7 @@ public class MybatisMapperRefresh implements Runnable {
 					sqlSessionFactory.getConfiguration(), // 注入的sql先不进行处理了
 					resource.toString(), sqlSessionFactory.getConfiguration().getSqlFragments());
 			xmlMapperBuilder.parse();
-			logger.fine("refresh:" + resource + ",success!");
+			logger.debug("refresh:" + resource + ",success!");
 		} catch (Exception e) {
 			throw new NestedIOException("Failed to parse mapping resource: '" + resource + "'", e);
 		} finally {

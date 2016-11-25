@@ -1,5 +1,18 @@
 package com.wshsoft.mybatis.toolkit;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSessionFactory;
+
 import com.wshsoft.mybatis.MybatisConfiguration;
 import com.wshsoft.mybatis.MybatisExtendsHolder;
 import com.wshsoft.mybatis.annotations.FieldStrategy;
@@ -8,17 +21,6 @@ import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -29,7 +31,7 @@ import java.util.logging.Logger;
  * @Date 2016-09-09
  */
 public class TableInfoHelper {
-	protected static final Logger logger = Logger.getLogger("TableInfoHelper");
+	private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
 
 	/**
 	 * 缓存反射类表信息
@@ -130,7 +132,7 @@ public class TableInfoHelper {
 		 * 未发现主键注解，跳过注入
 		 */
 		if (null == tableInfo.getKeyColumn()) {
-			logger.warning(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.",
+			logger.warn(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.",
 					clazz.getName()));
 			return null;
 		}

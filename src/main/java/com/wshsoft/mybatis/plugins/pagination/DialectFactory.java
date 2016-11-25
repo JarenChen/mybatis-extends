@@ -1,5 +1,15 @@
 package com.wshsoft.mybatis.plugins.pagination;
 
+import static com.wshsoft.mybatis.mapper.DBType.DB2;
+import static com.wshsoft.mybatis.mapper.DBType.H2;
+import static com.wshsoft.mybatis.mapper.DBType.HSQL;
+import static com.wshsoft.mybatis.mapper.DBType.MYSQL;
+import static com.wshsoft.mybatis.mapper.DBType.ORACLE;
+import static com.wshsoft.mybatis.mapper.DBType.POSTGRE;
+import static com.wshsoft.mybatis.mapper.DBType.SQLITE;
+import static com.wshsoft.mybatis.mapper.DBType.SQLSERVER;
+import static com.wshsoft.mybatis.mapper.DBType.SQLSERVER2005;
+
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.plugins.pagination.dialects.DB2Dialect;
 import com.wshsoft.mybatis.plugins.pagination.dialects.H2Dialect;
@@ -10,16 +20,6 @@ import com.wshsoft.mybatis.plugins.pagination.dialects.PostgreDialect;
 import com.wshsoft.mybatis.plugins.pagination.dialects.SQLServer2005Dialect;
 import com.wshsoft.mybatis.plugins.pagination.dialects.SQLServerDialect;
 import com.wshsoft.mybatis.plugins.pagination.dialects.SQLiteDialect;
-
-import static com.wshsoft.mybatis.mapper.DBType.DB2;
-import static com.wshsoft.mybatis.mapper.DBType.MYSQL;
-import static com.wshsoft.mybatis.mapper.DBType.ORACLE;
-import static com.wshsoft.mybatis.mapper.DBType.H2;
-import static com.wshsoft.mybatis.mapper.DBType.POSTGRE;
-import static com.wshsoft.mybatis.mapper.DBType.SQLITE;
-import static com.wshsoft.mybatis.mapper.DBType.SQLSERVER;
-import static com.wshsoft.mybatis.mapper.DBType.SQLSERVER2005;
-import static com.wshsoft.mybatis.mapper.DBType.HSQL;
 
 /**
  * <p>

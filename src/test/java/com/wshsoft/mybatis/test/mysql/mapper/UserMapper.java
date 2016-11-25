@@ -1,13 +1,13 @@
 package com.wshsoft.mybatis.test.mysql.mapper;
 
-import com.wshsoft.mybatis.mapper.BaseMapper;
-import com.wshsoft.mybatis.test.mysql.entity.User;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.session.RowBounds;
 
-import java.util.List;
+import com.wshsoft.mybatis.mapper.BaseMapper;
+import com.wshsoft.mybatis.test.mysql.entity.User;
 
 /**
  * <p>

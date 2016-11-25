@@ -1,15 +1,16 @@
 package com.wshsoft.mybatis.test.mysql.typehandler;
 
-import com.wshsoft.mybatis.test.mysql.entity.PhoneNumber;
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
 
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import com.wshsoft.mybatis.test.mysql.entity.PhoneNumber;
 
 /**
  * <p>

@@ -1,5 +1,13 @@
 package com.wshsoft.mybatis;
 
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+
+import javax.sql.DataSource;
+
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
@@ -27,13 +35,6 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.LocalCacheScope;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
-
-import javax.sql.DataSource;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * <p>

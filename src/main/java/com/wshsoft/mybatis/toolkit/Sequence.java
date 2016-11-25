@@ -1,11 +1,14 @@
 package com.wshsoft.mybatis.toolkit;
 
-import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.logging.Logger;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.plugins.SqlExplainInterceptor;
 
 /**
  * <p>
@@ -17,7 +20,7 @@ import java.util.logging.Logger;
  * @date 2016-08-18
  */
 public class Sequence {
-	protected final static Logger logger = Logger.getLogger("Sequence");
+	private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
 
 	/* 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动） */
 	private final long twepoch = 1288834974657L;
@@ -52,8 +55,7 @@ public class Sequence {
 	 */
 	public Sequence(long workerId, long datacenterId) {
 		if (workerId > maxWorkerId || workerId < 0) {
-			throw new MybatisExtendsException(
-					String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
+			throw new MybatisExtendsException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
 		}
 		if (datacenterId > maxDatacenterId || datacenterId < 0) {
 			throw new MybatisExtendsException(
@@ -71,8 +73,8 @@ public class Sequence {
 	public synchronized long nextId() {
 		long timestamp = timeGen();
 		if (timestamp < lastTimestamp) {
-			throw new MybatisExtendsException(String.format(
-					"Clock moved backwards. Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
+			throw new MybatisExtendsException(String.format("Clock moved backwards. Refusing to generate id for %d milliseconds",
+					lastTimestamp - timestamp));
 		}
 		if (lastTimestamp == timestamp) {
 			sequence = (sequence + 1) & sequenceMask;
@@ -85,8 +87,8 @@ public class Sequence {
 
 		lastTimestamp = timestamp;
 
-		return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift)
-				| (workerId << workerIdShift) | sequence;
+		return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift) | (workerId << workerIdShift)
+				| sequence;
 	}
 
 	protected long tilNextMillis(long lastTimestamp) {
@@ -136,12 +138,11 @@ public class Sequence {
 				id = 1L;
 			} else {
 				byte[] mac = network.getHardwareAddress();
-				id = ((0x000000FF & (long) mac[mac.length - 1])
-						| (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
+				id = ((0x000000FF & (long) mac[mac.length - 1]) | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
 				id = id % (maxDatacenterId + 1);
 			}
 		} catch (Exception e) {
-			logger.fine(" getDatacenterId: " + e.getMessage());
+			logger.warn(" getDatacenterId: " + e.getMessage());
 		}
 		return id;
 	}

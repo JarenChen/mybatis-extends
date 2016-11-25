@@ -1,13 +1,10 @@
 package com.wshsoft.mybatis.plugins;
 
-import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.plugins.entity.CountOptimize;
-import com.wshsoft.mybatis.plugins.pagination.DialectFactory;
-import com.wshsoft.mybatis.plugins.pagination.IDialect;
-import com.wshsoft.mybatis.plugins.pagination.Pagination;
-import com.wshsoft.mybatis.toolkit.IOUtils;
-import com.wshsoft.mybatis.toolkit.SqlUtils;
-import com.wshsoft.mybatis.toolkit.StringUtils;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Properties;
+
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -24,11 +21,14 @@ import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Properties;
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.plugins.entity.CountOptimize;
+import com.wshsoft.mybatis.plugins.pagination.DialectFactory;
+import com.wshsoft.mybatis.plugins.pagination.IDialect;
+import com.wshsoft.mybatis.plugins.pagination.Pagination;
+import com.wshsoft.mybatis.toolkit.IOUtils;
+import com.wshsoft.mybatis.toolkit.SqlUtils;
+import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
  * <p>
@@ -220,19 +220,10 @@ public Pagination count(String sql, Connection connection, MappedStatement mappe
 			page = new Pagination(1, page.getSize());
 			page.setTotal(total);
 		}
-	} catch (SQLException e) {
-		e.printStackTrace();
+	} catch (Exception e) {
+		// ignored
 	} finally {
-		try {
-			if (rs != null) {
-				rs.close();
-			}
-			if (pstmt != null) {
-				pstmt.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		IOUtils.closeQuietly(pstmt, rs);
 	}
 	return page;
 }

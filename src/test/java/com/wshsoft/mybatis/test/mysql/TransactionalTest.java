@@ -1,13 +1,14 @@
 package com.wshsoft.mybatis.test.mysql;
 
+import java.io.InputStream;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
 import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
 import com.wshsoft.mybatis.test.mysql.entity.User;
 import com.wshsoft.mybatis.test.mysql.mapper.UserMapper;
 import com.wshsoft.mybatis.toolkit.IdWorker;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import java.io.InputStream;
 
 /**
  * <p>

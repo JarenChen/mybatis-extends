@@ -1,15 +1,17 @@
 package com.wshsoft.mybatis.spring;
 
-import com.wshsoft.mybatis.MybatisConfiguration;
-import com.wshsoft.mybatis.MybatisExtendsHolder;
-import com.wshsoft.mybatis.MybatisXMLConfigBuilder;
-import com.wshsoft.mybatis.MybatisXMLMapperBuilder;
-import com.wshsoft.mybatis.annotations.FieldStrategy;
-import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.mapper.DBType;
-import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
-import com.wshsoft.mybatis.mapper.ISqlInjector;
-import com.wshsoft.mybatis.toolkit.PackageHelper;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.ObjectUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.tokenizeToStringArray;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -36,16 +38,16 @@ import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.ObjectUtils.isEmpty;
-import static org.springframework.util.StringUtils.hasLength;
-import static org.springframework.util.StringUtils.tokenizeToStringArray;
+import com.wshsoft.mybatis.MybatisConfiguration;
+import com.wshsoft.mybatis.MybatisExtendsHolder;
+import com.wshsoft.mybatis.MybatisXMLConfigBuilder;
+import com.wshsoft.mybatis.MybatisXMLMapperBuilder;
+import com.wshsoft.mybatis.annotations.FieldStrategy;
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.mapper.DBType;
+import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
+import com.wshsoft.mybatis.mapper.ISqlInjector;
+import com.wshsoft.mybatis.toolkit.PackageHelper;
 
 /**
  * <p>

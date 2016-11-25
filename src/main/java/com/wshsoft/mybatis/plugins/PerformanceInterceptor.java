@@ -1,9 +1,9 @@
 package com.wshsoft.mybatis.plugins;
 
-import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.toolkit.SqlUtils;
-import com.wshsoft.mybatis.toolkit.StringUtils;
-import com.wshsoft.mybatis.toolkit.SystemClock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -20,9 +20,10 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.toolkit.SqlUtils;
+import com.wshsoft.mybatis.toolkit.StringUtils;
+import com.wshsoft.mybatis.toolkit.SystemClock;
 
 /**
  * <p>
