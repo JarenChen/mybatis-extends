@@ -46,11 +46,35 @@ public interface IService<T> {
 	 *
 	 * @param entityList
 	 *            实体对象列表
-	 * @param entityList
+	 * @param batchSize
 	 *
 	 * @return boolean
 	 */
 	boolean insertBatch(List<T> entityList, int batchSize);
+
+	/**
+	 * <p>
+	 * 批量修改插入
+	 * </p>
+	 *
+	 * @param entityList
+	 *            实体对象列表
+	 * @return boolean
+	 */
+	boolean insertOrUpdateBatch(List<T> entityList);
+
+	/**
+	 * <p>
+	 * 批量修改插入
+	 * </p>
+	 *
+	 * @param entityList
+	 *            实体对象列表
+	 * @param batchSize
+	 *
+	 * @return boolean
+	 */
+	boolean insertOrUpdateBatch(List<T> entityList, int batchSize);
 
 	/**
 	 * <p>
@@ -231,5 +255,4 @@ public interface IService<T> {
 	 * @return
 	 */
 	Page<T> selectPage(Page<T> page, Wrapper<T> wrapper);
-
 }

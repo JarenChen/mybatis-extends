@@ -1,10 +1,6 @@
 package com.wshsoft.mybatis.test;
 
-import org.junit.Assert;
 import org.junit.Test;
-
-import com.wshsoft.mybatis.plugins.entity.CountOptimize;
-import com.wshsoft.mybatis.toolkit.SqlUtils;
 
 
 /**
@@ -21,10 +17,6 @@ public class SqlUtilsTest {
 	 */
 	@Test
 	public void test1() {
-		String sql = "select * from test orDer    \r\n   by name";
-		CountOptimize countOptimize = SqlUtils.getCountOptimize(sql, true);
-		Assert.assertEquals("{\"orderBy\":\"false\",\"countSQL\":\"SELECT COUNT(1) AS TOTAL from test \"}",
-				countOptimize.toString());
 
 	}
 
@@ -33,10 +25,6 @@ public class SqlUtilsTest {
 	 */
 	@Test
 	public void test2() {
-		String sql = "select distinct name from test orDer       by name";
-		CountOptimize countOptimize = SqlUtils.getCountOptimize(sql, true);
-		Assert.assertEquals("{\"orderBy\":\"true\",\"countSQL\":\"SELECT COUNT(1) AS TOTAL FROM (select distinct name from test orDer       by name) A\"}",
-				countOptimize.toString());
 
 	}
 
@@ -45,11 +33,6 @@ public class SqlUtilsTest {
 	 */
 	@Test
 	public void test3() {
-		String sql = "select DATE_FORMAT('2016-05-01 18:31:33','%Y-%m-%d')";
-		CountOptimize countOptimize = SqlUtils.getCountOptimize(sql, true);
-		Assert.assertEquals(
-				"{\"orderBy\":\"true\",\"countSQL\":\"SELECT COUNT(1) AS TOTAL FROM (select DATE_FORMAT('2016-05-01 18:31:33','%Y-%m-%d')) A\"}",
-				countOptimize.toString());
 
 	}
 
@@ -58,10 +41,6 @@ public class SqlUtilsTest {
 	 */
 	@Test
 	public void test4() {
-		String sql = "select DATE_FORMAT('2016-05-01 18:31:33','%Y-%m-%d') from test";
-		CountOptimize countOptimize = SqlUtils.getCountOptimize(sql, true);
-		Assert.assertEquals("{\"orderBy\":\"true\",\"countSQL\":\"SELECT COUNT(1) AS TOTAL from test\"}",
-				countOptimize.toString());
 
 	}
 

@@ -40,6 +40,7 @@ public class SqlExplainInterceptor implements Interceptor {
 	 */
 	private boolean stopProceed = false;
 
+	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 		/**
 		 * 处理 DELETE UPDATE 语句
@@ -73,6 +74,7 @@ public class SqlExplainInterceptor implements Interceptor {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("resource")
 	protected void sqlExplain(Configuration configuration, MappedStatement mappedStatement, BoundSql boundSql,
 			Connection connection, Object parameter) {
 		PreparedStatement stmt = null;
@@ -109,6 +111,7 @@ public class SqlExplainInterceptor implements Interceptor {
 		}
 	}
 
+	@Override
 	public Object plugin(Object target) {
 		if (target instanceof Executor) {
 			return Plugin.wrap(target, this);
@@ -116,6 +119,7 @@ public class SqlExplainInterceptor implements Interceptor {
 		return target;
 	}
 
+	@Override
 	public void setProperties(Properties prop) {
 		// TODO
 	}

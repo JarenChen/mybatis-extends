@@ -36,7 +36,7 @@ public enum DBType {
 	/**
 	 * POSTGRE
 	 */
-	POSTGRE("postgre", "Postgre数据库"),
+	POSTGRE("postgresql", "Postgre数据库"),
 	/**
 	 * SQLSERVER2005
 	 */

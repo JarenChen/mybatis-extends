@@ -46,6 +46,8 @@ public class PaginationInterceptor implements Interceptor {
 
 /* 溢出总页数，设置第一页 */
 private boolean overflowCurrent = false;
+/* Count优化方式 */
+private String optimizeType = "default";
 
 /* 方言类型 */
 private String dialectType;
@@ -53,6 +55,7 @@ private String dialectType;
 /* 方言实现类 */
 private String dialectClazz;
 
+@Override
 public Object intercept(Invocation invocation) throws Throwable {
 
 	Object target = invocation.getTarget();
@@ -74,7 +77,7 @@ public Object intercept(Invocation invocation) throws Throwable {
 		 * </p>
 		 */
 		BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
-		String originalSql = (String) boundSql.getSql();
+		String originalSql = boundSql.getSql();
 		metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
 		metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
 
@@ -93,7 +96,8 @@ public Object intercept(Invocation invocation) throws Throwable {
 				/*
 				 * COUNT 查询，去掉 ORDER BY 优化执行 SQL
 				 */
-				CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, page.isOptimizeCount());
+				CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
+						page.isOptimizeCount());
 				orderBy = countOptimize.isOrderBy();
 			}
 			/* 执行 SQL */
@@ -123,7 +127,7 @@ public Object intercept(Invocation invocation) throws Throwable {
 		 * <p> 禁用内存分页 </p> <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。
 		 * </p>
 		 */
-		String originalSql = (String) boundSql.getSql();
+		String originalSql = boundSql.getSql();
 
 		/**
 		 * <p>
@@ -142,7 +146,8 @@ public Object intercept(Invocation invocation) throws Throwable {
 					/*
 					 * COUNT 查询，去掉 ORDER BY 优化执行 SQL
 					 */
-					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, page.isOptimizeCount());
+					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
+							page.isOptimizeCount());
 					page = this.count(countOptimize.getCountSQL(), connection, mappedStatement, boundSql, page);
 					/** 总数 0 跳出执行 */
 					if (page.getTotal() <= 0) {
@@ -228,6 +233,7 @@ public Pagination count(String sql, Connection connection, MappedStatement mappe
 	return page;
 }
 
+@Override
 public Object plugin(Object target) {
 	if (target instanceof Executor) {
 		return Plugin.wrap(target, this);
@@ -238,6 +244,7 @@ public Object plugin(Object target) {
 	return target;
 }
 
+@Override
 public void setProperties(Properties prop) {
 	String dialectType = prop.getProperty("dialectType");
 	String dialectClazz = prop.getProperty("dialectClazz");
@@ -259,5 +266,9 @@ public void setDialectClazz(String dialectClazz) {
 
 public void setOverflowCurrent(boolean overflowCurrent) {
 	this.overflowCurrent = overflowCurrent;
+}
+
+public void setOptimizeType(String optimizeType) {
+	this.optimizeType = optimizeType;
 }
 }

@@ -54,6 +54,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param builderAssistant
 	 * @param mapperClass
 	 */
+	@Override
 	public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		String className = mapperClass.toString();
 		Set<String> mapperRegistryCache = MybatisConfiguration.MAPPER_REGISTRY_CACHE;
@@ -66,6 +67,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	/**
 	 * 注入单点 crudSql
 	 */
+	@Override
 	public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		this.configuration = builderAssistant.getConfiguration();
 		this.builderAssistant = builderAssistant;
