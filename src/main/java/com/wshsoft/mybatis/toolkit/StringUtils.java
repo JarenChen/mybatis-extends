@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.wshsoft.mybatis.enums.SQLlikeType;
+
 /**
  * <p>
  * String 工具类
@@ -212,7 +214,30 @@ public class StringUtils {
 		}
 		return srcStr;
 	}
-
+	
+	/**
+	 * <p>
+	 * 用%连接like
+	 * </p>
+	 *
+	 * @param str
+	 *            原字符串
+	 * @return
+	 */
+	public static String concatLike(String str, SQLlikeType type) {
+		switch (type) {
+		case LEFT:
+			str = "%" + str;
+			break;
+		case RIGHT:
+			str += "%";
+			break;
+		default:
+			str = "%" + str + "%";
+		}
+		return StringEscape.escapeString(str);
+	}
+	
 	/**
 	 * <p>
 	 * 使用单引号包含字符串
