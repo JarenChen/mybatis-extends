@@ -21,11 +21,13 @@ import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
 import com.wshsoft.mybatis.MybatisConfiguration;
-import com.wshsoft.mybatis.annotations.FieldStrategy;
-import com.wshsoft.mybatis.annotations.IdType;
+import com.wshsoft.mybatis.entity.TableFieldInfo;
+import com.wshsoft.mybatis.entity.TableInfo;
+import com.wshsoft.mybatis.enums.DBType;
+import com.wshsoft.mybatis.enums.FieldStrategy;
+import com.wshsoft.mybatis.enums.IdType;
+import com.wshsoft.mybatis.enums.SqlMethod;
 import com.wshsoft.mybatis.toolkit.SqlReservedWords;
-import com.wshsoft.mybatis.toolkit.TableFieldInfo;
-import com.wshsoft.mybatis.toolkit.TableInfo;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
 /**
@@ -33,7 +35,7 @@ import com.wshsoft.mybatis.toolkit.TableInfoHelper;
  * SQL 自动注入器
  * </p>
  *
- * @author hubin sjy
+ * @author Carry xie
  * @Date 2016-09-09
  */
 public class AutoSqlInjector implements ISqlInjector {

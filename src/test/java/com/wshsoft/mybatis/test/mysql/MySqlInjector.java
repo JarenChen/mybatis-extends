@@ -4,8 +4,8 @@ import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.session.Configuration;
 
+import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.mapper.AutoSqlInjector;
-import com.wshsoft.mybatis.toolkit.TableInfo;
 
 /**
  * <p>

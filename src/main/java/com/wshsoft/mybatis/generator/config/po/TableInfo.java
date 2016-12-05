@@ -5,7 +5,9 @@ import java.util.List;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
+ * <p>
  * 表信息，关联到当前字段信息
+ * </p>
  *
  * @author Carry xie
  * @since 2016/8/30

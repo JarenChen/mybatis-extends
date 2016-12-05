@@ -10,9 +10,10 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import com.wshsoft.mybatis.annotations.FieldStrategy;
+import com.wshsoft.mybatis.enums.DBType;
+import com.wshsoft.mybatis.enums.FieldStrategy;
+import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.mapper.AutoSqlInjector;
-import com.wshsoft.mybatis.mapper.DBType;
 import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
 import com.wshsoft.mybatis.mapper.ISqlInjector;
 
@@ -35,6 +36,11 @@ public class MybatisConfiguration extends Configuration {
 	 * 数据库类型（默认 MySql）
 	 */
 	public static DBType DB_TYPE = DBType.MYSQL;
+	
+	/*
+	 * 主键策略 （默认 ID_WORKER）
+	 */
+	public static IdType ID_TYPE = IdType.ID_WORKER;
 
 	/*
 	 * 数据库字段使用下划线命名（默认 false）
@@ -75,12 +81,12 @@ public class MybatisConfiguration extends Configuration {
 	 * 初始化调用
 	 */
 	public MybatisConfiguration() {
-		System.err.println("mybatis-extends init success.");
+		System.err.println("mybatis-plus init success.");
 	}
 
 	/**
 	 * <p>
-	 * MybatisExtends 加载 SQL 顺序：
+	 * MybatisPlus 加载 SQL 顺序：
 	 * </p>
 	 * 1、加载XML中的SQL<br>
 	 * 2、加载sqlProvider中的SQL<br>

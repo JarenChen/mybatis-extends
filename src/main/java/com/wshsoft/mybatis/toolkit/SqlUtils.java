@@ -1,8 +1,7 @@
 package com.wshsoft.mybatis.toolkit;
 
-import com.wshsoft.mybatis.plugins.SQLFormatter;
-import com.wshsoft.mybatis.plugins.entity.CountOptimize;
-import com.wshsoft.mybatis.plugins.entity.Optimize;
+import com.wshsoft.mybatis.entity.CountOptimize;
+import com.wshsoft.mybatis.enums.Optimize;
 import com.wshsoft.mybatis.plugins.pagination.Pagination;
 
 /**

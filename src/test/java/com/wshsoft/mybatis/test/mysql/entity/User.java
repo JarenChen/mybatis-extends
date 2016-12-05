@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Date;
 
-import com.wshsoft.mybatis.annotations.FieldStrategy;
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
+import com.wshsoft.mybatis.enums.FieldStrategy;
 
 /**
  * <p>

@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 import java.util.Collection;
 
 import com.wshsoft.mybatis.MybatisAbstractSQL;
-import com.wshsoft.mybatis.toolkit.CollectionUtil;
+import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
@@ -209,7 +209,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
 	 *            是否为NOT IN操作
 	 */
 	private void handerIn(String column, Collection<?> value, boolean isNot) {
-		if (StringUtils.isNotEmpty(column) && CollectionUtil.isNotEmpty(value)) {
+		if (StringUtils.isNotEmpty(column) && CollectionUtils.isNotEmpty(value)) {
 			StringBuilder inSql = new StringBuilder();
 			inSql.append(column);
 			if (isNot) {

@@ -9,8 +9,9 @@ import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import com.wshsoft.mybatis.annotations.FieldStrategy;
-import com.wshsoft.mybatis.mapper.DBType;
+import com.wshsoft.mybatis.enums.DBType;
+import com.wshsoft.mybatis.enums.FieldStrategy;
+import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
 import com.wshsoft.mybatis.mapper.ISqlInjector;
 import com.wshsoft.mybatis.toolkit.IOUtils;

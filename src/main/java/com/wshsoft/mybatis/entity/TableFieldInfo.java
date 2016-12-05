@@ -1,7 +1,9 @@
-package com.wshsoft.mybatis.toolkit;
+package com.wshsoft.mybatis.entity;
 
 import com.wshsoft.mybatis.MybatisConfiguration;
-import com.wshsoft.mybatis.annotations.FieldStrategy;
+import com.wshsoft.mybatis.enums.FieldStrategy;
+import com.wshsoft.mybatis.toolkit.SqlReservedWords;
+import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
  * <p>

@@ -10,7 +10,7 @@ import java.util.Collection;
  * @author Carry xie
  * @Date 2016-09-19
  */
-public class CollectionUtil {
+public class CollectionUtils {
 
 	/**
 	 * <p>

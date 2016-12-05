@@ -1,10 +1,12 @@
 package com.wshsoft.mybatis.generator.config.po;
 
 /**
- *  字段信息
+ * <p>
+ * 字段信息
+ *  </p>
  *  
  * @author Carry xie
- * @since 2016/8/30
+ * @since 2016-8-30
  */
 public class TableField {
 	private boolean keyFlag;

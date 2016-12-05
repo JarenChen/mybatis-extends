@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.wshsoft.mybatis.MybatisConfiguration;
-import com.wshsoft.mybatis.mapper.DBType;
+import com.wshsoft.mybatis.enums.DBType;
 
 /**
  * <p>

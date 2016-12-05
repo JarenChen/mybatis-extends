@@ -1,4 +1,4 @@
-package com.wshsoft.mybatis.annotations;
+package com.wshsoft.mybatis.enums;
 
 /**
  * <p>

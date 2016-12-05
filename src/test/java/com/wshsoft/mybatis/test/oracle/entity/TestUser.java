@@ -2,10 +2,10 @@ package com.wshsoft.mybatis.test.oracle.entity;
 
 import java.io.Serializable;
 
-import com.wshsoft.mybatis.annotations.IdType;
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
+import com.wshsoft.mybatis.enums.IdType;
 
 /**
  *

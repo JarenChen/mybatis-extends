@@ -15,11 +15,13 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.wshsoft.mybatis.MybatisConfiguration;
 import com.wshsoft.mybatis.MybatisExtendsHolder;
-import com.wshsoft.mybatis.annotations.FieldStrategy;
-import com.wshsoft.mybatis.annotations.IdType;
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
+import com.wshsoft.mybatis.entity.TableFieldInfo;
+import com.wshsoft.mybatis.entity.TableInfo;
+import com.wshsoft.mybatis.enums.FieldStrategy;
+import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 
 /**
@@ -31,6 +33,7 @@ import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
  * @Date 2016-09-09
  */
 public class TableInfoHelper {
+
 	private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
 
 	/**
@@ -116,8 +119,7 @@ public class TableInfoHelper {
 			/**
 			 * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
 			 */
-			TableFieldInfo tfi = new TableFieldInfo(field.getName());
-			fieldList.add(tfi);
+			fieldList.add(new TableFieldInfo(field.getName()));
 		}
 
 		/* 字段列表 */
@@ -178,7 +180,14 @@ public class TableInfoHelper {
 		TableId tableId = field.getAnnotation(TableId.class);
 		if (tableId != null) {
 			if (tableInfo.getKeyColumn() == null) {
-				tableInfo.setIdType(tableId.type());
+				/*
+				 * 主键策略（ 注解 > 全局 > 默认 ）
+				 */
+				if (IdType.INPUT != tableId.type()) {
+					tableInfo.setIdType(tableId.type());
+				} else {
+					tableInfo.setIdType(MybatisConfiguration.ID_TYPE);
+				}
 				if (StringUtils.isNotEmpty(tableId.value())) {
 					/* 自定义字段 */
 					tableInfo.setKeyColumn(tableId.value());
@@ -188,7 +197,7 @@ public class TableInfoHelper {
 					tableInfo.setKeyColumn(StringUtils.camelToUnderline(field.getName()));
 				} else {
 					tableInfo.setKeyColumn(field.getName());
-				}
+				} 
 				tableInfo.setKeyProperty(field.getName());
 				return true;
 			} else {
@@ -211,7 +220,7 @@ public class TableInfoHelper {
 	private static boolean initFieldId(TableInfo tableInfo, Field field, Class<?> clazz) {
 		if (DEFAULT_ID_NAME.equals(field.getName())) {
 			if (tableInfo.getKeyColumn() == null) {
-				tableInfo.setIdType(IdType.ID_WORKER);
+				tableInfo.setIdType(MybatisConfiguration.ID_TYPE);
 				tableInfo.setKeyColumn(field.getName());
 				tableInfo.setKeyProperty(field.getName());
 				return true;

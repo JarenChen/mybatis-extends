@@ -1,7 +1,8 @@
 package com.wshsoft.mybatis.test.generator;
 
-import com.wshsoft.mybatis.generator.MybatisPlusGenerator;
+import com.wshsoft.mybatis.generator.AutoGenerator;
 import com.wshsoft.mybatis.generator.config.DataSourceConfig;
+import com.wshsoft.mybatis.generator.config.GlobalConfig;
 import com.wshsoft.mybatis.generator.config.PackageConfig;
 import com.wshsoft.mybatis.generator.config.StrategyConfig;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
@@ -22,17 +23,25 @@ public class MysqlGenerator {
 	 * </p>
 	 */
 	public static void main(String[] args) {
-		MybatisPlusGenerator mpg = new MybatisPlusGenerator();
-		//输出目录(默认java.io.tmpdir)
-		mpg.setOutputDir("D:\\mybatis-extends");
-		//是否覆盖同名文件(默认false)
-		mpg.setFileOverride(true);
-		//是否开启 ActiveRecord 模式(默认true)
-		mpg.setActiveRecord(false);
-		//mapper.xml 中添加二级缓存配置(默认true)
-		mpg.setEnableCache(false);
-		//开发者名称 
-		mpg.setAuthor("Carry xie");
+		AutoGenerator mpg = new AutoGenerator();
+		// 全局配置
+		GlobalConfig gc = new GlobalConfig();
+		gc.setOutputDir("D://mybatis-extends");
+		gc.setFileOverride(true);
+		gc.setActiveRecord(true);
+		gc.setEnableCache(false);// XML 二级缓存
+		gc.setBaseResultMap(true);// XML ResultMap
+		gc.setBaseColumnList(false);// XML columList
+		gc.setAuthor("Carry xie");
+
+		// 自定义文件命名，注意 %s 会自动填充表实体属性！
+		// gc.setMapperName("%sDao");
+		// gc.setXmlName("%sDao");
+		// gc.setServiceName("MP%sService");
+		// gc.setServiceImplName("%sServiceDiy");
+		// gc.setControllerName("%sAction");
+		mpg.setGlobalConfig(gc);
+
 
 		// 数据源配置
 		DataSourceConfig dsc = new DataSourceConfig();
@@ -45,11 +54,32 @@ public class MysqlGenerator {
 
 		// 策略配置
 		StrategyConfig strategy = new StrategyConfig();
-		//表前缀 
-		//strategy.setTablePrefix("bmd_");
-		//字段生成策略
-		strategy.setNaming(NamingStrategy.underline_to_camel);
-      
+		// 表前缀
+		strategy.setTablePrefix("bmd_");
+		// 表名生成策略
+		strategy.setNaming(NamingStrategy.remove_prefix_and_camel);
+		// strategy.setInclude(new String[] { "user" }); // 需要生成的表
+		// strategy.setExclude(new String[]{"test"}); // 排除生成的表
+		// 字段名生成策略
+		strategy.setFieldNaming(NamingStrategy.underline_to_camel);
+		// 自定义实体父类
+		// strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");
+		// 自定义实体，公共字段
+		// strategy.setSuperEntityColumns(new String[] { "test_id", "age" });
+		// 自定义 mapper 父类
+		// strategy.setSuperMapperClass("com.baomidou.demo.TestMapper");
+		// 自定义 service 父类
+		// strategy.setSuperServiceClass("com.baomidou.demo.TestService");
+		// 自定义 service 实现类父类
+		// strategy.setSuperServiceImplClass("com.baomidou.demo.TestServiceImpl");
+		// 自定义 controller 父类
+		// strategy.setSuperControllerClass("com.baomidou.demo.TestController");
+		// 【实体】是否生成字段常量（默认 false）
+		// public static final String ID = "test_id";
+		// strategy.setEntityColumnConstant(true);
+		// 【实体】是否为构建者模型（默认 false）
+		// public User setName(String name) {this.name = name; return this;}
+		// strategy.setEntityBuliderModel(true);
 		mpg.setStrategy(strategy);
 
 		// 包配置

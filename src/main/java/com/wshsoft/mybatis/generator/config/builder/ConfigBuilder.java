@@ -14,22 +14,24 @@ import java.util.Set;
 
 import com.wshsoft.mybatis.generator.config.ConstVal;
 import com.wshsoft.mybatis.generator.config.DataSourceConfig;
+import com.wshsoft.mybatis.generator.config.GlobalConfig;
 import com.wshsoft.mybatis.generator.config.PackageConfig;
 import com.wshsoft.mybatis.generator.config.StrategyConfig;
 import com.wshsoft.mybatis.generator.config.TemplateConfig;
 import com.wshsoft.mybatis.generator.config.po.TableField;
 import com.wshsoft.mybatis.generator.config.po.TableInfo;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
-import com.wshsoft.mybatis.generator.config.rules.IdStrategy;
 import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
 import com.wshsoft.mybatis.generator.config.rules.QuerySQL;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
+ * <p>
  * 配置汇总 传递给文件生成工具
+ * </p>
  *
  * @author Carry xie
- * @since 2016/8/30
+ * @since 2016-08-30
  */
 public class ConfigBuilder {
 
@@ -50,10 +52,6 @@ public class ConfigBuilder {
 	private String superServiceImplClass;
 	private String superControllerClass;
 	/**
-	 * ID的字符串类型
-	 */
-	private String idType;
-	/**
 	 * 数据库表信息
 	 */
 	private List<TableInfo> tableInfoList;
@@ -73,6 +71,16 @@ public class ConfigBuilder {
 	private TemplateConfig template;
 
 	/**
+	 * 策略配置
+	 */
+	private StrategyConfig strategyConfig;
+
+	/**
+	 * 全局配置信息
+	 */
+	private GlobalConfig globalConfig;
+
+	/**
 	 * 在构造器中处理配置
 	 *
 	 * @param outputDir
@@ -85,20 +93,27 @@ public class ConfigBuilder {
 	 *            表配置
 	 */
 	public ConfigBuilder(PackageConfig packageConfig, DataSourceConfig dataSourceConfig, StrategyConfig strategyConfig,
-			TemplateConfig template, String outputDir) {
+			TemplateConfig template, GlobalConfig globalConfig) {
+		// 全局配置
+		if (null == globalConfig) {
+			this.globalConfig = new GlobalConfig();
+		} else {
+			this.globalConfig = globalConfig;
+		}
 		// 包配置
 		if (null == packageConfig) {
-			handlerPackage(outputDir, new PackageConfig());
+			handlerPackage(this.globalConfig.getOutputDir(), new PackageConfig());
 		} else {
-			handlerPackage(outputDir, packageConfig);
+			handlerPackage(this.globalConfig.getOutputDir(), packageConfig);
 		}
 		handlerDataSource(dataSourceConfig);
 		// 策略配置
 		if (null == strategyConfig) {
-			handlerStrategy(new StrategyConfig());
+			this.strategyConfig = new StrategyConfig();
 		} else {
-			handlerStrategy(strategyConfig);
+			this.strategyConfig = strategyConfig;
 		}
+		handlerStrategy(this.strategyConfig);
 		// 模板配置
 		if (null == template) {
 			this.template = new TemplateConfig();
@@ -150,15 +165,6 @@ public class ConfigBuilder {
 
 	public String getSuperControllerClass() {
 		return superControllerClass;
-	}
-
-	/**
-	 * 获取ID类型
-	 *
-	 * @return id生成方式
-	 */
-	public String getIdType() {
-		return idType;
 	}
 
 	/**
@@ -252,17 +258,6 @@ public class ConfigBuilder {
 		}
 		superEntityClass = config.getSuperEntityClass();
 		superControllerClass = config.getSuperControllerClass();
-
-		// ID 策略判断
-		if (config.getIdGenType() == IdStrategy.auto) {
-			idType = IdStrategy.auto.getValue();
-		} else if (config.getIdGenType() == IdStrategy.input) {
-			idType = IdStrategy.input.getValue();
-		} else if (config.getIdGenType() == IdStrategy.uuid) {
-			idType = IdStrategy.uuid.getValue();
-		} else {
-			idType = IdStrategy.id_worker.getValue();
-		}
 	}
 
 	/**
@@ -279,11 +274,32 @@ public class ConfigBuilder {
 		for (TableInfo tableInfo : tableList) {
 			tableInfo.setEntityName(
 					NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
-			tableInfo.setMapperName(tableInfo.getEntityName() + ConstVal.MAPPER);
-			tableInfo.setXmlName(tableInfo.getMapperName());
-			tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERIVCE);
-			tableInfo.setServiceImplName(tableInfo.getEntityName() + ConstVal.SERVICEIMPL);
-			tableInfo.setControllerName(tableInfo.getEntityName() + ConstVal.CONTROLLER);
+			if (StringUtils.isNotEmpty(globalConfig.getMapperName())) {
+				tableInfo.setMapperName(String.format(globalConfig.getMapperName(), tableInfo.getEntityName()));
+			} else {
+				tableInfo.setMapperName(tableInfo.getEntityName() + ConstVal.MAPPER);
+			}
+			if (StringUtils.isNotEmpty(globalConfig.getXmlName())) {
+				tableInfo.setXmlName(String.format(globalConfig.getXmlName(), tableInfo.getEntityName()));
+			} else {
+				tableInfo.setXmlName(tableInfo.getEntityName() + ConstVal.MAPPER);
+			}
+			if (StringUtils.isNotEmpty(globalConfig.getServiceName())) {
+				tableInfo.setServiceName(String.format(globalConfig.getServiceName(), tableInfo.getEntityName()));
+			} else {
+				tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERIVCE);
+			}
+			if (StringUtils.isNotEmpty(globalConfig.getServiceImplName())) {
+				tableInfo.setServiceImplName(
+						String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
+			} else {
+				tableInfo.setServiceImplName(tableInfo.getEntityName() + ConstVal.SERVICEIMPL);
+			}
+			if (StringUtils.isNotEmpty(globalConfig.getControllerName())) {
+				tableInfo.setControllerName(String.format(globalConfig.getControllerName(), tableInfo.getEntityName()));
+			} else {
+				tableInfo.setControllerName(tableInfo.getEntityName() + ConstVal.CONTROLLER);
+			}
 		}
 		return tableList;
 	}
@@ -398,6 +414,10 @@ public class ConfigBuilder {
 			}
 			// 处理其它信息
 			field.setName(results.getString(querySQL.getFieldName()));
+			if (strategyConfig.includeSuperEntityColumns(field.getName())) {
+				// 跳过公共字段
+				continue;
+			}
 			field.setType(results.getString(querySQL.getFieldType()));
 			field.setPropertyName(processName(field.getName(), strategy));
 			field.setPropertyType(processFiledType(field.getType()));
@@ -565,6 +585,22 @@ public class ConfigBuilder {
 			}
 		}
 		return QuerySQL.MYSQL;
+	}
+
+	public StrategyConfig getStrategyConfig() {
+		return strategyConfig;
+	}
+
+	public void setStrategyConfig(StrategyConfig strategyConfig) {
+		this.strategyConfig = strategyConfig;
+	}
+
+	public GlobalConfig getGlobalConfig() {
+		return globalConfig;
+	}
+
+	public void setGlobalConfig(GlobalConfig globalConfig) {
+		this.globalConfig = globalConfig;
 	}
 
 }

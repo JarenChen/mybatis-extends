@@ -1,18 +1,17 @@
 package com.wshsoft.mybatis.activerecord;
 
+import com.wshsoft.mybatis.enums.SqlMethod;
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.mapper.EntityWrapper;
+import com.wshsoft.mybatis.plugins.Page;
+import com.wshsoft.mybatis.toolkit.CollectionUtils;
+import com.wshsoft.mybatis.toolkit.StringUtils;
+import org.apache.ibatis.session.SqlSession;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.ibatis.session.SqlSession;
-
-import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.mapper.EntityWrapper;
-import com.wshsoft.mybatis.mapper.SqlMethod;
-import com.wshsoft.mybatis.plugins.Page;
-import com.wshsoft.mybatis.toolkit.CollectionUtil;
-import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
  * <p>
@@ -270,7 +269,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 */
 	public T selectOne(String columns, String whereClause, Object... args) {
 		List<T> tl = selectList(columns, whereClause, args);
-		if (CollectionUtil.isEmpty(tl)) {
+		if (CollectionUtils.isEmpty(tl)) {
 			return null;
 		}
 		return tl.get(0);
@@ -356,7 +355,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 */
 	public int selectCount(String whereClause, Object... args) {
 		List<T> tl = selectList(whereClause, args);
-		if (CollectionUtil.isEmpty(tl)) {
+		if (CollectionUtils.isEmpty(tl)) {
 			return 0;
 		}
 		return tl.size();

@@ -17,7 +17,7 @@ import com.wshsoft.mybatis.test.mysql.mapper.UserMapper;
 
 /**
  * 
- * @author carry xie
+ * @author Carry xie
  * @Date 2014-5-16
  */ 
 @RunWith(SpringJUnit4ClassRunner.class)

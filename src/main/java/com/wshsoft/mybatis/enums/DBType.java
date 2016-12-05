@@ -1,4 +1,4 @@
-package com.wshsoft.mybatis.mapper;
+package com.wshsoft.mybatis.enums;
 
 /**
  * <p>

@@ -1,4 +1,4 @@
-package com.wshsoft.mybatis.plugins;
+package com.wshsoft.mybatis.toolkit;
 
 import java.util.HashSet;
 import java.util.LinkedList;

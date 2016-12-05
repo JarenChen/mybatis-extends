@@ -1,10 +1,10 @@
-package com.wshsoft.mybatis.toolkit;
+package com.wshsoft.mybatis.entity;
 
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.wshsoft.mybatis.annotations.IdType;
+import com.wshsoft.mybatis.enums.IdType;
 
 /**
  * <p>

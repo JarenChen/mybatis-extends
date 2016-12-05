@@ -1,14 +1,14 @@
 package com.wshsoft.mybatis.plugins.pagination;
 
-import static com.wshsoft.mybatis.mapper.DBType.DB2;
-import static com.wshsoft.mybatis.mapper.DBType.H2;
-import static com.wshsoft.mybatis.mapper.DBType.HSQL;
-import static com.wshsoft.mybatis.mapper.DBType.MYSQL;
-import static com.wshsoft.mybatis.mapper.DBType.ORACLE;
-import static com.wshsoft.mybatis.mapper.DBType.POSTGRE;
-import static com.wshsoft.mybatis.mapper.DBType.SQLITE;
-import static com.wshsoft.mybatis.mapper.DBType.SQLSERVER;
-import static com.wshsoft.mybatis.mapper.DBType.SQLSERVER2005;
+import static com.wshsoft.mybatis.enums.DBType.DB2;
+import static com.wshsoft.mybatis.enums.DBType.H2;
+import static com.wshsoft.mybatis.enums.DBType.HSQL;
+import static com.wshsoft.mybatis.enums.DBType.MYSQL;
+import static com.wshsoft.mybatis.enums.DBType.ORACLE;
+import static com.wshsoft.mybatis.enums.DBType.POSTGRE;
+import static com.wshsoft.mybatis.enums.DBType.SQLITE;
+import static com.wshsoft.mybatis.enums.DBType.SQLSERVER;
+import static com.wshsoft.mybatis.enums.DBType.SQLSERVER2005;
 
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.plugins.pagination.dialects.DB2Dialect;

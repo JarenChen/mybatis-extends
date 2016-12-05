@@ -19,7 +19,7 @@ import com.wshsoft.mybatis.toolkit.IdWorker;
  * 对User, Role及el, typeHandler, resultMap进行测试
  * </p>
  *
- * @author junyu
+ * @author Carry xie
  * @Date 2016-09-09
  */
 public class URPTest {

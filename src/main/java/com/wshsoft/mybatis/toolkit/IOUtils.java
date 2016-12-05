@@ -18,7 +18,7 @@ import java.sql.Connection;
  * IOUtils Copy org.apache.commons.io.IOUtils
  * </p>
  *
- * @author Caratacus
+ * @author Carry xie
  * @Date 2016-11-23
  */
 public class IOUtils {

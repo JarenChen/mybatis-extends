@@ -1,4 +1,4 @@
-package com.wshsoft.mybatis.annotations;
+package com.wshsoft.mybatis.enums;
 
 /**
  * <p>
@@ -25,6 +25,25 @@ public enum IdType {
 	IdType(final int key, final String desc) {
 		this.key = key;
 		this.desc = desc;
+	}
+	
+	/**
+	 * <p>
+	 * 主键策略 （默认 ID_WORKER）
+	 * </p>
+	 * 
+	 * @param idType
+	 *            ID 策略类型
+	 * @return
+	 */
+	public static IdType getIdType(int idType) {
+		IdType[] its = IdType.values();
+		for (IdType it : its) {
+			if (it.getKey() == idType) {
+				return it;
+			}
+		}
+		return ID_WORKER;
 	}
 
 	public int getKey() {

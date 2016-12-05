@@ -4,7 +4,7 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.toolkit.TableInfo;
+import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
 /**

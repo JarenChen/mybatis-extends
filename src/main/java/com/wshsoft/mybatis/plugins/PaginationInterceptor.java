@@ -21,8 +21,8 @@ import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import com.wshsoft.mybatis.entity.CountOptimize;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.plugins.entity.CountOptimize;
 import com.wshsoft.mybatis.plugins.pagination.DialectFactory;
 import com.wshsoft.mybatis.plugins.pagination.IDialect;
 import com.wshsoft.mybatis.plugins.pagination.Pagination;

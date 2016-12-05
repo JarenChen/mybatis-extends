@@ -42,13 +42,13 @@ import com.wshsoft.mybatis.MybatisConfiguration;
 import com.wshsoft.mybatis.MybatisExtendsHolder;
 import com.wshsoft.mybatis.MybatisXMLConfigBuilder;
 import com.wshsoft.mybatis.MybatisXMLMapperBuilder;
-import com.wshsoft.mybatis.annotations.FieldStrategy;
+import com.wshsoft.mybatis.enums.DBType;
+import com.wshsoft.mybatis.enums.FieldStrategy;
+import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.mapper.DBType;
 import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
 import com.wshsoft.mybatis.mapper.ISqlInjector;
 import com.wshsoft.mybatis.toolkit.PackageHelper;
-
 /**
  * <p>
  * 拷贝类 org.mybatis.spring.SqlSessionFactoryBean 修改方法 buildSqlSessionFactory()
@@ -110,6 +110,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	// TODO 注入数据库类型
 	public void setDbType(String dbType) {
 		MybatisConfiguration.DB_TYPE = DBType.getDBType(dbType);
+	}
+	
+	// TODO 注入主键策略
+	public void setIdType(int idType) {
+		MybatisConfiguration.ID_TYPE = IdType.getIdType(idType);
 	}
 
 	// TODO 注入表字段使用下划线命名

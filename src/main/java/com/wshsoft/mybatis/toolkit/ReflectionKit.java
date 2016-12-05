@@ -9,7 +9,9 @@ import java.util.List;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
-import com.wshsoft.mybatis.annotations.FieldStrategy;
+import com.wshsoft.mybatis.entity.TableFieldInfo;
+import com.wshsoft.mybatis.entity.TableInfo;
+import com.wshsoft.mybatis.enums.FieldStrategy;
 
 /**
  * <p>

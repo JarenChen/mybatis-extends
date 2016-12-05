@@ -1,4 +1,4 @@
-package com.wshsoft.mybatis.plugins.entity;
+package com.wshsoft.mybatis.enums;
 
 /**
  * <p>

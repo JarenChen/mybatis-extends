@@ -13,11 +13,11 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 
-import com.wshsoft.mybatis.annotations.IdType;
+import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
 import com.wshsoft.mybatis.toolkit.IdWorker;
 import com.wshsoft.mybatis.toolkit.StringUtils;
-import com.wshsoft.mybatis.toolkit.TableInfo;
+import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
 /**

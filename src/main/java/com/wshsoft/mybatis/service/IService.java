@@ -1,4 +1,4 @@
-package com.wshsoft.framework.service;
+package com.wshsoft.mybatis.service;
 
 import java.io.Serializable;
 import java.util.List;

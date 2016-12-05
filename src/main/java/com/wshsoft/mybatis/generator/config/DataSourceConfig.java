@@ -8,9 +8,10 @@ import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 
 /**
+ * <p>
  * 数据库配置
- *
- * @author YangHu
+ * </p>
+ * @author Carry xie
  * @since 2016/8/30
  */
 public class DataSourceConfig {
