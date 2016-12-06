@@ -18,6 +18,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
 
 import com.wshsoft.mybatis.generator.config.ConstVal;
 import com.wshsoft.mybatis.generator.config.TemplateConfig;
@@ -221,10 +222,10 @@ public class AutoGenerator extends AbstractGenerator {
 		if (engine == null) {
 			Properties p = new Properties();
 			p.setProperty(ConstVal.VM_LOADPATH_KEY, ConstVal.VM_LOADPATH_VALUE);
-			p.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "");
-			p.setProperty(Velocity.ENCODING_DEFAULT, ConstVal.UTF8);
-			p.setProperty(Velocity.INPUT_ENCODING, ConstVal.UTF8);
-			p.setProperty(Velocity.OUTPUT_ENCODING, ConstVal.UTF8);
+			p.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, "");
+			p.setProperty(RuntimeConstants.ENCODING_DEFAULT, ConstVal.UTF8);
+			p.setProperty(RuntimeConstants.INPUT_ENCODING, ConstVal.UTF8);
+			p.setProperty(RuntimeConstants.OUTPUT_ENCODING, ConstVal.UTF8);
 			p.setProperty("file.resource.loader.unicode", "true");
 			engine = new VelocityEngine(p);
 		}

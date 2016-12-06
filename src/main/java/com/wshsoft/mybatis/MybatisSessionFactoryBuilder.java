@@ -57,6 +57,11 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 		MybatisConfiguration.DB_TYPE = DBType.getDBType(dbType);
 	}
 
+	// TODO 注入主键策略
+	public void setIdType(int idType) {
+		MybatisConfiguration.ID_TYPE = IdType.getIdType(idType);
+	}
+
 	// TODO 注入表字段使用下划线命名
 	public void setDbColumnUnderline(boolean dbColumnUnderline) {
 		MybatisConfiguration.DB_COLUMN_UNDERLINE = dbColumnUnderline;

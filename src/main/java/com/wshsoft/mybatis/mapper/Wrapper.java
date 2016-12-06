@@ -60,7 +60,8 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public abstract String getSqlSegment();
 
-    public String toString() {
+    @Override
+	public String toString() {
         return getSqlSegment();
     }
 

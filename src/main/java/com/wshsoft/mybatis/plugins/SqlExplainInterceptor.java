@@ -20,8 +20,11 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 
+import com.wshsoft.mybatis.MybatisConfiguration;
+import com.wshsoft.mybatis.enums.DBType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.toolkit.IOUtils;
+import com.wshsoft.mybatis.toolkit.VersionUtils;
 
 /**
  * <p>
@@ -52,7 +55,11 @@ public class SqlExplainInterceptor implements Interceptor {
 			BoundSql boundSql = ms.getBoundSql(parameter);
 			Executor exe = (Executor) invocation.getTarget();
 			Connection connection = exe.getTransaction().getConnection();
-
+			String databaseVersion = connection.getMetaData().getDatabaseProductVersion();
+			if (MybatisConfiguration.DB_TYPE.equals(DBType.MYSQL) && VersionUtils.compare("5.6.3", databaseVersion)) {
+				logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!");
+				return invocation.proceed();
+			}
 			/**
 			 * 执行 SQL 分析
 			 */

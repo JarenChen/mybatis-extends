@@ -1,6 +1,5 @@
 package com.wshsoft.mybatis.mapper;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 
 import com.wshsoft.mybatis.MybatisAbstractSQL;
@@ -101,7 +100,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
 			if (isNot) {
 				inSql.append(" NOT");
 			}
-			inSql.append(MessageFormat.format(SQL_LIKE, StringUtils.concatLike(value, type)));
+			inSql.append(StringUtils.sqlArgsFill(SQL_LIKE, StringUtils.concatLike(value, type)));
 			WHERE(inSql.toString());
 		}
 	}
@@ -272,7 +271,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
 		if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(val1) && StringUtils.isNotEmpty(val2)) {
 			StringBuilder betweenSql = new StringBuilder();
 			betweenSql.append(column);
-			betweenSql.append(MessageFormat.format(SQL_BETWEEN_AND, StringUtils.quotaMark(val1), StringUtils.quotaMark(val2)));
+			betweenSql.append(StringUtils.sqlArgsFill(SQL_BETWEEN_AND, StringUtils.quotaMark(val1), StringUtils.quotaMark(val2)));
 			WHERE(betweenSql.toString());
 		}
 	}

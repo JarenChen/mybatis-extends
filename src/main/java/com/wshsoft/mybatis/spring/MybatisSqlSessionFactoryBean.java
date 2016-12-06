@@ -49,6 +49,7 @@ import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
 import com.wshsoft.mybatis.mapper.ISqlInjector;
 import com.wshsoft.mybatis.toolkit.PackageHelper;
+import com.wshsoft.mybatis.toolkit.JdbcUtils;
 /**
  * <p>
  * 拷贝类 org.mybatis.spring.SqlSessionFactoryBean 修改方法 buildSqlSessionFactory()
@@ -107,8 +108,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private ObjectWrapperFactory objectWrapperFactory;
 
+	private boolean isAutoSetDbType = true;
+
 	// TODO 注入数据库类型
 	public void setDbType(String dbType) {
+		isAutoSetDbType = false;
 		MybatisConfiguration.DB_TYPE = DBType.getDBType(dbType);
 	}
 	
@@ -417,7 +421,13 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
 		state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
 				"Property 'configuration' and 'configLocation' can not specified with together");
-
+		if (isAutoSetDbType) {
+			String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
+			MybatisConfiguration.DB_TYPE = JdbcUtils.getDbType(jdbcUrl);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(" Auto Set DbType " + MybatisConfiguration.DB_TYPE.getDb());
+			}
+		}
 		this.sqlSessionFactory = buildSqlSessionFactory();
 	}
 
