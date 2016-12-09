@@ -6,14 +6,11 @@ import java.util.Properties;
 
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import com.wshsoft.mybatis.enums.DBType;
-import com.wshsoft.mybatis.enums.FieldStrategy;
-import com.wshsoft.mybatis.enums.IdType;
-import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
-import com.wshsoft.mybatis.mapper.ISqlInjector;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.toolkit.IOUtils;
 
 /**
@@ -26,11 +23,16 @@ import com.wshsoft.mybatis.toolkit.IOUtils;
  */
 public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
+	private GlobalConfiguration globalConfig = GlobalConfiguration.defaults();
+
 	@Override
 	public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
 		try {
 			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
-			return build(parser.parse());
+			// 原生支持全局配置缓存
+			Configuration configuration = parser.parse();
+			globalConfig.setGlobalConfig(configuration);
+			return build(configuration);
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
 		} finally {
@@ -43,7 +45,10 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
 		try {
 			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
-			return build(parser.parse());
+			// 原生支持全局配置缓存
+			Configuration configuration = parser.parse();
+			globalConfig.setGlobalConfig(configuration);
+			return build(configuration);
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
 		} finally {
@@ -52,34 +57,9 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 		}
 	}
 
-	// TODO 注入数据库类型
-	public void setDbType(String dbType) {
-		MybatisConfiguration.DB_TYPE = DBType.getDBType(dbType);
-	}
-
-	// TODO 注入主键策略
-	public void setIdType(int idType) {
-		MybatisConfiguration.ID_TYPE = IdType.getIdType(idType);
-	}
-
-	// TODO 注入表字段使用下划线命名
-	public void setDbColumnUnderline(boolean dbColumnUnderline) {
-		MybatisConfiguration.DB_COLUMN_UNDERLINE = dbColumnUnderline;
-	}
-
-	// TODO 注入 SQL注入器
-	public void setSqlInjector(ISqlInjector sqlInjector) {
-		MybatisConfiguration.SQL_INJECTOR = sqlInjector;
-	}
-
-	// TODO 注入 元对象字段填充控制器
-	public void setMetaObjectHandler(IMetaObjectHandler metaObjectHandler) {
-		MybatisConfiguration.META_OBJECT_HANDLER = metaObjectHandler;
-	}
-
-	// TODO 注入 元对象字段填充控制器
-	public void setFieldStrategy(int key) {
-		MybatisConfiguration.FIELD_STRATEGY = FieldStrategy.getFieldStrategy(key);
+	//TODO 注入全局配置
+	public void setGlobalConfig(GlobalConfiguration globalConfig) {
+		this.globalConfig = globalConfig;
 	}
 
 }

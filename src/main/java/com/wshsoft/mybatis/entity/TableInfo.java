@@ -2,8 +2,6 @@ package com.wshsoft.mybatis.entity;
 
 import java.util.List;
 
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.wshsoft.mybatis.enums.IdType;
 
 /**
@@ -61,7 +59,7 @@ public class TableInfo {
 	/**
 	 * 缓存SqlSessionFactory
 	 */
-	private SqlSessionFactory sqlSessionFactory;
+	private String configMark;
 
 	/**
 	 * <p>
@@ -144,11 +142,11 @@ public class TableInfo {
 		this.currentNamespace = currentNamespace;
 	}
 
-	public SqlSessionFactory getSqlSessionFactory() {
-		return sqlSessionFactory;
+	public String getConfigMark() {
+		return configMark;
 	}
 
-	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-		this.sqlSessionFactory = sqlSessionFactory;
+	public void setConfigMark(String configMark) {
+		this.configMark = configMark;
 	}
 }

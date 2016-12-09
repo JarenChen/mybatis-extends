@@ -1,15 +1,7 @@
 package com.wshsoft.mybatis.spring;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.toolkit.SystemClock;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
@@ -28,8 +20,15 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
 
-import com.wshsoft.mybatis.MybatisConfiguration;
-import com.wshsoft.mybatis.toolkit.SystemClock;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -80,6 +79,7 @@ public class MybatisMapperRefresh implements Runnable {
 		this.delaySeconds = delaySeconds;
 		this.enabled = enabled;
 		this.sleepSeconds = sleepSeconds;
+		this.configuration = sqlSessionFactory.getConfiguration();
 		this.run();
 	}
 
@@ -87,11 +87,12 @@ public class MybatisMapperRefresh implements Runnable {
 		this.mapperLocations = mapperLocations;
 		this.sqlSessionFactory = sqlSessionFactory;
 		this.enabled = enabled;
+		this.configuration = sqlSessionFactory.getConfiguration();
 		this.run();
 	}
 
-	@Override
 	public void run() {
+		final GlobalConfiguration mybatisGlobalCache = GlobalConfiguration.GlobalConfig(configuration);
 		/*
 		 * 启动 XML 热加载
 		 */
@@ -100,7 +101,6 @@ public class MybatisMapperRefresh implements Runnable {
 			final MybatisMapperRefresh runnable = this;
 			new Thread(new Runnable() {
 
-				@Override
 				public void run() {
 					if (fileSet == null) {
 						fileSet = new HashSet<String>();
@@ -135,7 +135,7 @@ public class MybatisMapperRefresh implements Runnable {
 							for (String filePath : fileSet) {
 								File file = new File(filePath);
 								if (file != null && file.isFile() && file.lastModified() > beforeTime) {
-									MybatisConfiguration.IS_REFRESH = true;
+									mybatisGlobalCache.setRefresh(true);
 									List<Resource> removeList = jarMapper.get(filePath);
 									if (removeList != null && !removeList.isEmpty()) {// 如果是jar包中的xml，将刷新jar包中存在的所有xml，后期再修改加载jar中修改过后的xml
 										for (Resource resource : removeList) {
@@ -146,10 +146,10 @@ public class MybatisMapperRefresh implements Runnable {
 									}
 								}
 							}
-							if (MybatisConfiguration.IS_REFRESH) {
+							if (mybatisGlobalCache.isRefresh()) {
 								beforeTime = SystemClock.now();
 							}
-							MybatisConfiguration.IS_REFRESH = false;
+							mybatisGlobalCache.setRefresh(true);
 						} catch (Exception exception) {
 							exception.printStackTrace();
 						}

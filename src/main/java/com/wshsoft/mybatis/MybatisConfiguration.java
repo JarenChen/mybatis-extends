@@ -1,8 +1,5 @@
 package com.wshsoft.mybatis;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -10,12 +7,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import com.wshsoft.mybatis.enums.DBType;
-import com.wshsoft.mybatis.enums.FieldStrategy;
-import com.wshsoft.mybatis.enums.IdType;
-import com.wshsoft.mybatis.mapper.AutoSqlInjector;
-import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
-import com.wshsoft.mybatis.mapper.ISqlInjector;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
 
 /**
  * <p>
@@ -33,60 +25,20 @@ public class MybatisConfiguration extends Configuration {
 	private static final Log logger = LogFactory.getLog(MybatisConfiguration.class);
 
 	/*
-	 * 数据库类型（默认 MySql）
-	 */
-	public static DBType DB_TYPE = DBType.MYSQL;
-	
-	/*
-	 * 主键策略 （默认 ID_WORKER）
-	 */
-	public static IdType ID_TYPE = IdType.ID_WORKER;
-
-	/*
-	 * 数据库字段使用下划线命名（默认 false）
-	 */
-	public static boolean DB_COLUMN_UNDERLINE = false;
-
-	/*
-	 * SQL 注入器，实现 ISqlInjector 或继承 AutoSqlInjector 自定义方法
-	 */
-	public static ISqlInjector SQL_INJECTOR = new AutoSqlInjector();
-
-	/*
 	 * Mapper 注册
 	 */
 	public final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);
 
 	/**
-	 * 缓存注册标识
-	 */
-	public static Set<String> MAPPER_REGISTRY_CACHE = new ConcurrentSkipListSet<String>();
-
-	/*
-	 * 元对象字段填充控制器
-	 */
-	public static IMetaObjectHandler META_OBJECT_HANDLER = null;
-
-	/*
-	 * 字段验证策略
-	 */
-	public static FieldStrategy FIELD_STRATEGY = FieldStrategy.NOT_NULL;
-
-	/*
-	 * 是否刷新mapper
-	 */
-	public static boolean IS_REFRESH = false;
-
-	/**
 	 * 初始化调用
 	 */
 	public MybatisConfiguration() {
-		System.err.println("mybatis-plus init success.");
+		System.err.println("mybatis-extends init success.");
 	}
 
 	/**
 	 * <p>
-	 * MybatisPlus 加载 SQL 顺序：
+	 * mybatis-extends 加载 SQL 顺序：
 	 * </p>
 	 * 1、加载XML中的SQL<br>
 	 * 2、加载sqlProvider中的SQL<br>
@@ -97,7 +49,7 @@ public class MybatisConfiguration extends Configuration {
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
 		logger.debug(" addMappedStatement: " + ms.getId());
-		if (IS_REFRESH) {
+		if (GlobalConfiguration.GlobalConfig(ms.getConfiguration()).isRefresh()) {
 			/*
 			 * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
 			 */

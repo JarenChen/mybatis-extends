@@ -1,10 +1,10 @@
 package com.wshsoft.mybatis.plugins;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.Properties;
-
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.enums.DBType;
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.toolkit.IOUtils;
+import com.wshsoft.mybatis.toolkit.VersionUtils;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
@@ -20,11 +20,10 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 
-import com.wshsoft.mybatis.MybatisConfiguration;
-import com.wshsoft.mybatis.enums.DBType;
-import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.toolkit.IOUtils;
-import com.wshsoft.mybatis.toolkit.VersionUtils;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Properties;
 
 /**
  * <p>
@@ -42,8 +41,11 @@ public class SqlExplainInterceptor implements Interceptor {
 	 * 发现执行全表 delete update 语句是否停止执行
 	 */
 	private boolean stopProceed = false;
+	/**
+	 * Mysql支持分析SQL的最小版本
+	 */
+	private String minMySQLVersion = "5.6.3";
 
-	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 		/**
 		 * 处理 DELETE UPDATE 语句
@@ -56,7 +58,8 @@ public class SqlExplainInterceptor implements Interceptor {
 			Executor exe = (Executor) invocation.getTarget();
 			Connection connection = exe.getTransaction().getConnection();
 			String databaseVersion = connection.getMetaData().getDatabaseProductVersion();
-			if (MybatisConfiguration.DB_TYPE.equals(DBType.MYSQL) && VersionUtils.compare("5.6.3", databaseVersion)) {
+			if (GlobalConfiguration.getDbType(configuration).equals(DBType.MYSQL)
+					&& VersionUtils.compare(minMySQLVersion, databaseVersion)) {
 				logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!");
 				return invocation.proceed();
 			}
@@ -118,7 +121,6 @@ public class SqlExplainInterceptor implements Interceptor {
 		}
 	}
 
-	@Override
 	public Object plugin(Object target) {
 		if (target instanceof Executor) {
 			return Plugin.wrap(target, this);
@@ -126,7 +128,6 @@ public class SqlExplainInterceptor implements Interceptor {
 		return target;
 	}
 
-	@Override
 	public void setProperties(Properties prop) {
 		// TODO
 	}

@@ -3,7 +3,6 @@ package com.wshsoft.mybatis.toolkit;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.wshsoft.mybatis.MybatisConfiguration;
 import com.wshsoft.mybatis.enums.DBType;
 
 /**
@@ -957,10 +956,6 @@ public class SqlReservedWords {
 			return String.format("`%s`", column);
 		}
 		return column;
-	}
-
-	public static String convert(String column) {
-		return convert(MybatisConfiguration.DB_TYPE, column);
 	}
 
 	public static boolean containsWord(String word) {

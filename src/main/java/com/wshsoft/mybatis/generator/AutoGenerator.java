@@ -18,7 +18,6 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
 
 import com.wshsoft.mybatis.generator.config.ConstVal;
 import com.wshsoft.mybatis.generator.config.TemplateConfig;
@@ -96,10 +95,18 @@ public class AutoGenerator extends AbstractGenerator {
 
 		for (TableInfo tableInfo : tableList) {
 			VelocityContext ctx = new VelocityContext();
+			if (null != cfg) {
+				/**
+				 * 注入自定义配置
+				 */
+				cfg.initMap();
+				ctx.put("cfg", cfg.getMap());
+			}
 			ctx.put("package", packageInfo);
 			ctx.put("author", config.getGlobalConfig().getAuthor());
 			ctx.put("date", date);
 			ctx.put("table", tableInfo);
+			ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
 			ctx.put("enableCache", config.getGlobalConfig().isEnableCache());
 			ctx.put("baseResultMap", config.getGlobalConfig().isBaseResultMap());
 			ctx.put("baseColumnList", config.getGlobalConfig().isBaseColumnList());
@@ -222,10 +229,10 @@ public class AutoGenerator extends AbstractGenerator {
 		if (engine == null) {
 			Properties p = new Properties();
 			p.setProperty(ConstVal.VM_LOADPATH_KEY, ConstVal.VM_LOADPATH_VALUE);
-			p.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, "");
-			p.setProperty(RuntimeConstants.ENCODING_DEFAULT, ConstVal.UTF8);
-			p.setProperty(RuntimeConstants.INPUT_ENCODING, ConstVal.UTF8);
-			p.setProperty(RuntimeConstants.OUTPUT_ENCODING, ConstVal.UTF8);
+			p.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "");
+			p.setProperty(Velocity.ENCODING_DEFAULT, ConstVal.UTF8);
+			p.setProperty(Velocity.INPUT_ENCODING, ConstVal.UTF8);
+			p.setProperty(Velocity.OUTPUT_ENCODING, ConstVal.UTF8);
 			p.setProperty("file.resource.loader.unicode", "true");
 			engine = new VelocityEngine(p);
 		}

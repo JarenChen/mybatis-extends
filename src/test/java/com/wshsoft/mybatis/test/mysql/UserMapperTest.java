@@ -1,16 +1,7 @@
 package com.wshsoft.mybatis.test.mysql;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.jdbc.SQL;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.mapper.EntityWrapper;
 import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.plugins.pagination.Pagination;
@@ -18,10 +9,19 @@ import com.wshsoft.mybatis.test.mysql.entity.Role;
 import com.wshsoft.mybatis.test.mysql.entity.User;
 import com.wshsoft.mybatis.test.mysql.mapper.UserMapper;
 import com.wshsoft.mybatis.toolkit.IdWorker;
+import org.apache.ibatis.jdbc.SQL;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
- * MybatisExtends 测试类
+ * Mybatis-Extends 测试类
  * </p>
  * <p>
  * 自动提交了事务问题：<br>
@@ -38,7 +38,7 @@ public class UserMapperTest {
 	 * RUN 测试
 	 * <p>
 	 * <p>
-	 * MybatisExtends 加载 SQL 顺序：
+	 * Mybatis-Extends 加载 SQL 顺序：
 	 * </p>
 	 * 1、加载XML中的SQL<br>
 	 * 2、加载sqlProvider中的SQL<br>
@@ -66,12 +66,12 @@ public class UserMapperTest {
 		/**
 		 * 设置，自定义 SQL 注入器
 		 */
-		mf.setSqlInjector(new MySqlInjector());
-
+		GlobalConfiguration gc = new GlobalConfiguration(new MySqlInjector());
 		/**
 		 * 设置，自定义 元对象填充器，实现公共字段自动写入
 		 */
-		mf.setMetaObjectHandler(new MyMetaObjectHandler());
+		gc.setMetaObjectHandler(new MyMetaObjectHandler());
+		mf.setGlobalConfig(gc);
 
 		SqlSessionFactory sessionFactory = mf.build(in);
 		SqlSession session = sessionFactory.openSession();

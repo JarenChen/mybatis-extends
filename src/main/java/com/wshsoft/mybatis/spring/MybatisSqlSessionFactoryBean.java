@@ -39,17 +39,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import com.wshsoft.mybatis.MybatisConfiguration;
-import com.wshsoft.mybatis.MybatisExtendsHolder;
 import com.wshsoft.mybatis.MybatisXMLConfigBuilder;
 import com.wshsoft.mybatis.MybatisXMLMapperBuilder;
-import com.wshsoft.mybatis.enums.DBType;
-import com.wshsoft.mybatis.enums.FieldStrategy;
-import com.wshsoft.mybatis.enums.IdType;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
-import com.wshsoft.mybatis.mapper.ISqlInjector;
 import com.wshsoft.mybatis.toolkit.PackageHelper;
-import com.wshsoft.mybatis.toolkit.JdbcUtils;
+
 /**
  * <p>
  * 拷贝类 org.mybatis.spring.SqlSessionFactoryBean 修改方法 buildSqlSessionFactory()
@@ -108,37 +103,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private ObjectWrapperFactory objectWrapperFactory;
 
-	private boolean isAutoSetDbType = true;
+	private GlobalConfiguration globalConfig = GlobalConfiguration.defaults();
 
-	// TODO 注入数据库类型
-	public void setDbType(String dbType) {
-		isAutoSetDbType = false;
-		MybatisConfiguration.DB_TYPE = DBType.getDBType(dbType);
-	}
-	
-	// TODO 注入主键策略
-	public void setIdType(int idType) {
-		MybatisConfiguration.ID_TYPE = IdType.getIdType(idType);
-	}
-
-	// TODO 注入表字段使用下划线命名
-	public void setDbColumnUnderline(boolean dbColumnUnderline) {
-		MybatisConfiguration.DB_COLUMN_UNDERLINE = dbColumnUnderline;
-	}
-
-	// TODO 注入 SQL注入器
-	public void setSqlInjector(ISqlInjector sqlInjector) {
-		MybatisConfiguration.SQL_INJECTOR = sqlInjector;
-	}
-
-	// TODO 注入 元对象字段填充控制器
-	public void setMetaObjectHandler(IMetaObjectHandler metaObjectHandler) {
-		MybatisConfiguration.META_OBJECT_HANDLER = metaObjectHandler;
-	}
-
-	// TODO 注入 元对象字段填充控制器
-	public void setFieldStrategy(int key) {
-		MybatisConfiguration.FIELD_STRATEGY = FieldStrategy.getFieldStrategy(key);
+	//TODO 注入全局配置
+	public void setGlobalConfig(GlobalConfiguration globalConfig) {
+		this.globalConfig = globalConfig;
 	}
 
 	/**
@@ -415,19 +384,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public void afterPropertiesSet() throws Exception {
 		notNull(dataSource, "Property 'dataSource' is required");
 		notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
 		state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
 				"Property 'configuration' and 'configLocation' can not specified with together");
-		if (isAutoSetDbType) {
-			String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
-			MybatisConfiguration.DB_TYPE = JdbcUtils.getDbType(jdbcUrl);
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(" Auto Set DbType " + MybatisConfiguration.DB_TYPE.getDb());
-			}
-		}
 		this.sqlSessionFactory = buildSqlSessionFactory();
 	}
 
@@ -572,10 +533,20 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		}
 
 		configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
-
+		// TODO 自动设置数据库类型
+		if (globalConfig.isAutoSetDbType()) {
+			try {
+				String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
+				globalConfig.setDbTypeByJdbcUrl(jdbcUrl);
+			} catch (SQLException e) {
+				LOGGER.warn("Warn: Auto Set DbType Fail !  Cause:" + e);
+			}
+		}
 		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
 		// TODO 缓存 sqlSessionFactory
-		MybatisExtendsHolder.setSqlSessionFactory(sqlSessionFactory);
+		globalConfig.setSqlSessionFactory(sqlSessionFactory);
+		// TODO 设置全局参数属性
+		globalConfig.setGlobalConfig(configuration);
 
 		if (!isEmpty(this.mapperLocations)) {
 			for (Resource mapperLocation : this.mapperLocations) {
@@ -610,7 +581,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public SqlSessionFactory getObject() throws Exception {
 		if (this.sqlSessionFactory == null) {
 			afterPropertiesSet();
@@ -621,7 +591,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public Class<? extends SqlSessionFactory> getObjectType() {
 		return this.sqlSessionFactory == null ? SqlSessionFactory.class : this.sqlSessionFactory.getClass();
 	}
@@ -629,7 +598,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public boolean isSingleton() {
 		return true;
 	}
@@ -637,7 +605,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
 		if (failFast && event instanceof ContextRefreshedEvent) {
 			// fail-fast -> check all statements are completed

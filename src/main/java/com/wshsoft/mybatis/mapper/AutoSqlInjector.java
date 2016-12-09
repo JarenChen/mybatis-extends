@@ -1,11 +1,14 @@
 package com.wshsoft.mybatis.mapper;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.entity.TableFieldInfo;
+import com.wshsoft.mybatis.entity.TableInfo;
+import com.wshsoft.mybatis.enums.DBType;
+import com.wshsoft.mybatis.enums.FieldStrategy;
+import com.wshsoft.mybatis.enums.IdType;
+import com.wshsoft.mybatis.enums.SqlMethod;
+import com.wshsoft.mybatis.toolkit.SqlReservedWords;
+import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -20,15 +23,11 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
-import com.wshsoft.mybatis.MybatisConfiguration;
-import com.wshsoft.mybatis.entity.TableFieldInfo;
-import com.wshsoft.mybatis.entity.TableInfo;
-import com.wshsoft.mybatis.enums.DBType;
-import com.wshsoft.mybatis.enums.FieldStrategy;
-import com.wshsoft.mybatis.enums.IdType;
-import com.wshsoft.mybatis.enums.SqlMethod;
-import com.wshsoft.mybatis.toolkit.SqlReservedWords;
-import com.wshsoft.mybatis.toolkit.TableInfoHelper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -56,10 +55,9 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param builderAssistant
 	 * @param mapperClass
 	 */
-	@Override
 	public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		String className = mapperClass.toString();
-		Set<String> mapperRegistryCache = MybatisConfiguration.MAPPER_REGISTRY_CACHE;
+		Set<String> mapperRegistryCache = GlobalConfiguration.getMapperRegistryCache(builderAssistant.getConfiguration());
 		if (!mapperRegistryCache.contains(className)) {
 			inject(builderAssistant, mapperClass);
 			mapperRegistryCache.add(className);
@@ -69,17 +67,17 @@ public class AutoSqlInjector implements ISqlInjector {
 	/**
 	 * 注入单点 crudSql
 	 */
-	@Override
 	public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		this.configuration = builderAssistant.getConfiguration();
 		this.builderAssistant = builderAssistant;
 		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
-		this.dbType = MybatisConfiguration.DB_TYPE;
+		GlobalConfiguration globalCache = GlobalConfiguration.GlobalConfig(configuration);
+		this.dbType = globalCache.getDbType();
 		/*
-		 * 驼峰设置 PLUS 配置 > 原始配置
+		 * 驼峰设置 > 原始配置
 		 */
-		if (!MybatisConfiguration.DB_COLUMN_UNDERLINE) {
-			MybatisConfiguration.DB_COLUMN_UNDERLINE = configuration.isMapUnderscoreToCamelCase();
+		if (!globalCache.isDbColumnUnderline()) {
+			globalCache.setDbColumnUnderline(configuration.isMapUnderscoreToCamelCase());
 		}
 		Class<?> modelClass = extractModelClass(mapperClass);
 		TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
@@ -116,7 +114,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			/**
 			 * 警告
 			 */
-			logger.warn(String.format("%s ,Not found @TableId annotation, cannot use mybatis-plus curd method.",
+			logger.warn(String.format("%s ,Not found @TableId annotation, cannot use mybatis-extends curd method.",
 					modelClass.toString()));
 		}
 	}
@@ -178,12 +176,12 @@ public class AutoSqlInjector implements ISqlInjector {
 		}
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
-			fieldBuilder.append(convertIfTagInsert(fieldInfo, false));
+			fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
 			fieldBuilder.append(fieldInfo.getColumn()).append(",");
-			fieldBuilder.append(convertIfTagInsert(fieldInfo, true));
-			placeholderBuilder.append(convertIfTagInsert(fieldInfo, false));
+			fieldBuilder.append(convertIfTagIgnored(fieldInfo, true));
+			placeholderBuilder.append(convertIfTagIgnored(fieldInfo, false));
 			placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
-			placeholderBuilder.append(convertIfTagInsert(fieldInfo, true));
+			placeholderBuilder.append(convertIfTagIgnored(fieldInfo, true));
 		}
 		fieldBuilder.append("\n</trim>");
 		placeholderBuilder.append("\n</trim>");
@@ -422,16 +420,29 @@ public class AutoSqlInjector implements ISqlInjector {
 		set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
-			set.append(convertIfTag(fieldInfo, prefix, false));
+			set.append(convertIfTag(true, fieldInfo, prefix, false));
 			set.append(fieldInfo.getColumn()).append("=#{");
 			if (null != prefix) {
 				set.append(prefix);
 			}
 			set.append(fieldInfo.getEl()).append("},");
-			set.append(convertIfTag(fieldInfo, true));
+			set.append(convertIfTag(true, fieldInfo, null, true));
 		}
 		set.append("\n</trim>");
 		return set.toString();
+	}
+
+	/**
+	 * <p>
+	 * 获取需要转义的SQL字段
+	 * </p>
+	 *
+	 * @param convertStr
+	 * @return
+	 */
+	protected String sqlWordConvert(String convertStr) {
+		DBType dbType = GlobalConfiguration.getDbType(configuration);
+		return SqlReservedWords.convert(dbType, convertStr);
 	}
 
 	/**
@@ -465,15 +476,15 @@ public class AutoSqlInjector implements ISqlInjector {
 				columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
 			}
 			if (table.isKeyRelated()) {
-				columns.append(table.getKeyColumn()).append(" AS ").append(SqlReservedWords.convert(table.getKeyProperty()));
+				columns.append(table.getKeyColumn()).append(" AS ").append(sqlWordConvert(table.getKeyProperty()));
 			} else {
-				columns.append(SqlReservedWords.convert(table.getKeyProperty()));
+				columns.append(sqlWordConvert(table.getKeyProperty()));
 			}
 			List<TableFieldInfo> fieldList = table.getFieldList();
 			for (TableFieldInfo fieldInfo : fieldList) {
 				columns.append(",").append(fieldInfo.getColumn());
 				if (fieldInfo.isRelated()) {
-					columns.append(" AS ").append(SqlReservedWords.convert(fieldInfo.getProperty()));
+					columns.append(" AS ").append(sqlWordConvert(fieldInfo.getProperty()));
 				}
 			}
 			if (entityWrapper) {
@@ -527,8 +538,8 @@ public class AutoSqlInjector implements ISqlInjector {
 	protected String sqlWhereByMap() {
 		StringBuilder where = new StringBuilder();
 		where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
-		where.append("\n<where> ");
-		where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\"> ");
+		where.append("\n<where>");
+		where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
 		where.append("\n<if test=\"cm[k] != null\">");
 		if (DBType.MYSQL.equals(dbType)) {
 			where.append("\n`${k}` = #{cm[${k}]}");
@@ -537,7 +548,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		}
 		where.append("\n</if>");
 		where.append("\n</foreach>");
-		where.append("\n</where> ");
+		where.append("\n</where>");
 		where.append("\n</if>");
 		return where.toString();
 	}
@@ -547,8 +558,8 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * IF 条件转换方法
 	 * </p>
 	 *
-	 * @param sqlCommandType
-	 *            SQL 操作类型
+	 * @param ignored
+	 *            允许忽略
 	 * @param fieldInfo
 	 *            字段信息
 	 * @param prefix
@@ -557,41 +568,44 @@ public class AutoSqlInjector implements ISqlInjector {
 	 *            是否闭合标签
 	 * @return
 	 */
-	protected String convertIfTag(SqlCommandType sqlCommandType, TableFieldInfo fieldInfo, String prefix, boolean colse) {
+	protected String convertIfTag(boolean ignored, TableFieldInfo fieldInfo, String prefix, boolean colse) {
+		/* 忽略策略 */
+		FieldStrategy fieldStrategy = fieldInfo.getFieldStrategy(); 
+		if (fieldStrategy == FieldStrategy.IGNORED) {
+			if (ignored) {
+				return "";
+			}
+			//TODO 考虑日期类型忽略
+			// 查询策略，使用全局策略
+			fieldStrategy = GlobalConfiguration.GlobalConfig(configuration).getFieldStrategy();
+		}
+
+		// 关闭标签
+		if (colse) {
+			return "</if>";
+		}
+
 		/* 前缀处理 */
 		String property = fieldInfo.getProperty();
 		if (null != prefix) {
 			property = prefix + property;
 		}
 
-		/* 判断策略 */
-		if (sqlCommandType == SqlCommandType.INSERT && fieldInfo.getFieldStrategy() == FieldStrategy.FILL) {
-			return "";
-		}
-		if (fieldInfo.getFieldStrategy() == FieldStrategy.IGNORED) {
-			return "";
-		} else if (fieldInfo.getFieldStrategy() == FieldStrategy.NOT_EMPTY) {
-			if (colse) {
-				return "</if>";
-			} else {
-				return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
-			}
+		// 验证逻辑
+		if (fieldStrategy == FieldStrategy.NOT_EMPTY) {
+			return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
 		} else {
 			// FieldStrategy.NOT_NULL
-			if (colse) {
-				return "</if>";
-			} else {
-				return String.format("\n\t<if test=\"%s!=null\">", property);
-			}
+			return String.format("\n\t<if test=\"%s!=null\">", property);
 		}
 	}
 
-	protected String convertIfTagInsert(TableFieldInfo fieldInfo, boolean colse) {
-		return convertIfTag(SqlCommandType.INSERT, fieldInfo, null, colse);
+	protected String convertIfTagIgnored(TableFieldInfo fieldInfo, boolean colse) {
+		return convertIfTag(true, fieldInfo, null, colse);
 	}
 
 	protected String convertIfTag(TableFieldInfo fieldInfo, String prefix, boolean colse) {
-		return convertIfTag(SqlCommandType.UNKNOWN, fieldInfo, prefix, colse);
+		return convertIfTag(false, fieldInfo, prefix, colse);
 	}
 
 	protected String convertIfTag(TableFieldInfo fieldInfo, boolean colse) {

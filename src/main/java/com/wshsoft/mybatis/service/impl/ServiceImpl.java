@@ -1,16 +1,5 @@
 package com.wshsoft.mybatis.service.impl;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.jdbc.SQL;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.wshsoft.mybatis.service.IService;
 import com.wshsoft.mybatis.activerecord.Record;
 import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.enums.IdType;
@@ -18,10 +7,21 @@ import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.mapper.BaseMapper;
 import com.wshsoft.mybatis.mapper.Wrapper;
 import com.wshsoft.mybatis.plugins.Page;
+import com.wshsoft.mybatis.service.IService;
 import com.wshsoft.mybatis.toolkit.CollectionUtils;
+import com.wshsoft.mybatis.toolkit.MapUtils;
 import com.wshsoft.mybatis.toolkit.ReflectionKit;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
+import org.apache.ibatis.jdbc.SQL;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -90,7 +90,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 *            实体对象
 	 * @return boolean
 	 */
-	@Override
 	public boolean insertOrUpdate(T entity) {
 		if (null != entity) {
 			Class<?> cls = entity.getClass();
@@ -118,22 +117,18 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return false;
 	}
 
-	@Override
 	public boolean insert(T entity) {
 		return retBool(baseMapper.insert(entity));
 	}
 
-	@Override
 	public boolean insertBatch(List<T> entityList) {
 		return insertBatch(entityList, 30);
 	}
 
-	@Override
 	public boolean insertOrUpdateBatch(List<T> entityList) {
 		return insertOrUpdateBatch(entityList, 30);
 	}
 
-	@Override
 	public boolean insertOrUpdateBatch(List<T> entityList, int batchSize) {
 		if (CollectionUtils.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
@@ -162,7 +157,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 * @param batchSize
 	 * @return
 	 */
-	@Override
 	public boolean insertBatch(List<T> entityList, int batchSize) {
 		if (CollectionUtils.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
@@ -185,37 +179,33 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	}
 
-	@Override
 	public boolean deleteById(Serializable id) {
 		return retBool(baseMapper.deleteById(id));
 	}
 
-	@Override
 	public boolean deleteByMap(Map<String, Object> columnMap) {
+		if (MapUtils.isEmpty(columnMap)) {
+			throw new MybatisExtendsException("deleteByMap columnMap is empty.");
+		}
 		return retBool(baseMapper.deleteByMap(columnMap));
 	}
 
-	@Override
 	public boolean delete(Wrapper<T> wrapper) {
 		return retBool(baseMapper.delete(wrapper));
 	}
 
-	@Override
 	public boolean deleteBatchIds(List<? extends Serializable> idList) {
 		return retBool(baseMapper.deleteBatchIds(idList));
 	}
 
-	@Override
 	public boolean updateById(T entity) {
 		return retBool(baseMapper.updateById(entity));
 	}
 
-	@Override
 	public boolean update(T entity, Wrapper<T> wrapper) {
 		return retBool(baseMapper.update(entity, wrapper));
 	}
 
-	@Override
 	public boolean updateBatchById(List<T> entityList) {
 		if (CollectionUtils.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
@@ -237,22 +227,18 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return true;
 	}
 
-	@Override
 	public T selectById(Serializable id) {
 		return baseMapper.selectById(id);
 	}
 
-	@Override
 	public List<T> selectBatchIds(List<? extends Serializable> idList) {
 		return baseMapper.selectBatchIds(idList);
 	}
 
-	@Override
 	public List<T> selectByMap(Map<String, Object> columnMap) {
 		return baseMapper.selectByMap(columnMap);
 	}
 
-	@Override
 	public T selectOne(Wrapper<T> wrapper) {
 		List<T> list = baseMapper.selectList(wrapper);
 		if (CollectionUtils.isNotEmpty(list)) {
@@ -265,23 +251,19 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return null;
 	}
 
-	@Override
 	public int selectCount(Wrapper<T> wrapper) {
 		return baseMapper.selectCount(wrapper);
 	}
 
-	@Override
 	public List<T> selectList(Wrapper<T> wrapper) {
 		return baseMapper.selectList(wrapper);
 	}
 
-	@Override
 	public Page<T> selectPage(Page<T> page) {
 		page.setRecords(baseMapper.selectPage(page, null));
 		return page;
 	}
 
-	@Override
 	public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
 		if (null != wrapper) {
 			wrapper.orderBy(page.getOrderByField(), page.isAsc());

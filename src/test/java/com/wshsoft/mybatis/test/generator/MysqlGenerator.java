@@ -1,5 +1,8 @@
 package com.wshsoft.mybatis.test.generator;
 
+import java.util.HashMap;
+import java.util.Map;
+import com.wshsoft.mybatis.generator.InjectionConfig;
 import com.wshsoft.mybatis.generator.AutoGenerator;
 import com.wshsoft.mybatis.generator.config.DataSourceConfig;
 import com.wshsoft.mybatis.generator.config.GlobalConfig;
@@ -87,8 +90,22 @@ public class MysqlGenerator {
 		pc.setModuleName("demo");
 		mpg.setPackageInfo(pc);
 
+		// 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值
+		InjectionConfig cfg = new InjectionConfig() {
+			@Override
+			public void initMap() {
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
+				this.setMap(map);
+			}
+		};
+		mpg.setCfg(cfg);
+
 		// 执行生成
 		mpg.execute();
+
+		// 打印注入设置
+		System.err.println(mpg.getCfg().getMap().get("abc"));
 	}
 
 }

@@ -17,6 +17,7 @@ import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
 import com.wshsoft.mybatis.toolkit.IdWorker;
 import com.wshsoft.mybatis.toolkit.StringUtils;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
@@ -127,7 +128,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 				}
 			}
 			/* 自定义元对象填充控制器 */
-			IMetaObjectHandler metaObjectHandler = MybatisConfiguration.META_OBJECT_HANDLER;
+			IMetaObjectHandler metaObjectHandler = GlobalConfiguration.getMetaObjectHandler(ms.getConfiguration());
 			if (null != metaObjectHandler) {
 				metaObjectHandler.insertFill(metaObject);
 			}

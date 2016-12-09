@@ -4,6 +4,7 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
@@ -39,7 +40,7 @@ public class Record {
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSessionBatch(Class<?> clazz) {
-		return table(clazz).getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+		return GlobalConfiguration.currentSessionFactory(clazz).openSession(ExecutorType.BATCH, false);
 	}
 
 	/**
@@ -54,7 +55,7 @@ public class Record {
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
-		return table(clazz).getSqlSessionFactory().openSession(autoCommit);
+        return GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
 	}
 
 	/**

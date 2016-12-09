@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.mapper.EntityWrapper;
 import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.test.oracle.entity.TestUser;
@@ -40,7 +41,9 @@ public class TestUserMapperTest {
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 
 		/** 设置数据库类型为 oracle */
-		mf.setDbType("oracle");
+		GlobalConfiguration gc = new GlobalConfiguration();
+		gc.setDbType("oracle");
+		mf.setGlobalConfig(gc);
 
 		/*
 		 * 1、数据库字段驼峰命名不需要任何设置

@@ -73,6 +73,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.mapper.BaseMapper;
 
 /**
@@ -135,14 +136,14 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         parsePendingMethods();
     }
 
-    /*
-     * 注入 CURD 动态 SQL(XML不存在时注入)
-     */
-    private void inspectInject(boolean flag) {
-        if (!flag && BaseMapper.class.isAssignableFrom(type)) {
-            MybatisConfiguration.SQL_INJECTOR.inspectInject(assistant, type);
-        }
-    }
+	/*
+	 * 注入 CURD 动态 SQL(XML不存在时注入)
+	 */
+	private void inspectInject(boolean flag) {
+		if (!flag && BaseMapper.class.isAssignableFrom(type)) {
+			GlobalConfiguration.getSqlInjector(configuration).inspectInject(assistant, type);
+		}
+	}
 
     private void parsePendingMethods() {
         Collection<MethodResolver> incompleteMethods = configuration.getIncompleteMethods();
@@ -179,10 +180,10 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 // ignore, resource is not required
                 flag = false;
             }
-            if (inputStream != null) {
-                MybatisXMLMapperBuilder xmlParser = new MybatisXMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource,
-                        configuration.getSqlFragments(), type.getName());
-                xmlParser.parse();
+			if (inputStream != null) {
+				MybatisXMLMapperBuilder xmlParser = new MybatisXMLMapperBuilder(inputStream, assistant.getConfiguration(),
+						xmlResource, configuration.getSqlFragments(), type.getName());
+				xmlParser.parse();
             }
         }
         return flag;

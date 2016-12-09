@@ -272,8 +272,7 @@ public class ConfigBuilder {
 	 */
 	private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, String tablePrefix) {
 		for (TableInfo tableInfo : tableList) {
-			tableInfo.setEntityName(
-					NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
+			tableInfo.setEntityName(NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
 			if (StringUtils.isNotEmpty(globalConfig.getMapperName())) {
 				tableInfo.setMapperName(String.format(globalConfig.getMapperName(), tableInfo.getEntityName()));
 			} else {
@@ -290,8 +289,7 @@ public class ConfigBuilder {
 				tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERIVCE);
 			}
 			if (StringUtils.isNotEmpty(globalConfig.getServiceImplName())) {
-				tableInfo.setServiceImplName(
-						String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
+				tableInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
 			} else {
 				tableInfo.setServiceImplName(tableInfo.getEntityName() + ConstVal.SERVICEIMPL);
 			}

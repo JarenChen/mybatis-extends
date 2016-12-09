@@ -2,7 +2,9 @@ package com.wshsoft.mybatis.activerecord;
 
 import com.wshsoft.mybatis.enums.SqlMethod;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.mapper.Condition;
 import com.wshsoft.mybatis.mapper.EntityWrapper;
+import com.wshsoft.mybatis.mapper.Wrapper;
 import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
@@ -213,21 +215,13 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * 查询总记录数
 	 * </p>
 	 * 
-	 * @param columns
-	 *            查询字段
-	 * @param whereClause
-	 *            查询条件
-	 * @param args
-	 *            查询条件值
+	 * @param wrapper
 	 * @return
 	 */
-	public List<T> selectList(String columns, String whereClause, Object... args) {
+
+	public List<T> selectList(Wrapper wrapper) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		EntityWrapper<T> ew = new EntityWrapper<T>(null, columns);
-		if (StringUtils.isNotEmpty(whereClause)) {
-			ew.addFilter(whereClause, args);
-		}
-		map.put("ew", ew);
+		map.put("ew", wrapper);
 		return sqlSession().selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
 	}
 
@@ -241,7 +235,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public List<T> selectList(String whereClause, Object... args) {
-		return selectList(null, whereClause, args);
+		return selectList(Condition.instance().where(whereClause, args));
 	}
 
 	/**
@@ -262,13 +256,11 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * 查询一条记录
 	 * </p>
 	 * 
-	 * @param columns
-	 * @param whereClause
-	 * @param args
+	 * @param wrapper
 	 * @return
 	 */
-	public T selectOne(String columns, String whereClause, Object... args) {
-		List<T> tl = selectList(columns, whereClause, args);
+	public T selectOne(Wrapper wrapper) {
+		List<T> tl = selectList(wrapper);
 		if (CollectionUtils.isEmpty(tl)) {
 			return null;
 		}
@@ -285,7 +277,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public T selectOne(String whereClause, Object... args) {
-		return selectOne(null, whereClause, args);
+		return selectOne(Condition.instance().where(whereClause, args));
 	}
 
 	/**
@@ -295,21 +287,15 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * 
 	 * @param page
 	 *            翻页查询条件
-	 * @param columns
-	 *            查询字段
-	 * @param whereClause
-	 *            查询条件
-	 * @param args
-	 *            查询条件值
+	 * @param wrapper
 	 * @return
 	 */
-	public Page<T> selectPage(Page<T> page, String columns, String whereClause, Object... args) {
+	public Page<T> selectPage(Page<T> page, Wrapper wrapper) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		EntityWrapper<T> ew = new EntityWrapper<T>(null, columns);
-		if (StringUtils.isNotEmpty(whereClause)) {
-			ew.addFilter(whereClause, args);
+		if (wrapper != null && StringUtils.isNotEmpty(page.getOrderByField())) {
+			wrapper.orderBy(page.getOrderByField());
 		}
-		map.put("ew", ew);
+		map.put("ew", wrapper);
 		List<T> tl = sqlSession().selectList(sqlStatement(SqlMethod.SELECT_PAGE), map, page);
 		page.setRecords(tl);
 		return page;
@@ -326,7 +312,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public Page<T> selectPage(Page<T> page, String whereClause, Object... args) {
-		return selectPage(page, null, whereClause, args);
+		return selectPage(page, Condition.instance().where(whereClause, args));
 	}
 
 	/**

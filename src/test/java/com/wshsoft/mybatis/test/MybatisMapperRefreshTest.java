@@ -9,6 +9,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.plugins.pagination.Pagination;
 import com.wshsoft.mybatis.spring.MybatisMapperRefresh;
 import com.wshsoft.mybatis.test.mysql.MySqlInjector;
@@ -27,14 +28,13 @@ import com.wshsoft.mybatis.toolkit.SystemClock;
  * @Date 2016-08-25
  */
 public class MybatisMapperRefreshTest {
-
 	/**
 	 * 测试 Mybatis XML 修改自动刷新
 	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
 		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		mf.setSqlInjector(new MySqlInjector());
+		mf.setGlobalConfig(new GlobalConfiguration(new MySqlInjector()));
 		Resource[] resource = new ClassPathResource[] { new ClassPathResource("mysql/UserMapper.xml") };
 		SqlSessionFactory sessionFactory = mf.build(in);
 		new MybatisMapperRefresh(resource, sessionFactory, 0, 5, true);

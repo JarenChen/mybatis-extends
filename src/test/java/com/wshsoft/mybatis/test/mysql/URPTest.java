@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.mapper.EntityWrapper;
 import com.wshsoft.mybatis.test.mysql.entity.PhoneNumber;
 import com.wshsoft.mybatis.test.mysql.entity.Role;
@@ -28,8 +29,7 @@ public class URPTest {
 		// 加载配置文件
 		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		mf.setSqlInjector(new MySqlInjector());
-		mf.setMetaObjectHandler(new MyMetaObjectHandler());
+		mf.setGlobalConfig(new GlobalConfiguration(new MySqlInjector()));
 		SqlSessionFactory sessionFactory = mf.build(in);
 		SqlSession session = sessionFactory.openSession();
 
