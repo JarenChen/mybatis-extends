@@ -1,10 +1,19 @@
 package com.wshsoft.mybatis.service.impl;
 
-import com.wshsoft.mybatis.activerecord.Record;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.mapper.BaseMapper;
+import com.wshsoft.mybatis.mapper.SqlHelper;
 import com.wshsoft.mybatis.mapper.Wrapper;
 import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.service.IService;
@@ -13,15 +22,6 @@ import com.wshsoft.mybatis.toolkit.MapUtils;
 import com.wshsoft.mybatis.toolkit.ReflectionKit;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
-import org.apache.ibatis.jdbc.SQL;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -38,35 +38,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	@Autowired
 	protected M baseMapper;
 
-	/**
-	 * 判断数据库操作是否成功
-	 *
-	 * @param result
-	 *            数据库操作返回影响条数
-	 * @return boolean
-	 */
-	protected boolean retBool(int result) {
-		return result >= 1;
-	}
-
-	/**
-	 * <p>
-	 * SQL 构建方法
-	 * </p>
-	 *
-	 * @param sql
-	 *            SQL 语句
-	 * @param args
-	 *            执行参数
-	 * @return
-	 */
-	protected String sqlBuilder(SQL sql, Object... args) {
-		if (null == sql) {
-			throw new IllegalArgumentException("Error: sql Can not be empty.");
-		}
-		return StringUtils.sqlArgsFill(sql.toString(), args);
-	}
-
 	@SuppressWarnings("unchecked")
 	protected Class<T> currentModleClass() {
 		return ReflectionKit.getSuperClassGenricType(getClass(), 1);
@@ -78,7 +49,20 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 * </p>
 	 */
 	protected SqlSession sqlSessionBatch() {
-		return Record.sqlSessionBatch(currentModleClass());
+		return SqlHelper.sqlSessionBatch(currentModleClass());
+	}
+
+	/**
+	 * <p>
+	 * 判断数据库操作是否成功
+	 * </p>
+	 *
+	 * @param result
+	 *            数据库操作返回影响条数
+	 * @return boolean
+	 */
+	public boolean retBool(int result) {
+		return result >= 1;
 	}
 
 	/**

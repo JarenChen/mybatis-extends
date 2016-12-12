@@ -35,8 +35,13 @@ public class Pagination extends RowBounds implements Serializable {
 	/* 查询总记录数（默认 true） */
 	private boolean searchCount = true;
 
-	/* 查询总数优化（默认 true） */
-	private boolean optimizeCount = true;
+	/**
+	 * 查询总数优化（默认 false 该属性只针对于Optimize.DEFAULT有效)
+	 * 
+	 * @see com.wshsoft.mybatis.enums.Optimize
+	 *
+	 */
+	private boolean optimizeCount = false;
 
 	/**
 	 * <p>

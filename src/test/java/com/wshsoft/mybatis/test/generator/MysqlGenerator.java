@@ -66,17 +66,17 @@ public class MysqlGenerator {
 		// 字段名生成策略
 		strategy.setFieldNaming(NamingStrategy.underline_to_camel);
 		// 自定义实体父类
-		// strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");
+		// strategy.setSuperEntityClass("com.wshsoft.demo.TestEntity");
 		// 自定义实体，公共字段
 		// strategy.setSuperEntityColumns(new String[] { "test_id", "age" });
 		// 自定义 mapper 父类
-		// strategy.setSuperMapperClass("com.baomidou.demo.TestMapper");
+		// strategy.setSuperMapperClass("com.wshsoft.demo.TestMapper");
 		// 自定义 service 父类
-		// strategy.setSuperServiceClass("com.baomidou.demo.TestService");
+		// strategy.setSuperServiceClass("com.wshsoft.demo.TestService");
 		// 自定义 service 实现类父类
-		// strategy.setSuperServiceImplClass("com.baomidou.demo.TestServiceImpl");
+		// strategy.setSuperServiceImplClass("com.wshsoft.demo.TestServiceImpl");
 		// 自定义 controller 父类
-		// strategy.setSuperControllerClass("com.baomidou.demo.TestController");
+		// strategy.setSuperControllerClass("com.wshsoft.demo.TestController");
 		// 【实体】是否生成字段常量（默认 false）
 		// public static final String ID = "test_id";
 		// strategy.setEntityColumnConstant(true);
@@ -100,6 +100,16 @@ public class MysqlGenerator {
 			}
 		};
 		mpg.setCfg(cfg);
+
+		// 自定义模板配置
+		// TemplateConfig tc = new TemplateConfig();
+		// tc.setController("...");
+		// tc.setEntity("...");
+		// tc.setMapper("...");
+		// tc.setXml("...");
+		// tc.setService("...");
+		// tc.setServiceImpl("...");
+		// mpg.setTemplate(tc);
 
 		// 执行生成
 		mpg.execute();

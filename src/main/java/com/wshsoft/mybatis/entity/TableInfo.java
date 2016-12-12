@@ -2,7 +2,9 @@ package com.wshsoft.mybatis.entity;
 
 import java.util.List;
 
+import org.apache.ibatis.session.Configuration;
 import com.wshsoft.mybatis.enums.IdType;
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 
 /**
  * <p>
@@ -57,7 +59,7 @@ public class TableInfo {
 	 */
 	private String currentNamespace;
 	/**
-	 * 缓存SqlSessionFactory
+	 * MybatisConfiguration 标记 (Configuration内存地址值)
 	 */
 	private String configMark;
 
@@ -146,7 +148,11 @@ public class TableInfo {
 		return configMark;
 	}
 
-	public void setConfigMark(String configMark) {
-		this.configMark = configMark;
+	public void setConfigMark(Configuration configuration) {
+		if (configuration == null) {
+			throw new MybatisExtendsException("Error: You need Initialize MybatisConfiguration !");
+		}
+		this.configMark = configuration.toString();
 	}
+
 }

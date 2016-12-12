@@ -91,10 +91,6 @@ public class StringUtils {
 		}
 		return sb.toString();
 	}
-	
-	public static void main(String[] args) {
-		System.err.println(StringUtils.camelToUnderline("DSDSSD_SDDS"));
-	}
 
 	/**
 	 * <p>

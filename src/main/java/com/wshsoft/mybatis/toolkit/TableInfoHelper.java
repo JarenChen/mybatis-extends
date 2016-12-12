@@ -1,20 +1,5 @@
 package com.wshsoft.mybatis.toolkit;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import com.wshsoft.mybatis.MybatisConfiguration;
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
@@ -24,6 +9,20 @@ import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.enums.FieldStrategy;
 import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -61,6 +60,23 @@ public class TableInfoHelper {
 
 	/**
 	 * <p>
+	 * 随机获取一个TableInfo
+	 * <p>
+	 *
+	 * @return
+	 */
+	public static TableInfo getRandomTableInfo() {
+		Collection<TableInfo> tableInfos = tableInfoCache.values();
+		if (CollectionUtils.isNotEmpty(tableInfos)) {
+			Iterator<TableInfo> iterator = tableInfos.iterator();
+			TableInfo tableInfo = iterator.next();
+			return tableInfo;
+		}
+		return null;
+	}
+
+	/**
+	 * <p>
 	 * 实体类反射获取表信息【初始化】
 	 * <p>
 	 *
@@ -74,26 +90,29 @@ public class TableInfoHelper {
 			return ti;
 		}
 		TableInfo tableInfo = new TableInfo();
-		Configuration configuration = null;
+		GlobalConfiguration globalCache = null;
 		if (null != builderAssistant) {
 			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
-			configuration = builderAssistant.getConfiguration();
+			tableInfo.setConfigMark(builderAssistant.getConfiguration());
+			globalCache = GlobalConfiguration.GlobalConfig(builderAssistant.getConfiguration());
 		} else {
-			// TODO 测试用例所走的方法 正常是不会走这里 待优化 Caratacus
-			configuration = new MybatisConfiguration();
-			GlobalConfiguration.setGlobalConfig(configuration, GlobalConfiguration.DEFAULT);
+			// 兼容测试场景
+			globalCache = GlobalConfiguration.DEFAULT;
 		}
-		GlobalConfiguration globalCache = GlobalConfiguration.GlobalConfig(configuration);
 		/* 表名 */
 		TableName table = clazz.getAnnotation(TableName.class);
 		String tableName = clazz.getSimpleName();
 		if (table != null && StringUtils.isNotEmpty(table.value())) {
 			tableName = table.value();
-		} else if (globalCache.isDbColumnUnderline()) {
-			/* 开启字段下划线申明 */
-			tableName = StringUtils.camelToUnderline(tableName);
 		} else {
-			tableName = tableName.toLowerCase();
+			// 开启字段下划线申明
+			if (globalCache.isDbColumnUnderline()) {
+				tableName = StringUtils.camelToUnderline(tableName);
+			}
+			// 大写命名判断
+			if (globalCache.isCapitalMode()) {
+				tableName = tableName.toUpperCase();
+			}
 		}
 		tableInfo.setTableName(tableName);
 		/* 表结果集映射 */
@@ -131,15 +150,12 @@ public class TableInfoHelper {
 
 		/* 字段列表 */
 		tableInfo.setFieldList(fieldList);
-		/**
-		 * SqlSessionFactory
-		 */
-		tableInfo.setConfigMark(configuration.toString());
 		/*
 		 * 未发现主键注解，跳过注入
 		 */
 		if (null == tableInfo.getKeyColumn()) {
-			logger.warn(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.", clazz.getName()));
+			logger.warn(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.",
+					clazz.getName()));
 			return null;
 		}
 		/*
@@ -180,7 +196,8 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initTableId(GlobalConfiguration globalCache, TableInfo tableInfo, Field field, Class<?> clazz) {
+	private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
+			Class<?> clazz) {
 		TableId tableId = field.getAnnotation(TableId.class);
 		if (tableId != null) {
 			if (tableInfo.getKeyColumn() == null) {
@@ -190,18 +207,24 @@ public class TableInfoHelper {
 				if (IdType.INPUT != tableId.type()) {
 					tableInfo.setIdType(tableId.type());
 				} else {
-					tableInfo.setIdType(globalCache.getIdType());
+					tableInfo.setIdType(globalConfig.getIdType());
 				}
+				/* 字段 */
+				String column = field.getName();
 				if (StringUtils.isNotEmpty(tableId.value())) {
-					/* 自定义字段 */
-					tableInfo.setKeyColumn(tableId.value());
+					column = tableId.value();
 					tableInfo.setKeyRelated(true);
-				} else if (globalCache.isDbColumnUnderline()) {
-					/* 开启字段下划线申明 */
-					tableInfo.setKeyColumn(StringUtils.camelToUnderline(field.getName()));
 				} else {
-					tableInfo.setKeyColumn(field.getName());
+					// 开启字段下划线申明
+					if (globalConfig.isDbColumnUnderline()) {
+						column = StringUtils.camelToUnderline(column);
+					}
+					// 全局大写命名
+					if (globalConfig.isCapitalMode()) {
+						column = column.toUpperCase();
+					}
 				}
+				tableInfo.setKeyColumn(column);
 				tableInfo.setKeyProperty(field.getName());
 				return true;
 			} else {
@@ -221,11 +244,16 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initFieldId(GlobalConfiguration mybatisGlobalCache, TableInfo tableInfo, Field field, Class<?> clazz) {
-		if (DEFAULT_ID_NAME.equals(field.getName())) {
+	private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
+			Class<?> clazz) {
+		String column = field.getName();
+		if (globalConfig.isCapitalMode()) {
+			column = column.toUpperCase();
+		}
+		if (DEFAULT_ID_NAME.equalsIgnoreCase(column)) {
 			if (tableInfo.getKeyColumn() == null) {
-				tableInfo.setIdType(mybatisGlobalCache.getIdType());
-				tableInfo.setKeyColumn(field.getName());
+				tableInfo.setIdType(globalConfig.getIdType());
+				tableInfo.setKeyColumn(column);
 				tableInfo.setKeyProperty(field.getName());
 				return true;
 			} else {
@@ -257,7 +285,7 @@ public class TableInfoHelper {
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
 	private static boolean initTableField(GlobalConfiguration globalCache, List<TableFieldInfo> fieldList, Field field,
-                                          Class<?> clazz) {
+			Class<?> clazz) {
 		/* 获取注解属性，自定义字段 */
 		TableField tableField = field.getAnnotation(TableField.class);
 		if (tableField != null) {
@@ -336,7 +364,7 @@ public class TableInfoHelper {
 	}
 
 	/**
-	 * 初始化sqlMapper (供Mybatis原生调用)
+	 * 初始化SqlSessionFactory (供Mybatis原生调用)
 	 *
 	 * @param sqlSessionFactory
 	 * @return
@@ -352,5 +380,4 @@ public class TableInfoHelper {
 			globalCache.setSqlSessionFactory(sqlSessionFactory);
 		}
 	}
-
 }
