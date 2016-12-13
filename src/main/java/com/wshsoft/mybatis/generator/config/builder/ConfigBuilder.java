@@ -82,15 +82,17 @@ public class ConfigBuilder {
 
 	/**
 	 * 在构造器中处理配置
-	 *
-	 * @param outputDir
-	 *            输出目录
+	 * 
 	 * @param packageConfig
 	 *            包配置
 	 * @param dataSourceConfig
 	 *            数据源配置
 	 * @param strategyConfig
 	 *            表配置
+	 * @param template
+	 *            模板配置
+	 * @param globalConfig
+	 *            全局配置
 	 */
 	public ConfigBuilder(PackageConfig packageConfig, DataSourceConfig dataSourceConfig, StrategyConfig strategyConfig,
 			TemplateConfig template, GlobalConfig globalConfig) {

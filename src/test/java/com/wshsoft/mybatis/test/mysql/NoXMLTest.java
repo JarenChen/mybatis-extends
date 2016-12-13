@@ -5,10 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
+import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.test.mysql.entity.Test;
 import com.wshsoft.mybatis.toolkit.IdWorker;
 
@@ -35,6 +37,12 @@ public class NoXMLTest {
 		 */
 		TestMapper testMapper = sqlSession.getMapper(TestMapper.class);
 		testMapper.insert(new Test(IdWorker.getId(), "Caratacus"));
+        List<Map<String, Object>> list = testMapper.selectMaps(null);
+        List<Map<String, Object>> list1 = testMapper.selectMapsPage(RowBounds.DEFAULT, null);
+        List<Map<String, Object>> list2 = testMapper.selectMapsPage(new Page(1,5), null);
+        System.out.println(list);
+        System.out.println(list1);
+        System.out.println(list2);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("type", null);
 		map.put("id", null);

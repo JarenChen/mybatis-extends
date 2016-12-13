@@ -8,7 +8,7 @@ import com.wshsoft.mybatis.activerecord.Model;
 #end
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableField;
-#if(${addTabeName})
+#if(${tabeAnnotation})
 import com.wshsoft.mybatis.annotations.TableName;
 #end
 import java.io.Serializable;

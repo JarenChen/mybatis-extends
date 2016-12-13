@@ -145,8 +145,7 @@ public class ReflectionKit {
 			return Object.class;
 		}
 		if (!(params[index] instanceof Class)) {
-			logger.warn(String.format("Warn: %s not set the actual class on superclass generic parameter",
-					clazz.getSimpleName()));
+			logger.warn(String.format("Warn: %s not set the actual class on superclass generic parameter", clazz.getSimpleName()));
 			return Object.class;
 		}
 

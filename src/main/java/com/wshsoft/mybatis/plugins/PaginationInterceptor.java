@@ -76,7 +76,7 @@ public Object intercept(Invocation invocation) throws Throwable {
 		 * </p>
 		 */
 		BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
-		String originalSql = boundSql.getSql();
+			String originalSql = (String) boundSql.getSql();
 		metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
 		metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
 

@@ -212,7 +212,7 @@ public class StringUtils {
 		}
 		return srcStr;
 	}
-	
+
 	/**
 	 * <p>
 	 * 用%连接like
@@ -235,7 +235,7 @@ public class StringUtils {
 		}
 		return StringEscape.escapeString(str);
 	}
-	
+
 	/**
 	 * <p>
 	 * 使用单引号包含字符串
@@ -333,6 +333,29 @@ public class StringUtils {
 	 */
 	public static boolean checkValNull(Object object) {
 		return !checkValNotNull(object);
+	}
+
+	/**
+	 * 判断对象是否为空
+	 *
+	 * @param str
+	 * @return
+	 */
+	public static boolean isEmpty(Object str) {
+		if (str instanceof CharSequence) {
+			return isEmpty((CharSequence) str);
+		}
+		return (str == null || "".equals(str));
+	}
+
+	/**
+	 * 判断对象是否不为空
+	 *
+	 * @param str
+	 * @return
+	 */
+	public static boolean isNotEmpty(Object str) {
+		return !isEmpty(str);
 	}
 
 	// endsWith
