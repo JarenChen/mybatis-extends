@@ -51,12 +51,13 @@ public class MysqlGenerator {
 		dsc.setDbType(DbType.MYSQL);
 		dsc.setDriverName("com.mysql.jdbc.Driver");
 		dsc.setUsername("root");
-		dsc.setPassword("root");
-		dsc.setUrl("jdbc:mysql://127.0.0.1:3306/demo?useUnicode=true&amp;useSSL=false");
+		dsc.setPassword("pod_123");
+		dsc.setUrl("jdbc:mysql://192.168.1.20:3306/weixin?useUnicode=true&amp;useSSL=false");
 		mpg.setDataSource(dsc);
 
 		// 策略配置
 		StrategyConfig strategy = new StrategyConfig();
+		// strategy.setDbColumnUnderline(true);//全局下划线命名
 		// 表前缀
 		strategy.setTablePrefix("bmd_");
 		// 表名生成策略
@@ -101,7 +102,8 @@ public class MysqlGenerator {
 		};
 		mpg.setCfg(cfg);
 
-		// 自定义模板配置
+		// 自定义模板配置，模板可以参考源码 /mybatis-plus/src/main/resources/template 使用 copy
+		// 至您项目 src/main/resources/template 目录下，模板名称也可自定义如下配置：
 		// TemplateConfig tc = new TemplateConfig();
 		// tc.setController("...");
 		// tc.setEntity("...");

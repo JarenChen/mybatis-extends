@@ -1,17 +1,12 @@
 package com.wshsoft.mybatis.spring;
 
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.ObjectUtils.isEmpty;
-import static org.springframework.util.StringUtils.hasLength;
-import static org.springframework.util.StringUtils.tokenizeToStringArray;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
+import com.wshsoft.mybatis.MybatisConfiguration;
+import com.wshsoft.mybatis.MybatisXMLConfigBuilder;
+import com.wshsoft.mybatis.MybatisXMLMapperBuilder;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.mapper.SqlRunner;
+import com.wshsoft.mybatis.toolkit.PackageHelper;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -38,12 +33,16 @@ import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
-import com.wshsoft.mybatis.MybatisConfiguration;
-import com.wshsoft.mybatis.MybatisXMLConfigBuilder;
-import com.wshsoft.mybatis.MybatisXMLMapperBuilder;
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
-import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.toolkit.PackageHelper;
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.ObjectUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
  * <p>
@@ -543,6 +542,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 			}
 		}
 		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
+		// TODO SqlRunner
+		SqlRunner.FACTORY = sqlSessionFactory;
 		// TODO 缓存 sqlSessionFactory
 		globalConfig.setSqlSessionFactory(sqlSessionFactory);
 		// TODO 设置全局参数属性

@@ -11,6 +11,10 @@ import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
  * @since 2016-8-30
  */
 public class StrategyConfig {
+	/**
+	 * 表名、字段名、是否使用下划线命名（默认 false）
+	 */
+	public static boolean DB_COLUMN_UNDERLINE = false;
 
 	/**
 	 * 数据库表映射到实体的命名策略
@@ -76,6 +80,10 @@ public class StrategyConfig {
 	 * public User setName(String name) { this.name = name; return this; }
 	 */
 	private boolean entityBuliderModel = false;
+
+	public void setDbColumnUnderline(boolean dbColumnUnderline) {
+		DB_COLUMN_UNDERLINE = dbColumnUnderline;
+	}
 
 	public NamingStrategy getNaming() {
 		return naming;

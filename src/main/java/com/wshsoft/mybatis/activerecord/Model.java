@@ -1,23 +1,24 @@
 package com.wshsoft.mybatis.activerecord;
 
+import com.wshsoft.mybatis.enums.SqlMethod;
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.mapper.Condition;
+import com.wshsoft.mybatis.mapper.SqlHelper;
+import com.wshsoft.mybatis.mapper.SqlRunner;
+import com.wshsoft.mybatis.mapper.Wrapper;
+import com.wshsoft.mybatis.plugins.Page;
+import com.wshsoft.mybatis.toolkit.CollectionUtils;
+import com.wshsoft.mybatis.toolkit.StringUtils;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
 
-import com.wshsoft.mybatis.enums.SqlMethod;
-import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.mapper.Condition;
-import com.wshsoft.mybatis.mapper.SqlHelper;
-import com.wshsoft.mybatis.mapper.SqlQuery;
-import com.wshsoft.mybatis.mapper.Wrapper;
-import com.wshsoft.mybatis.plugins.Page;
-import com.wshsoft.mybatis.toolkit.CollectionUtils;
-import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
  * <p>
@@ -48,7 +49,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * </p>
 	 */
 	public boolean insertOrUpdate() {
-		if (StringUtils.isNotEmpty(pkVal())) {
+		if (StringUtils.checkValNotNull(pkVal())) {
 			// update
 			return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
 		} else {
@@ -78,7 +79,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean deleteById() {
-		if (StringUtils.isEmpty(pkVal())) {
+		if (StringUtils.checkValNull(pkVal())) {
 			throw new MybatisExtendsException("deleteById primaryKey is null.");
 		}
 		return deleteById(this.pkVal());
@@ -122,7 +123,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean updateById() {
-		if (StringUtils.isEmpty(pkVal())) {
+		if (StringUtils.checkValNull(pkVal())) {
 			throw new MybatisExtendsException("updateById primaryKey is null.");
 		}
 		// updateById
@@ -193,7 +194,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public T selectById() {
-		if (StringUtils.isEmpty(pkVal())) {
+		if (StringUtils.checkValNull(pkVal())) {
 			throw new MybatisExtendsException("selectById primaryKey is null.");
 		}
 		return selectById(this.pkVal());
@@ -329,8 +330,8 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * 执行 SQL
 	 * </p>
 	 */
-	public SqlQuery sql() {
-		return new SqlQuery(getClass());
+	public SqlRunner sql() {
+		return new SqlRunner(getClass());
 	}
 
 	/**

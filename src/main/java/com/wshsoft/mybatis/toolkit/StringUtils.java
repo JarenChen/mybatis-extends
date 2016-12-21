@@ -1,11 +1,11 @@
 package com.wshsoft.mybatis.toolkit;
 
+import com.wshsoft.mybatis.enums.SqlLike;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.wshsoft.mybatis.enums.SQLlikeType;
 
 /**
  * <p>
@@ -222,7 +222,7 @@ public class StringUtils {
 	 *            原字符串
 	 * @return
 	 */
-	public static String concatLike(String str, SQLlikeType type) {
+	public static String concatLike(String str, SqlLike type) {
 		switch (type) {
 		case LEFT:
 			str = "%" + str;
@@ -334,32 +334,6 @@ public class StringUtils {
 	public static boolean checkValNull(Object object) {
 		return !checkValNotNull(object);
 	}
-
-	/**
-	 * 判断对象是否为空
-	 *
-	 * @param str
-	 * @return
-	 */
-	public static boolean isEmpty(Object str) {
-		if (str instanceof CharSequence) {
-			return isEmpty((CharSequence) str);
-		}
-		return (str == null || "".equals(str));
-	}
-
-	/**
-	 * 判断对象是否不为空
-	 *
-	 * @param str
-	 * @return
-	 */
-	public static boolean isNotEmpty(Object str) {
-		return !isEmpty(str);
-	}
-
-	// endsWith
-	// -----------------------------------------------------------------------
 
 	/**
 	 * <p>

@@ -1,11 +1,12 @@
 package com.wshsoft.mybatis.mapper;
 
-import java.util.Collection;
-
 import com.wshsoft.mybatis.MybatisAbstractSQL;
-import com.wshsoft.mybatis.enums.SQLlikeType;
+import com.wshsoft.mybatis.enums.SqlLike;
 import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
+import java.util.Collection;
+
+
 
 /**
  * <p>
@@ -39,7 +40,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
 	 *            like值,无需前后%
 	 * @return
 	 */
-	public SqlPlus LIKE(String column, String value, SQLlikeType type) {
+	public SqlPlus LIKE(String column, String value, SqlLike type) {
 		handerLike(column, value, type, false);
 		return this;
 	}
@@ -54,7 +55,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
 	 * @param type
 	 * @return
 	 */
-	public SqlPlus NOT_LIKE(String column, String value, SQLlikeType type) {
+	public SqlPlus NOT_LIKE(String column, String value, SqlLike type) {
 		handerLike(column, value, type, true);
 		return this;
 	}
@@ -93,7 +94,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
 	 * @param isNot
 	 *            是否为NOT LIKE操作
 	 */
-	private void handerLike(String column, String value, SQLlikeType type, boolean isNot) {
+	private void handerLike(String column, String value, SqlLike type, boolean isNot) {
 		if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
 			StringBuilder inSql = new StringBuilder();
 			inSql.append(column);

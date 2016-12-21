@@ -1,8 +1,10 @@
 package com.wshsoft.mybatis.generator.config.po;
 
+import com.wshsoft.mybatis.generator.config.StrategyConfig;
+
 /**
  * <p>
- * 字段信息
+ * 表字段信息
  *  </p>
  *  
  * @author Carry xie
@@ -65,6 +67,9 @@ public class TableField {
 	}
 
 	public boolean isConvert() {
+		if (StrategyConfig.DB_COLUMN_UNDERLINE) {
+			return false;
+		}
 		return !name.equals(propertyName);
 	}
 

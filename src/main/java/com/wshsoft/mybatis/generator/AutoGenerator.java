@@ -20,6 +20,7 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
 import com.wshsoft.mybatis.generator.config.ConstVal;
+import com.wshsoft.mybatis.generator.config.StrategyConfig;
 import com.wshsoft.mybatis.generator.config.TemplateConfig;
 import com.wshsoft.mybatis.generator.config.builder.ConfigBuilder;
 import com.wshsoft.mybatis.generator.config.po.TableInfo;
@@ -106,6 +107,7 @@ public class AutoGenerator extends AbstractGenerator {
 			ctx.put("author", config.getGlobalConfig().getAuthor());
 			ctx.put("date", date);
 			ctx.put("table", tableInfo);
+			ctx.put("dbColumnUnderline", StrategyConfig.DB_COLUMN_UNDERLINE);
 			ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
 			ctx.put("enableCache", config.getGlobalConfig().isEnableCache());
 			ctx.put("baseResultMap", config.getGlobalConfig().isBaseResultMap());

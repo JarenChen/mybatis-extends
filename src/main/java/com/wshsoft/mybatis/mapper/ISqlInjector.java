@@ -1,6 +1,7 @@
 package com.wshsoft.mybatis.mapper;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.session.Configuration;
 
 /**
  * <p>
@@ -27,5 +28,13 @@ public interface ISqlInjector {
 	 * @param mapperClass
 	 */
 	void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
+
+	/**
+	 * 注入SqlRunner相关
+	 * 
+	 * @param configuration
+	 * @see com.wshsoft.mybatis.mapper.SqlRunner
+	 */
+	void injectSqlRunner(Configuration configuration);
 
 }

@@ -1,20 +1,19 @@
 package com.wshsoft.mybatis.test;
 
+import com.wshsoft.mybatis.enums.SqlLike;
+import com.wshsoft.mybatis.mapper.Condition;
+import com.wshsoft.mybatis.mapper.EntityWrapper;
+import com.wshsoft.mybatis.test.mysql.entity.User;
+import com.wshsoft.mybatis.toolkit.TableInfoHelper;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.wshsoft.mybatis.enums.SQLlikeType;
-import com.wshsoft.mybatis.mapper.Condition;
-import com.wshsoft.mybatis.mapper.EntityWrapper;
-import com.wshsoft.mybatis.test.mysql.entity.User;
-import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -300,9 +299,8 @@ public class EntityWrapperTest {
 	 * 测试LIKE
 	 */
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testlike() {
-		String sqlPart = Condition.instance().like("default", "default", SQLlikeType.DEFAULT).like("left","left", SQLlikeType.LEFT).like("right","right", SQLlikeType.RIGHT).toString();
+		String sqlPart = Condition.instance().like("default", "default", SqlLike.DEFAULT).like("left","left", SqlLike.LEFT).like("right","right", SqlLike.RIGHT).toString();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (default LIKE '%default%' AND left LIKE '%left' AND right LIKE 'right%')", sqlPart);
 	}
