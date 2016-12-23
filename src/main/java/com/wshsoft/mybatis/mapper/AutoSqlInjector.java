@@ -6,8 +6,10 @@ import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.enums.DBType;
 import com.wshsoft.mybatis.enums.FieldStrategy;
 import com.wshsoft.mybatis.enums.IdType;
+import com.wshsoft.mybatis.enums.InjectionRules;
 import com.wshsoft.mybatis.enums.SqlMethod;
 import com.wshsoft.mybatis.toolkit.SqlReservedWords;
+import com.wshsoft.mybatis.toolkit.StringUtils;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
@@ -77,18 +79,99 @@ public class AutoSqlInjector implements ISqlInjector {
 		GlobalConfiguration globalCache = GlobalConfiguration.GlobalConfig(configuration);
 		this.dbType = globalCache.getDbType();
 		/*
-		 * 驼峰设置 > 原始配置
+		 * 驼峰设置 PLUS 配置 > 原始配置
 		 */
 		if (!globalCache.isDbColumnUnderline()) {
 			globalCache.setDbColumnUnderline(configuration.isMapUnderscoreToCamelCase());
 		}
 		Class<?> modelClass = extractModelClass(mapperClass);
-		TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
+		if (modelClass != null) {
+			TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
 
+			/**
+			 * 表信息不为空的情况
+			 */
+			if (null != table) {
+				InjectionRules injectionRule = globalCache.getInjectionRule();
+				if (InjectionRules.UNREQUIREDPK.equals(injectionRule)) {
+					InjectUnrequiredPK(builderAssistant, mapperClass, modelClass, table);
+				} else {
+					InjectRequiredPK(builderAssistant, mapperClass, modelClass, table);
+				}
+
+			} else {
+				/**
+				 * 警告 Mybatis-Plus 默认方法不能使用
+				 */
+				logger.warn(String.format("%s ,Not found Table Detail, Cannot use Mybatis-Plus CRUD Method.",
+						modelClass.toString()));
+			}
+		}
+	}
+
+	/**
+	 * 注入SQL时不需要主键策略
+	 * 
+	 * @param builderAssistant
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	protected void InjectUnrequiredPK(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass,
+			TableInfo table) {
 		/**
-		 * 没有指定主键，默认方法不能使用
+		 * #148 表信息包含主键，注入主键相关方法
 		 */
-		if (null != table && null != table.getKeyProperty()) {
+		if (StringUtils.isNotEmpty(table.getKeyProperty())) {
+			/* 删除 */
+			this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
+			this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
+			/* 修改 */
+			this.injectUpdateByIdSql(mapperClass, modelClass, table);
+			/* 查询 */
+			this.injectSelectByIdSql(false, mapperClass, modelClass, table);
+			this.injectSelectByIdSql(true, mapperClass, modelClass, table);
+		}
+		/**
+		 * 表不包含主键时 给予警告
+		 */
+		if (StringUtils.isEmpty(table.getKeyProperty())) {
+			logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.",
+					modelClass.toString()));
+		}
+		/**
+		 * 正常注入无需主键方法
+		 */
+		/* 插入 */
+		this.injectInsertOneSql(mapperClass, modelClass, table);
+		/* 删除 */
+		this.injectDeleteSql(mapperClass, modelClass, table);
+		this.injectDeleteByMapSql(mapperClass, table);
+		/* 修改 */
+		this.injectUpdateSql(mapperClass, modelClass, table);
+		/* 查询 */
+		this.injectSelectByMapSql(mapperClass, modelClass, table);
+		this.injectSelectOneSql(mapperClass, modelClass, table);
+		this.injectSelectCountSql(mapperClass, modelClass, table);
+		this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
+		this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
+		this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
+		this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
+		/* 自定义方法 */
+		this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
+	}
+
+	/**
+	 * 注入SQL时不需要主键策略
+	 * 
+	 * @param builderAssistant
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	protected void InjectRequiredPK(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass,
+			TableInfo table) {
+		if (StringUtils.isNotEmpty(table.getKeyProperty())) {
 			/* 插入 */
 			this.injectInsertOneSql(mapperClass, modelClass, table);
 
@@ -119,9 +202,10 @@ public class AutoSqlInjector implements ISqlInjector {
 			/**
 			 * 警告
 			 */
-			logger.warn(String.format("%s ,Not found @TableId annotation, cannot use mybatis-extends curd method.",
+			logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Extends crud Method.",
 					modelClass.toString()));
 		}
+
 	}
 
 	/**
@@ -133,17 +217,22 @@ public class AutoSqlInjector implements ISqlInjector {
 	}
 
 	protected Class<?> extractModelClass(Class<?> mapperClass) {
-		Type[] types = mapperClass.getGenericInterfaces();
-		ParameterizedType target = null;
-		for (Type type : types) {
-			if (type instanceof ParameterizedType && BaseMapper.class.isAssignableFrom(mapperClass)) {
-				target = (ParameterizedType) type;
-				break;
+		if (mapperClass == BaseMapper.class) {
+			logger.warn(" Current Class is BaseMapper ");
+			return null;
+		} else {
+			Type[] types = mapperClass.getGenericInterfaces();
+			ParameterizedType target = null;
+			for (Type type : types) {
+				if (type instanceof ParameterizedType && BaseMapper.class.isAssignableFrom(mapperClass)) {
+					target = (ParameterizedType) type;
+					break;
+				}
 			}
+			Type[] parameters = target.getActualTypeArguments();
+			Class<?> modelClass = (Class<?>) parameters[0];
+			return modelClass;
 		}
-		Type[] parameters = target.getActualTypeArguments();
-		Class<?> modelClass = (Class<?>) parameters[0];
-		return modelClass;
 	}
 
 	/**
@@ -169,16 +258,21 @@ public class AutoSqlInjector implements ISqlInjector {
 		placeholderBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
 		String keyProperty = null;
 		String keyColumn = null;
-		if (table.getIdType() == IdType.AUTO) {
-			/* 自增主键 */
-			keyGenerator = new Jdbc3KeyGenerator();
-			keyProperty = table.getKeyProperty();
-			keyColumn = table.getKeyColumn();
-		} else {
-			/* 用户输入自定义ID */
-			fieldBuilder.append(table.getKeyColumn()).append(",");
-			placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
+
+		// 表包含主键处理逻辑,如果不包含主键当普通字段处理
+		if (StringUtils.isNotEmpty(table.getKeyProperty())) {
+			if (table.getIdType() == IdType.AUTO) {
+				/* 自增主键 */
+				keyGenerator = new Jdbc3KeyGenerator();
+				keyProperty = table.getKeyProperty();
+				keyColumn = table.getKeyColumn();
+			} else {
+				/* 用户输入自定义ID */
+				fieldBuilder.append(table.getKeyColumn()).append(",");
+				placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
+			}
 		}
+
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
 			fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
@@ -412,9 +506,11 @@ public class AutoSqlInjector implements ISqlInjector {
 	protected String sqlWhereEntityWrapper(TableInfo table) {
 		StringBuilder where = new StringBuilder("\n<if test=\"ew!=null\">");
 		where.append("\n<if test=\"ew.entity!=null\">\n<where>");
-		where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">\n");
-		where.append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append("}");
-		where.append("\n</if>");
+		if (StringUtils.isNotEmpty(table.getKeyProperty())) {
+			where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">\n");
+			where.append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append("}");
+			where.append("\n</if>");
+		}
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
 			where.append(convertIfTag(fieldInfo, "ew.entity.", false));
@@ -536,9 +632,11 @@ public class AutoSqlInjector implements ISqlInjector {
 			where.append("\n<if test=\"ew!=null\">");
 		}
 		where.append("\n<where>");
-		where.append("\n<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">\n");
-		where.append(table.getKeyColumn()).append("=#{ew.").append(table.getKeyProperty()).append("}");
-		where.append("\n</if>");
+		if (StringUtils.isNotEmpty(table.getKeyProperty())) {
+			where.append("\n<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">\n");
+			where.append(table.getKeyColumn()).append("=#{ew.").append(table.getKeyProperty()).append("}");
+			where.append("\n</if>");
+		}
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
 			where.append(convertIfTag(fieldInfo, "ew.", false));
@@ -597,7 +695,6 @@ public class AutoSqlInjector implements ISqlInjector {
 			if (ignored) {
 				return "";
 			}
-			// TODO 考虑日期类型忽略
 			// 查询策略，使用全局策略
 			fieldStrategy = GlobalConfiguration.GlobalConfig(configuration).getFieldStrategy();
 		}
@@ -615,7 +712,13 @@ public class AutoSqlInjector implements ISqlInjector {
 
 		// 验证逻辑
 		if (fieldStrategy == FieldStrategy.NOT_EMPTY) {
-			return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
+			String propertyType = fieldInfo.getPropertyType();
+			// 如果是Date类型
+			if ("java.util.Date".equals(propertyType) || "java.sql.Date".equals(propertyType)) {
+				return String.format("\n\t<if test=\"%s!=null \">", property, property);
+			} else {
+				return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
+			}
 		} else {
 			// FieldStrategy.NOT_NULL
 			return String.format("\n\t<if test=\"%s!=null\">", property);

@@ -35,6 +35,7 @@ import java.util.Properties;
  */
 @Intercepts({ @Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class SqlExplainInterceptor implements Interceptor {
+
 	private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
 
 	/**
@@ -55,12 +56,12 @@ public class SqlExplainInterceptor implements Interceptor {
 			Configuration configuration = ms.getConfiguration();
 			Object parameter = invocation.getArgs()[1];
 			BoundSql boundSql = ms.getBoundSql(parameter);
-			Executor exe = (Executor) invocation.getTarget();
-			Connection connection = exe.getTransaction().getConnection();
+			Connection connection = configuration.getEnvironment().getDataSource().getConnection();
 			String databaseVersion = connection.getMetaData().getDatabaseProductVersion();
 			if (GlobalConfiguration.getDbType(configuration).equals(DBType.MYSQL)
 					&& VersionUtils.compare(minMySQLVersion, databaseVersion)) {
 				logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!");
+				IOUtils.closeQuietly(connection);
 				return invocation.proceed();
 			}
 			/**

@@ -3,6 +3,7 @@ package com.wshsoft.mybatis.entity;
 import com.wshsoft.mybatis.enums.DBType;
 import com.wshsoft.mybatis.enums.FieldStrategy;
 import com.wshsoft.mybatis.enums.IdType;
+import com.wshsoft.mybatis.enums.InjectionRules;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.mapper.AutoSqlInjector;
 import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
@@ -59,6 +60,8 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	private boolean isAutoSetDbType = true;
 	// 是否大写命名
 	private boolean isCapitalMode = false;
+	// 注入规则 false不开启无主键注入 true 开启无主键注入
+	private InjectionRules injectionRule = InjectionRules.REQUIREDPK;
 	// 缓存当前Configuration的SqlSessionFactory
 	private SqlSessionFactory sqlSessionFactory;
 
@@ -155,6 +158,22 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
 		this.sqlSessionFactory = sqlSessionFactory;
+	}
+
+	public boolean isCapitalMode() {
+		return isCapitalMode;
+	}
+
+	public void setCapitalMode(boolean isCapitalMode) {
+		this.isCapitalMode = isCapitalMode;
+	}
+
+	public InjectionRules getInjectionRule() {
+		return injectionRule;
+	}
+
+	public void setInjectionRule(int injectionRule) {
+		this.injectionRule = InjectionRules.getInjectionRule(injectionRule);
 	}
 
 	@Override
@@ -261,7 +280,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	}
 
 	public static ISqlInjector getSqlInjector(Configuration configuration) {
-	    // fix #140
+		// fix #140
 		GlobalConfiguration globalConfiguration = GlobalConfig(configuration);
 		ISqlInjector sqlInjector = globalConfiguration.getSqlInjector();
 		if (sqlInjector == null) {
@@ -291,12 +310,8 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		return GlobalConfig(configuration).getMapperRegistryCache();
 	}
 
-	public boolean isCapitalMode() {
-		return isCapitalMode;
-	}
-
-	public void setCapitalMode(boolean isCapitalMode) {
-		this.isCapitalMode = isCapitalMode;
+	public static InjectionRules getInjectionRule(Configuration configuration) {
+		return GlobalConfig(configuration).getInjectionRule();
 	}
 
 }

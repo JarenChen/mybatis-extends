@@ -1,13 +1,12 @@
 package com.wshsoft.mybatis.test.mysql.mapper;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.session.RowBounds;
-
 import com.wshsoft.mybatis.mapper.BaseMapper;
 import com.wshsoft.mybatis.test.mysql.entity.User;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
+import java.util.List;
 
 /**
  * <p>
@@ -37,7 +36,14 @@ public interface UserMapper extends BaseMapper<User> {
 	/**
 	 * 自定义注入方法
 	 */
-	@Delete("DELETE FROM user")
 	int deleteAll();
 
+	/**
+	 * 根据主键批量查询
+	 * 
+	 * @param pagination
+	 * @param ids
+	 * @return
+	 */
+	List<User> forSelect(RowBounds pagination, @Param("ids") List<String> ids);
 }

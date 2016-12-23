@@ -1,8 +1,10 @@
 package com.wshsoft.mybatis.test.mysql.entity;
 
-import java.io.Serializable;
-
 import com.wshsoft.mybatis.activerecord.Model;
+import com.wshsoft.mybatis.annotations.TableField;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -23,6 +25,9 @@ public class Test extends Model<Test> {
 	private Long id;
 
 	private String type;
+
+	@TableField("create_time")
+	private Date createTime;
 
 	public Test() {
 
@@ -47,6 +52,14 @@ public class Test extends Model<Test> {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 
 	@Override

@@ -85,15 +85,17 @@
 				<property name="url" value="jdbc:mysql://localhost:3306/mybatis-extends" />
 				<property name="username" value="root" />
 				<property name="password" value="root" />
-			<!-- 
-				<property name="driver" value="${jdbc.driver}" />
-				<property name="url" value="${jdbc.url}" />
-				<property name="username" value="${jdbc.username}" />
-				<property name="password" value="${jdbc.password}" />
-			 -->
-			</dataSource>
-		</environment>
-	</environments>
+                                <property name="poolMaximumActiveConnections" value="100"/>
+                                <property name="poolMaximumIdleConnections" value="20"/>
+                <!--
+                    <property name="driver" value="${jdbc.driver}" />
+                    <property name="url" value="${jdbc.url}" />
+                    <property name="username" value="${jdbc.username}" />
+                    <property name="password" value="${jdbc.password}" />
+                 -->
+            </dataSource>
+        </environment>
+    </environments>
 
 
     <!--
@@ -107,8 +109,9 @@
     <mappers>
         <mapper resource="mysql/RoleMapper.xml"/>
         <mapper class="com.wshsoft.mybatis.test.mysql.mapper.UserMapper" />
+        <mapper class="com.wshsoft.mybatis.test.mysql.mapper.NotPKMapper"/>
         <mapper resource="mysql/UserMapper.xml"/>
         <mapper class="com.wshsoft.mybatis.test.mysql.mapper.RoleMapper" />
-        <mapper class="com.wshsoft.mybatis.test.mysql.TestMapper" />
+        <mapper class="com.wshsoft.mybatis.test.mysql.mapper.TestMapper" />
     </mappers>
 </configuration>

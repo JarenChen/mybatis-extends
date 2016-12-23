@@ -1,4 +1,4 @@
-package com.wshsoft.mybatis.test.mysql;
+package com.wshsoft.mybatis.test.mysql.mapper;
 
 import org.apache.ibatis.annotations.Insert;
 

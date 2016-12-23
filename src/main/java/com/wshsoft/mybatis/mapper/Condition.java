@@ -14,6 +14,13 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
 public class Condition extends Wrapper {
 
 	/**
+	 * 构建一个Empty条件构造 避免传递参数使用null
+	 */
+	public static Condition Empty() {
+		return Condition.instance();
+	}
+
+	/**
 	 * 获取实例
 	 */
 	public static Condition instance() {

@@ -5,8 +5,7 @@ import com.wshsoft.mybatis.generator.config.StrategyConfig;
 /**
  * <p>
  * 表字段信息
- *  </p>
- *  
+ * </p>
  * @author Carry xie
  * @since 2016-8-30
  */
@@ -70,7 +69,7 @@ public class TableField {
 		if (StrategyConfig.DB_COLUMN_UNDERLINE) {
 			return false;
 		}
-		return !name.equals(propertyName);
+		return !name.equalsIgnoreCase(propertyName);
 	}
 
 	public String getCapitalName() {

@@ -32,9 +32,9 @@ public class MysqlGenerator {
 		gc.setOutputDir("D://mybatis-extends");
 		gc.setFileOverride(true);
 		gc.setActiveRecord(true);
-		gc.setEnableCache(false);// XML 二级缓存
+		gc.setEnableCache(true);// XML 二级缓存
 		gc.setBaseResultMap(true);// XML ResultMap
-		gc.setBaseColumnList(false);// XML columList
+		gc.setBaseColumnList(true);// XML columList
 		gc.setAuthor("Carry xie");
 
 		// 自定义文件命名，注意 %s 会自动填充表实体属性！

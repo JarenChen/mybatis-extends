@@ -1,13 +1,13 @@
 package com.wshsoft.mybatis.test.mysql.entity;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.Date;
-
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.enums.FieldStrategy;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.Date;
 
 /**
  * <p>
@@ -30,7 +30,6 @@ public class User implements Serializable {
 	private Long id;
 
 	/* 测试忽略验证 */
-	
 	private String name;
 
 	private Integer age;

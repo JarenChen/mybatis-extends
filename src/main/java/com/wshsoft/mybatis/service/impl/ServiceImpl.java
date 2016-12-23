@@ -1,14 +1,5 @@
 package com.wshsoft.mybatis.service.impl;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
@@ -22,6 +13,14 @@ import com.wshsoft.mybatis.toolkit.MapUtils;
 import com.wshsoft.mybatis.toolkit.ReflectionKit;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -78,7 +77,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (null != entity) {
 			Class<?> cls = entity.getClass();
 			TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
-			if (null != tableInfo) {
+			if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
 				Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
 				if (StringUtils.checkValNull(idVal)) {
 					return insert(entity);

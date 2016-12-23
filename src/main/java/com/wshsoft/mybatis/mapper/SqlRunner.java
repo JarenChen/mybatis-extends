@@ -16,23 +16,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * <p>
- * SqlQuery 执行 SQL
+ * SqlRunner 执行 SQL
  * </p>
  *
  * @author Carry xie
  * @Date 2016-12-11
  */
 public class SqlRunner {
+
 	private static final Log logger = LogFactory.getLog(SqlRunner.class);
+	// 默认FACTORY
 	public static SqlSessionFactory FACTORY;
-	public static final String INSERT = "SqlRunner.Insert";
-	public static final String DELETE = "SqlRunner.Delete";
-	public static final String UPDATE = "SqlRunner.Update";
-	public static final String SELECT = "SqlRunner.Select";
-	public static final String COUNT = "SqlRunner.Count";
+	public static final String INSERT = "com.wshsoft.mybatis.mapper.SqlRunner.Insert";
+	public static final String DELETE = "com.wshsoft.mybatis.mapper.SqlRunner.Delete";
+	public static final String UPDATE = "com.wshsoft.mybatis.mapper.SqlRunner.Update";
+	public static final String SELECT = "com.wshsoft.mybatis.mapper.SqlRunner.Select";
+	public static final String COUNT = "com.wshsoft.mybatis.mapper.SqlRunner.Count";
 	public static final String SQLScript = "${sql}";
 	public static final String SQL = "sql";
 

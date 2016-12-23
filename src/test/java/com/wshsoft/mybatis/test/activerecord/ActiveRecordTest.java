@@ -9,8 +9,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
 import com.wshsoft.mybatis.plugins.Page;
-import com.wshsoft.mybatis.test.mysql.TestMapper;
 import com.wshsoft.mybatis.test.mysql.entity.Test;
+import com.wshsoft.mybatis.test.mysql.mapper.TestMapper;
 import com.wshsoft.mybatis.toolkit.IdWorker;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
