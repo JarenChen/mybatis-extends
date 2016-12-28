@@ -9,6 +9,7 @@ package com.wshsoft.mybatis.toolkit;
  * @Date 2016-10-16
  */
 public class StringEscape {
+
 	/**
 	 * 字符串是否需要转义
 	 *
@@ -144,4 +145,5 @@ public class StringEscape {
 		}
 		return "\'" + parameterAsString + "\'";
 	}
+
 }

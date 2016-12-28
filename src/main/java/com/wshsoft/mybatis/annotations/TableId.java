@@ -33,4 +33,5 @@ public @interface TableId {
 	 * {@link IdType}
 	 */
 	IdType type() default IdType.INPUT;
+
 }

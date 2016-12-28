@@ -1,16 +1,15 @@
 package com.wshsoft.mybatis;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
-
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.toolkit.IOUtils;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
-import com.wshsoft.mybatis.toolkit.IOUtils;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
 
 /**
  * <p>

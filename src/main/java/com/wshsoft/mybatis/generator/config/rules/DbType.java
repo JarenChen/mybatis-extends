@@ -8,7 +8,7 @@ package com.wshsoft.mybatis.generator.config.rules;
  */
 public enum DbType {
 
-	MYSQL("mysql"), ORACLE("oracle");
+	MYSQL("mysql"), ORACLE("oracle"),SQLSERVER("sqlserver");
 
 	private String value;
 

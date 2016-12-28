@@ -3,23 +3,29 @@ package com.wshsoft.mybatis.entity;
 import com.wshsoft.mybatis.enums.DBType;
 import com.wshsoft.mybatis.enums.FieldStrategy;
 import com.wshsoft.mybatis.enums.IdType;
-import com.wshsoft.mybatis.enums.InjectionRules;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.mapper.AutoSqlInjector;
 import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
 import com.wshsoft.mybatis.mapper.ISqlInjector;
+import com.wshsoft.mybatis.toolkit.IOUtils;
 import com.wshsoft.mybatis.toolkit.JdbcUtils;
+import com.wshsoft.mybatis.toolkit.StringUtils;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import javax.sql.DataSource;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+
 /**
  * <p>
  * Mybatis全局缓存
@@ -60,12 +66,14 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	private boolean isAutoSetDbType = true;
 	// 是否大写命名
 	private boolean isCapitalMode = false;
-	// 注入规则 false不开启无主键注入 true 开启无主键注入
-	private InjectionRules injectionRule = InjectionRules.REQUIREDPK;
+	// 标识符
+	private String identifierQuote;
 	// 缓存当前Configuration的SqlSessionFactory
 	private SqlSessionFactory sqlSessionFactory;
 
 	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
+	// 关键字
+	private Set<String> sqlKeywords;
 
 	public GlobalConfiguration() {
 		// TODO
@@ -168,12 +176,22 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		this.isCapitalMode = isCapitalMode;
 	}
 
-	public InjectionRules getInjectionRule() {
-		return injectionRule;
+	public String getIdentifierQuote() {
+		return identifierQuote;
 	}
 
-	public void setInjectionRule(int injectionRule) {
-		this.injectionRule = InjectionRules.getInjectionRule(injectionRule);
+	public void setIdentifierQuote(String identifierQuote) {
+		this.identifierQuote = identifierQuote;
+	}
+
+	public Set<String> getSqlKeywords() {
+		return sqlKeywords;
+	}
+
+	public void setSqlKeywords(String sqlKeywords) {
+		if (StringUtils.isNotEmpty(sqlKeywords)) {
+			this.sqlKeywords = new HashSet<String>(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
+		}
 	}
 
 	@Override
@@ -183,7 +201,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	/**
 	 * 获取当前的SqlSessionFactory
-	 * 
+	 *
 	 * @param clazz
 	 * @return
 	 */
@@ -195,7 +213,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	/**
 	 * 获取默认MybatisGlobalConfig
-	 * 
+	 *
 	 * @return
 	 */
 	public static GlobalConfiguration defaults() {
@@ -239,7 +257,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	/**
 	 * 获取MybatisGlobalConfig (统一所有入口)
-	 * 
+	 *
 	 * @param configuration
 	 * @return
 	 */
@@ -252,7 +270,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	/**
 	 * 获取MybatisGlobalConfig (统一所有入口)
-	 * 
+	 *
 	 * @param configMark
 	 * @return
 	 */
@@ -310,8 +328,33 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		return GlobalConfig(configuration).getMapperRegistryCache();
 	}
 
-	public static InjectionRules getInjectionRule(Configuration configuration) {
-		return GlobalConfig(configuration).getInjectionRule();
+	public static String getIdentifierQuote(Configuration configuration) {
+		return GlobalConfig(configuration).getIdentifierQuote();
 	}
 
+	public static Set<String> getSqlKeywords(Configuration configuration) {
+		return GlobalConfig(configuration).getSqlKeywords();
+	}
+
+	/**
+	 * 设置元数据相关属性
+	 *
+	 * @param dataSource
+	 * @param globalConfig
+	 */
+	public static void setMetaData(DataSource dataSource, GlobalConfiguration globalConfig) {
+		Connection connection = null;
+		try {
+			connection = dataSource.getConnection();
+			String jdbcUrl = connection.getMetaData().getURL();
+			// TODO 自动设置数据库类型
+			if (globalConfig.isAutoSetDbType()) {
+				globalConfig.setDbTypeByJdbcUrl(jdbcUrl);
+			}
+		} catch (SQLException e) {
+			logger.warn("Warn: GlobalConfiguration setMetaData Fail !  Cause:" + e);
+		} finally {
+			IOUtils.closeQuietly(connection);
+		}
+	}
 }
