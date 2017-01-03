@@ -1,5 +1,8 @@
 package com.wshsoft.mybatis.test.generator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.wshsoft.mybatis.generator.AutoGenerator;
 import com.wshsoft.mybatis.generator.InjectionConfig;
 import com.wshsoft.mybatis.generator.config.DataSourceConfig;
@@ -9,9 +12,6 @@ import com.wshsoft.mybatis.generator.config.StrategyConfig;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * <p>
  * 代码生成器演示
@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Carry xie
  * @date 2016-11-01
  */
-public class SQLServerGenerator {
+public class PostgreSQLGenerator {
 
     public static void main(String[] args) {
         AutoGenerator mpg = new AutoGenerator();
@@ -44,11 +44,11 @@ public class SQLServerGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setDbType(DbType.SQL_SERVER);
-        dsc.setDriverName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        dsc.setUsername("sa");
-        dsc.setPassword("sa");
-        dsc.setUrl("jdbc:sqlserver://localhost:1433;databaseName=mybatis-extends");
+        dsc.setDbType(DbType.POSTGRE_SQL);
+        dsc.setDriverName("org.postgresql.Driver");
+        dsc.setUsername("postgres");
+        dsc.setPassword("postgres");
+        dsc.setUrl("jdbc:postgresql://localhost:5432/mybatis-extends");
         mpg.setDataSource(dsc);
 
         // 策略配置
@@ -83,6 +83,8 @@ public class SQLServerGenerator {
         // 包配置
         PackageConfig pc = new PackageConfig();
         pc.setModuleName("test");
+        pc.setParent("com.wshsoft");
+		pc.setController("controller");
         mpg.setPackageInfo(pc);
 
         // 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值

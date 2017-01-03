@@ -1,14 +1,13 @@
 package com.wshsoft.mybatis.mapper;
 
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
-import com.wshsoft.mybatis.entity.TableFieldInfo;
-import com.wshsoft.mybatis.entity.TableInfo;
-import com.wshsoft.mybatis.enums.FieldStrategy;
-import com.wshsoft.mybatis.enums.IdType;
-import com.wshsoft.mybatis.enums.SqlMethod;
-import com.wshsoft.mybatis.toolkit.SqlReservedWords;
-import com.wshsoft.mybatis.toolkit.StringUtils;
-import com.wshsoft.mybatis.toolkit.TableInfoHelper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -22,16 +21,17 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.entity.TableFieldInfo;
+import com.wshsoft.mybatis.entity.TableInfo;
+import com.wshsoft.mybatis.enums.FieldStrategy;
+import com.wshsoft.mybatis.enums.IdType;
+import com.wshsoft.mybatis.enums.SqlMethod;
+import com.wshsoft.mybatis.toolkit.SqlReservedWords;
+import com.wshsoft.mybatis.toolkit.StringUtils;
+import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -90,9 +90,9 @@ public class AutoSqlInjector implements ISqlInjector {
 				injectSql(builderAssistant, mapperClass, modelClass, table);
 			} else {
 				/**
-				 * 警告 Mybatis-Plus 默认方法不能使用
+				 * 警告 Mybatis-Extends 默认方法不能使用
 				 */
-				logger.warn(String.format("%s ,Not found Table Detail, Cannot use Mybatis-Plus CRUD Method.",
+				logger.warn(String.format("%s ,Not found Table Detail, Cannot use Mybatis-Extends CRUD Method.",
 						modelClass.toString()));
 			}
 		}
@@ -274,19 +274,18 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	protected void injectDeleteByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
-		SqlSource sqlSource = null;
+		String sql = null;
 		if (batch) {
 			sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
 			StringBuilder ids = new StringBuilder();
 			ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
 			ids.append("#{item}");
 			ids.append("\n</foreach>");
-			String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), ids.toString());
-			sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+			sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), ids.toString());
 		} else {
-			String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), table.getKeyColumn());
-			sqlSource = new RawSqlSource(configuration, sql, Object.class);
+			sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), table.getKeyColumn());
 		}
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
 	}
 
@@ -346,8 +345,8 @@ public class AutoSqlInjector implements ISqlInjector {
 			sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
 					sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);
 		} else {
-			sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
-					table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), Object.class);
+			sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
+					table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), modelClass);
 		}
 		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
 	}

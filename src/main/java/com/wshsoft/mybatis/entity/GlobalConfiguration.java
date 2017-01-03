@@ -9,6 +9,7 @@ import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
 import com.wshsoft.mybatis.mapper.ISqlInjector;
 import com.wshsoft.mybatis.toolkit.IOUtils;
 import com.wshsoft.mybatis.toolkit.JdbcUtils;
+import com.wshsoft.mybatis.toolkit.SqlReservedWords;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
@@ -20,7 +21,6 @@ import javax.sql.DataSource;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -72,8 +72,6 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	private SqlSessionFactory sqlSessionFactory;
 
 	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
-	// 关键字
-	private Set<String> sqlKeywords;
 
 	public GlobalConfiguration() {
 		// TODO
@@ -184,13 +182,9 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		this.identifierQuote = identifierQuote;
 	}
 
-	public Set<String> getSqlKeywords() {
-		return sqlKeywords;
-	}
-
 	public void setSqlKeywords(String sqlKeywords) {
 		if (StringUtils.isNotEmpty(sqlKeywords)) {
-			this.sqlKeywords = new HashSet<String>(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
+			SqlReservedWords.RESERVED_WORDS.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
 		}
 	}
 
@@ -332,10 +326,6 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		return GlobalConfig(configuration).getIdentifierQuote();
 	}
 
-	public static Set<String> getSqlKeywords(Configuration configuration) {
-		return GlobalConfig(configuration).getSqlKeywords();
-	}
-
 	/**
 	 * 设置元数据相关属性
 	 *
@@ -347,7 +337,9 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		try {
 			connection = dataSource.getConnection();
 			String jdbcUrl = connection.getMetaData().getURL();
-			// TODO 自动设置数据库类型
+			// 设置全局关键字
+			globalConfig.setSqlKeywords(connection.getMetaData().getSQLKeywords());
+			// 自动设置数据库类型
 			if (globalConfig.isAutoSetDbType()) {
 				globalConfig.setDbTypeByJdbcUrl(jdbcUrl);
 			}

@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class SqlReservedWords {
 
-	private static Set<String> RESERVED_WORDS;
+	public static Set<String> RESERVED_WORDS;
 
 	static {
 		String[] words = { "AUDIT", "VOLUMES", "MINVALUE", "STATIC", "FLOOR", "CATALOG", "YEAR", "TRIGGER_CATALOG", "WLM",

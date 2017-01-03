@@ -34,6 +34,7 @@
 		<logback-classic.version>1.1.7</logback-classic.version>
 		<mysql-connector-java.version>5.1.38</mysql-connector-java.version>
 		<ojdbc14.version>10.2.0.5.0</ojdbc14.version>
+		<postgresql.version>9.4.1212</postgresql.version>
 		<servlet-api.version>2.5</servlet-api.version>
 		<spring.version>4.2.5.RELEASE</spring.version>
 		<mybatis-ehcache.version>1.0.3</mybatis-ehcache.version>
@@ -162,6 +163,12 @@
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>sqljdbc4</artifactId>
             <version>${sqljdbc4.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
             <scope>test</scope>
         </dependency>
 		<!-- test end -->
