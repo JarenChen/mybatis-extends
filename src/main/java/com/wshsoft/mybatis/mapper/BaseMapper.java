@@ -7,6 +7,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
 /**
  * <p>
  * Mapper 继承该接口后，无需编写 mapper.xml 文件，即可获得CRUD功能
@@ -29,7 +32,7 @@ public interface BaseMapper<T> {
 	 *            实体对象
 	 * @return int
 	 */
-	int insert(T entity);
+	Integer insert(T entity);
 
 	/**
 	 * <p>
@@ -40,7 +43,7 @@ public interface BaseMapper<T> {
 	 *            主键ID
 	 * @return int
 	 */
-	int deleteById(Serializable id);
+	Integer deleteById(Serializable id);
 
 	/**
 	 * <p>
@@ -51,7 +54,7 @@ public interface BaseMapper<T> {
 	 *            表字段 map 对象
 	 * @return int
 	 */
-	int deleteByMap(@Param("cm") Map<String, Object> columnMap);
+	Integer deleteByMap(@Param("cm") Map<String, Object> columnMap);
 
 	/**
 	 * <p>
@@ -62,7 +65,7 @@ public interface BaseMapper<T> {
 	 *            实体对象封装操作类（可以为 null）
 	 * @return int
 	 */
-	int delete(@Param("ew") Wrapper<T> wrapper);
+	Integer delete(@Param("ew") Wrapper<T> wrapper);
 
 	/**
 	 * <p>
@@ -73,7 +76,7 @@ public interface BaseMapper<T> {
 	 *            主键ID列表
 	 * @return int
 	 */
-	int deleteBatchIds(List<? extends Serializable> idList);
+	Integer deleteBatchIds(List<? extends Serializable> idList);
 
 	/**
 	 * <p>
@@ -84,7 +87,7 @@ public interface BaseMapper<T> {
 	 *            实体对象
 	 * @return int
 	 */
-	int updateById(T entity);
+	Integer updateById(T entity);
 
 	/**
 	 * <p>
@@ -97,7 +100,7 @@ public interface BaseMapper<T> {
 	 *            实体对象封装操作类（可以为 null）
 	 * @return
 	 */
-	int update(@Param("et") T entity, @Param("ew") Wrapper<T> wrapper);
+	Integer update(@Param("et") T entity, @Param("ew") Wrapper<T> wrapper);
 
 	/**
 	 * <p>
@@ -152,7 +155,7 @@ public interface BaseMapper<T> {
 	 *            实体对象
 	 * @return int
 	 */
-	int selectCount(@Param("ew") Wrapper<T> wrapper);
+	Integer selectCount(@Param("ew") Wrapper<T> wrapper);
 
 	/**
 	 * <p>

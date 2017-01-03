@@ -18,8 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-
 /**
  * <p>
  * ActiveRecord 模式 CRUD
@@ -322,7 +320,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	public int selectCount(Wrapper wrapper) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("ew", wrapper);
-		return sqlSession().selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map);
+		return SqlHelper.retCount(sqlSession().<Integer> selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
 	}
 
 	/**
