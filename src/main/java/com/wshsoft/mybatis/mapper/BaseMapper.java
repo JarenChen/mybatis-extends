@@ -7,9 +7,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
-
 /**
  * <p>
  * Mapper 继承该接口后，无需编写 mapper.xml 文件，即可获得CRUD功能
@@ -178,6 +175,17 @@ public interface BaseMapper<T> {
 	 * @return List<T>
 	 */
 	List<Map<String, Object>> selectMaps(@Param("ew") Wrapper<T> wrapper);
+
+	/**
+	 * <p>
+	 * 根据 Wrapper 条件，查询全部记录
+	 * </p>
+	 *
+	 * @param wrapper
+	 *            实体对象封装操作类（可以为 null）
+	 * @return List<Object>
+	 */
+	List<Object> selectObjs(@Param("ew") Wrapper<T> wrapper);
 
 	/**
 	 * <p>

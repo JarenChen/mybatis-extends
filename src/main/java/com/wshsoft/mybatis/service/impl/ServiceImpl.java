@@ -226,27 +226,15 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public T selectOne(Wrapper<T> wrapper) {
-		List<T> list = baseMapper.selectList(wrapper);
-		if (CollectionUtils.isNotEmpty(list)) {
-			int size = list.size();
-			if (size > 1) {
-				logger.warn(String.format("Warn: selectOne Method There are  %s results.", size));
-			}
-			return list.get(0);
-		}
-		return null;
+		return SqlHelper.getObject(baseMapper.selectList(wrapper));
 	}
 
 	public Map<String, Object> selectMap(Wrapper<T> wrapper) {
-		List<Map<String, Object>> list = baseMapper.selectMaps(wrapper);
-		if (CollectionUtils.isNotEmpty(list)) {
-			int size = list.size();
-			if (size > 1) {
-				logger.warn(String.format("Warn: selectMap Method There are  %s results.", size));
-			}
-			return list.get(0);
-		}
-		return null;
+		return SqlHelper.getObject(baseMapper.selectMaps(wrapper));
+	}
+
+	public Object selectObj(Wrapper<T> wrapper) {
+		return SqlHelper.getObject(baseMapper.selectObjs(wrapper));
 	}
 
 	public int selectCount(Wrapper<T> wrapper) {
@@ -264,6 +252,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	public List<Map<String, Object>> selectMaps(Wrapper<T> wrapper) {
 		return baseMapper.selectMaps(wrapper);
+	}
+
+	public List<Object> selectObjs(Wrapper<T> wrapper) {
+		return baseMapper.selectObjs(wrapper);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

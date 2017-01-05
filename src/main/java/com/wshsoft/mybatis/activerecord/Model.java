@@ -235,15 +235,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public T selectOne(Wrapper wrapper) {
-		List<T> list = selectList(wrapper);
-		if (CollectionUtils.isNotEmpty(list)) {
-			int size = list.size();
-			if (size > 1) {
-				logger.warn(String.format("Warn: selectOne Method There are  %s results.", size));
-			}
-			return list.get(0);
-		}
-		return null;
+		return SqlHelper.getObject(selectList(wrapper));
 	}
 
 	/**

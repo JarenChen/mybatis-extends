@@ -223,6 +223,17 @@ public interface IService<T> {
 
 	/**
 	 * <p>
+	 * 根据 Wrapper，查询一条记录
+	 * </p>
+	 *
+	 * @param wrapper
+	 *            {@link Wrapper}
+	 * @return Object
+	 */
+	Object selectObj(Wrapper<T> wrapper);
+
+	/**
+	 * <p>
 	 * 根据 Wrapper 条件，查询总记录数
 	 * </p>
 	 *
@@ -264,6 +275,17 @@ public interface IService<T> {
 	 * @return
 	 */
 	List<Map<String, Object>> selectMaps(Wrapper<T> wrapper);
+
+	/**
+	 * <p>
+	 * 根据 Wrapper 条件，查询全部记录
+	 * </p>
+	 *
+	 * @param wrapper
+	 *            实体对象封装操作类（可以为 null）
+	 * @return List<Object>
+	 */
+	List<Object> selectObjs(Wrapper<T> wrapper);
 
 	/**
 	 * <p>

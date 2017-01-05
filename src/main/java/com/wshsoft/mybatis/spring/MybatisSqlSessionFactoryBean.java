@@ -269,7 +269,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	/**
 	 * Set a customized MyBatis configuration.
-	 *
+	 * 
 	 * @param configuration
 	 *            MyBatis configuration
 	 * @since 1.3.0
@@ -422,11 +422,13 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 			configuration = xmlConfigBuilder.getConfiguration();
 		} else {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Property `configuration` or 'configLocation' not specified, using default MyBatis Configuration");
+				LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default Mybatis-Extends Configuration");
 			}
 			// TODO 使用自定义配置
 			configuration = new MybatisConfiguration();
-			configuration.setVariables(this.configurationProperties);
+			if (this.configurationProperties != null) {
+				configuration.setVariables(this.configurationProperties);
+			}
 		}
 
 		if (this.objectFactory != null) {
@@ -501,7 +503,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		}
 
 		if (this.databaseIdProvider != null) {// fix #64 set databaseId before
-			// parse mapper xmls
+												// parse mapper xmls
 			try {
 				configuration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
 			} catch (SQLException e) {
@@ -553,7 +555,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 					MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(mapperLocation.getInputStream(),
 							configuration, mapperLocation.toString(), configuration.getSqlFragments());
 					xmlMapperBuilder.parse();
-
 				} catch (Exception e) {
 					throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
 				} finally {

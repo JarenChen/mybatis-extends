@@ -1,12 +1,16 @@
 package com.wshsoft.mybatis.mapper;
 
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSession;
-
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,6 +21,8 @@ import com.wshsoft.mybatis.toolkit.TableInfoHelper;
  * @Date 2016-11-06
  */
 public class SqlHelper {
+
+	private static final Log logger = LogFactory.getLog(SqlHelper.class);
 
 	/**
 	 * 获取Session 默认自动提交
@@ -97,6 +103,26 @@ public class SqlHelper {
 	 */
 	public static int retCount(Integer result) {
 		return (null == result) ? 0 : result;
+	}
+
+	/**
+	 * <p>
+	 * 从list中取第一条数据返回对应List中泛型的单个结果
+	 * </p>
+	 * 
+	 * @param list
+	 * @param <E>
+	 * @return
+	 */
+	public static <E> E getObject(List<E> list) {
+		if (CollectionUtils.isNotEmpty(list)) {
+			int size = list.size();
+			if (size > 1) {
+				logger.warn(String.format("Warn: execute Method There are  %s results.", size));
+			}
+			return list.get(0);
+		}
+		return null;
 	}
 
 }

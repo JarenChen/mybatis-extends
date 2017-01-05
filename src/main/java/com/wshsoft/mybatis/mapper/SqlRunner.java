@@ -85,15 +85,7 @@ public class SqlRunner {
 	}
 
 	public Map<String, Object> selectOne(String sql, Object... args) {
-		List<Map<String, Object>> list = selectList(sql, args);
-		if (CollectionUtils.isNotEmpty(list)) {
-			int size = list.size();
-			if (size > 1) {
-				logger.warn(String.format("Warn: selectOne Method There are  %s results.", size));
-			}
-			return list.get(0);
-		}
-		return Collections.emptyMap();
+		return SqlHelper.getObject(selectList(sql, args));
 	}
 
 	public Page<Map<String, Object>> selectPage(Page page, String sql, Object... args) {
