@@ -1,17 +1,16 @@
 package com.wshsoft.mybatis.toolkit;
 
-import java.lang.reflect.InvocationTargetException;
+import com.wshsoft.mybatis.entity.TableFieldInfo;
+import com.wshsoft.mybatis.entity.TableInfo;
+import com.wshsoft.mybatis.enums.FieldStrategy;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
-import com.wshsoft.mybatis.entity.TableFieldInfo;
-import com.wshsoft.mybatis.entity.TableInfo;
-import com.wshsoft.mybatis.enums.FieldStrategy;
 
 /**
  * <p>
@@ -22,21 +21,27 @@ import com.wshsoft.mybatis.enums.FieldStrategy;
  * @Date 2016-09-22
  */
 public class ReflectionKit {
-
 	private static final Log logger = LogFactory.getLog(ReflectionKit.class);
-
 
 	/**
 	 * <p>
 	 * 反射 method 方法名，例如 getId
 	 * </p>
 	 *
+	 * @param field
 	 * @param str
 	 *            属性字符串内容
 	 * @return
 	 */
-	public static String getMethodCapitalize(final String str) {
-		return StringUtils.concatCapitalize("get", str);
+	public static String getMethodCapitalize(Field field, final String str) {
+		Class<?> fieldType = field.getType();
+		String concatstr;
+		if (Boolean.class.equals(fieldType) || boolean.class.equals(fieldType)) {
+			concatstr = "is";
+		} else {
+			concatstr = "get";
+		}
+		return StringUtils.concatCapitalize(concatstr, str);
 	}
 
 	/**
@@ -52,13 +57,14 @@ public class ReflectionKit {
 	public static Object getMethodValue(Class<?> cls, Object entity, String str) {
 		Object obj = null;
 		try {
-			Method method = cls.getMethod(getMethodCapitalize(str));
+			Field field = cls.getDeclaredField(str);
+			Method method = cls.getMethod(getMethodCapitalize(field, str));
 			obj = method.invoke(entity);
 		} catch (NoSuchMethodException e) {
 			logger.warn(String.format("Warn: No such method. in %s.  Cause:", cls.getSimpleName()) + e);
 		} catch (IllegalAccessException e) {
 			logger.warn(String.format("Warn: Cannot execute a private method. in %s.  Cause:", cls.getSimpleName()) + e);
-		} catch (InvocationTargetException e) {
+		} catch (Exception e) {
 			logger.warn("Warn: Unexpected exception on getMethodValue.  Cause:" + e);
 		}
 		return obj;

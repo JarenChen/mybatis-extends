@@ -1,15 +1,16 @@
 package com.wshsoft.mybatis;
 
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
-import com.wshsoft.mybatis.toolkit.IOUtils;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
+
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.toolkit.IOUtils;
 
 /**
  * <p>
@@ -27,8 +28,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
 		try {
 			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
-			globalConfig.setGlobalConfig(parser.getConfiguration());
-			return build(parser.parse());
+			return globalConfig.signGlobalConfig(build(parser.parse()));
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
 		} finally {
@@ -41,8 +41,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
 		try {
 			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
-			globalConfig.setGlobalConfig(parser.getConfiguration());
-			return build(parser.parse());
+			return globalConfig.signGlobalConfig(build(parser.parse()));
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
 		} finally {
@@ -51,7 +50,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 		}
 	}
 
-	//TODO 注入全局配置
+	// TODO 注入全局配置
 	public void setGlobalConfig(GlobalConfiguration globalConfig) {
 		this.globalConfig = globalConfig;
 	}

@@ -59,7 +59,7 @@ public class MysqlGenerator {
 		StrategyConfig strategy = new StrategyConfig();
 		// strategy.setDbColumnUnderline(true);//全局下划线命名
 		// 表前缀
-		strategy.setTablePrefix("bmd_");
+		strategy.setTablePrefix("tb_");
 		// 表名生成策略
 		strategy.setNaming(NamingStrategy.remove_prefix_and_camel);
 		// strategy.setInclude(new String[] { "user" }); // 需要生成的表
