@@ -1,7 +1,12 @@
 package com.wshsoft.mybatis.generator.config.po;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
@@ -25,8 +30,8 @@ public class TableInfo {
 	private String controllerName;
 
 	private List<TableField> fields;
+	private List<String> importPackages = new ArrayList<String>();
 	private String fieldNames;
-	private boolean hasDate;
 
 	public String getName() {
 		return name;
@@ -104,7 +109,33 @@ public class TableInfo {
 	}
 
 	public void setFields(List<TableField> fields) {
-		this.fields = fields;
+		if (CollectionUtils.isNotEmpty(fields)) {
+			this.fields = fields;
+			// 收集导入包信息
+			Set<String> pkgSet = new HashSet<String>();
+			for (TableField field : fields) {
+				if (null != field.getColumnType() && null != field.getColumnType().getPkg()) {
+					pkgSet.add(field.getColumnType().getPkg());
+				}
+				if (field.isKeyFlag() && field.isConvert()) {
+					pkgSet.add("com.wshsoft.mybatis.annotations.TableId");
+				}
+				if (field.isConvert()) {
+					pkgSet.add("com.wshsoft.mybatis.annotations.TableField");
+				}
+			}
+			if (!pkgSet.isEmpty()) {
+				this.importPackages =  new ArrayList(Arrays.asList(pkgSet.toArray(new String[] {})));
+			}
+		}
+	}
+
+	public List<String> getImportPackages() {
+		return importPackages;
+	}
+
+	public void setImportPackages(String pkg) {
+		importPackages.add(pkg);
 	}
 
 	/**
@@ -126,21 +157,6 @@ public class TableInfo {
 			fieldNames = names.toString();
 		}
 		return fieldNames;
-	}
-
-	/**
-	 * 判断字段中是否包含日期类型
-	 *
-	 * @return 是否
-	 */
-	public boolean isHasDate() {
-		for (TableField fieldInfo : fields) {
-			if (fieldInfo.getPropertyType().equals("Date")) {
-				hasDate = true;
-				break;
-			}
-		}
-		return hasDate;
 	}
 
 	/**

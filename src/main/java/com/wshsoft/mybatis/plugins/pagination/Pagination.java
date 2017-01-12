@@ -1,10 +1,9 @@
 package com.wshsoft.mybatis.plugins.pagination;
 
-import java.io.Serializable;
-
+import com.wshsoft.mybatis.toolkit.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 
-import com.wshsoft.mybatis.toolkit.StringUtils;
+import java.io.Serializable;
 
 /**
  * <p>

@@ -1,22 +1,13 @@
 package ${package.Entity};
 
-#if(${superEntityClassPackage})
-import ${superEntityClassPackage};
-#end
 #if(${activeRecord})
 import com.wshsoft.mybatis.activerecord.Model;
 #end
-#if(!${dbColumnUnderline})
-import com.wshsoft.mybatis.annotations.TableId;
-import com.wshsoft.mybatis.annotations.TableField;
-#end
-#if(${tabeAnnotation})
-import com.wshsoft.mybatis.annotations.TableName;
+#foreach($pkg in ${table.importPackages})
+import ${pkg};
 #end
 import java.io.Serializable;
-#if(${table.hasDate})
-import java.util.Date;
-#end
+
 
 /**
  * <p>
@@ -26,7 +17,7 @@ import java.util.Date;
  * @author ${author}
  * @since ${date}
  */
-#if(${tabeAnnotation})
+#if(${tableAnnotation})
 @TableName("${table.name}")
 #end
 #if(${superEntityClass})
@@ -45,17 +36,15 @@ public class ${entity} implements Serializable {
 #if(${field.keyFlag})
 #set($keyPropertyName=${field.propertyName})
 #end
-#if(${field.comment})
-	/**
-	 * ${field.comment}
-	 */
+#if("$!field.comment" != "")
+    /**
+     * ${field.comment}
+     */
 #end
-#if(${field.keyFlag})
-	@TableId#if(${field.convert})(value="${field.name}")
-#end
-
-#else
 #if(${field.convert})
+#if(${field.keyFlag})
+	@TableId(value="${field.name}")
+#else
 	@TableField(value="${field.name}")
 #end
 #end

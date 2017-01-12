@@ -1,11 +1,13 @@
 package com.wshsoft.mybatis.generator.config.po;
 
 import com.wshsoft.mybatis.generator.config.StrategyConfig;
+import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
 
 /**
  * <p>
  * 表字段信息
  * </p>
+ * 
  * @author Carry xie
  * @since 2016-8-30
  */
@@ -14,7 +16,7 @@ public class TableField {
 	private String name;
 	private String type;
 	private String propertyName;
-	private String propertyType;
+	private DbColumnType columnType;
 	private String comment;
 
 	public boolean isKeyFlag() {
@@ -49,12 +51,19 @@ public class TableField {
 		this.propertyName = propertyName;
 	}
 
-	public String getPropertyType() {
-		return propertyType;
+	public DbColumnType getColumnType() {
+		return columnType;
 	}
 
-	public void setPropertyType(String propertyType) {
-		this.propertyType = propertyType;
+	public void setColumnType(DbColumnType columnType) {
+		this.columnType = columnType;
+	}
+
+	public String getPropertyType() {
+		if (null != columnType) {
+			return columnType.getType();
+		}
+		return null;
 	}
 
 	public String getComment() {
