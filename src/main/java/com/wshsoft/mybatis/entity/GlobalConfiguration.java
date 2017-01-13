@@ -74,7 +74,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
 
 	public GlobalConfiguration() {
-		// TODO
+		// 构造方法
 	}
 
 	public GlobalConfiguration(ISqlInjector sqlInjector) {
@@ -242,7 +242,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	 * 标记全局设置 (统一所有入口)
 	 * </p>
 	 *
-	 * @param configuration
+	 * @param sqlSessionFactory
 	 * @return
 	 */
 	public SqlSessionFactory signGlobalConfig(SqlSessionFactory sqlSessionFactory) {

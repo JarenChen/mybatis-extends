@@ -27,12 +27,13 @@ public class MysqlGenerator {
 	 */
 	public static void main(String[] args) {
 		AutoGenerator mpg = new AutoGenerator();
+
 		// 全局配置
 		GlobalConfig gc = new GlobalConfig();
 		gc.setOutputDir("D://mybatis-extends");
 		gc.setFileOverride(true);
-		gc.setActiveRecord(true);
-		gc.setEnableCache(true);// XML 二级缓存
+		gc.setActiveRecord(true);// 开启 activeRecord 模式 
+		gc.setEnableCache(false);// XML 二级缓存
 		gc.setBaseResultMap(true);// XML ResultMap
 		gc.setBaseColumnList(true);// XML columList
 		gc.setAuthor("Carry xie");
@@ -44,7 +45,6 @@ public class MysqlGenerator {
 		// gc.setServiceImplName("%sServiceDiy");
 		// gc.setControllerName("%sAction");
 		mpg.setGlobalConfig(gc);
-
 
 		// 数据源配置
 		DataSourceConfig dsc = new DataSourceConfig();
@@ -59,7 +59,7 @@ public class MysqlGenerator {
 		StrategyConfig strategy = new StrategyConfig();
 		// strategy.setDbColumnUnderline(true);//全局下划线命名
 		// 表前缀
-		strategy.setTablePrefix("tb_");
+		strategy.setTablePrefix(new String[]{"bmd_", "mp_"});// 此处可以修改为您的表前缀
 		// 表名生成策略
 		strategy.setNaming(NamingStrategy.remove_prefix_and_camel);
 		// strategy.setInclude(new String[] { "user" }); // 需要生成的表
@@ -89,6 +89,8 @@ public class MysqlGenerator {
 		// 包配置
 		PackageConfig pc = new PackageConfig();
 		pc.setModuleName("demo");
+		pc.setParent("com.wshsoft");//自定义包路径
+		pc.setController("controller");//这里是控制器包名，默认 web
 		mpg.setPackageInfo(pc);
 
 		// 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值

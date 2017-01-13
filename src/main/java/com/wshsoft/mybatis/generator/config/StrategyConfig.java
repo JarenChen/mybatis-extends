@@ -11,6 +11,7 @@ import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
  * @since 2016-8-30
  */
 public class StrategyConfig {
+
 	/**
 	 * 表名、字段名、是否使用下划线命名（默认 false）
 	 */
@@ -26,7 +27,7 @@ public class StrategyConfig {
 	/**
 	 * 表前缀
 	 */
-	private String tablePrefix;
+	private String[] tablePrefix;
 
 	/**
 	 * 自定义继承的Entity类全称，带包名
@@ -101,11 +102,11 @@ public class StrategyConfig {
 		this.fieldNaming = fieldNaming;
 	}
 
-	public String getTablePrefix() {
+	public String[] getTablePrefix() {
 		return tablePrefix;
 	}
 
-	public void setTablePrefix(String tablePrefix) {
+	public void setTablePrefix(String[] tablePrefix) {
 		this.tablePrefix = tablePrefix;
 	}
 

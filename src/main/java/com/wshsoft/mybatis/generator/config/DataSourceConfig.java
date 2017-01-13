@@ -48,6 +48,8 @@ public class DataSourceConfig {
 				dbType = DbType.MYSQL;
 			} else if (driverName.contains("oracle")) {
 				dbType = DbType.ORACLE;
+			} else if (driverName.contains("postgresql")) {
+				dbType = DbType.POSTGRE_SQL;
 			} else {
 				throw new MybatisExtendsException("Unknown type of database!");
 			}
