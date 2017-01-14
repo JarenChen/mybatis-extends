@@ -1,6 +1,5 @@
-package com.wshsoft.mybatis.toolkit;
 
-import com.wshsoft.mybatis.enums.SqlLike;
+package com.wshsoft.mybatis.toolkit;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -354,6 +353,25 @@ public class StringUtils {
 	 */
 	public static boolean checkValNull(Object object) {
 		return !checkValNotNull(object);
+	}
+
+	/**
+	 * <p>
+	 * 包含大写字母
+	 * </p>
+	 * 
+	 * @param word
+	 *            待判断字符串
+	 * @return
+	 */
+	public static boolean containsUpperCase(String word) {
+		for (int i = 0; i < word.length(); i++) {
+			char c = word.charAt(i);
+			if (Character.isUpperCase(c)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

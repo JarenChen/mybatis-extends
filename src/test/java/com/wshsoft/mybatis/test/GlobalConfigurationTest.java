@@ -1,23 +1,22 @@
 package com.wshsoft.mybatis.test;
 
-import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
-import com.wshsoft.mybatis.mapper.Condition;
-import com.wshsoft.mybatis.test.mysql.mapper.NotPKMapper;
-import com.wshsoft.mybatis.test.mysql.mapper.TestMapper;
-import com.wshsoft.mybatis.test.mysql.entity.NotPK;
-import com.wshsoft.mybatis.test.mysql.entity.Test;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.UUID;
+
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Assert;
 
-import java.io.InputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.mapper.Condition;
+import com.wshsoft.mybatis.test.mysql.entity.NotPK;
+import com.wshsoft.mybatis.test.mysql.entity.Test;
+import com.wshsoft.mybatis.test.mysql.mapper.NotPKMapper;
+import com.wshsoft.mybatis.test.mysql.mapper.TestMapper;
 
 /**
  * <p>
@@ -32,6 +31,7 @@ public class GlobalConfigurationTest {
 	/**
 	 * 全局配置测试
 	 */
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
         GlobalConfiguration global = GlobalConfiguration.defaults();
         global.setAutoSetDbType(true);
@@ -51,7 +51,6 @@ public class GlobalConfigurationTest {
 		SqlSessionFactory sessionFactory = factoryBuilder.build(inputStream);
 		SqlSession session = sessionFactory.openSession(false);
 		TestMapper testMapper = session.getMapper(TestMapper.class);
-        List<Map<String, Object>> list = testMapper.selectMaps(null);
         Test test = new Test();
 		test.setCreateTime(new Date());
 		// 开启全局校验字符串会忽略空字符串
