@@ -42,13 +42,9 @@ import com.wshsoft.mybatis.toolkit.TableInfoHelper;
  * @Date 2016-09-09
  */
 public class AutoSqlInjector implements ISqlInjector {
-
 	private static final Log logger = LogFactory.getLog(AutoSqlInjector.class);
-
 	protected Configuration configuration;
-
 	protected LanguageDriver languageDriver;
-
 	protected MapperBuilderAssistant builderAssistant;
 
 	/**
@@ -72,7 +68,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		this.configuration = builderAssistant.getConfiguration();
 		this.builderAssistant = builderAssistant;
-		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
+		this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
 		GlobalConfiguration globalCache = GlobalConfiguration.GlobalConfig(configuration);
 		/*
 		 * 驼峰设置 Extends配置 > 原始配置
@@ -776,7 +772,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	// --------------------------------------------------------SqlRunner------------------------------------------------------------
 	public void injectSqlRunner(Configuration configuration) {
 		this.configuration = configuration;
-		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
+		this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
 		initSelect();
 		initInsert();
 		initUpdate();
@@ -803,6 +799,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param resultType
 	 *            返回的结果类型
 	 */
+	@SuppressWarnings("serial")
 	private void createSelectMappedStatement(String mappedStatement, SqlSource sqlSource, final Class<?> resultType) {
 		MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, SqlCommandType.SELECT)
 				.resultMaps(new ArrayList<ResultMap>() {
@@ -824,6 +821,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param sqlCommandType
 	 *            执行的sqlCommandType
 	 */
+	@SuppressWarnings("serial")
 	private void createUpdateMappedStatement(String mappedStatement, SqlSource sqlSource, SqlCommandType sqlCommandType) {
 		MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, sqlCommandType).resultMaps(
 				new ArrayList<ResultMap>() {

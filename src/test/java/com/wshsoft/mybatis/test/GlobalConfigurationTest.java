@@ -24,7 +24,7 @@ import java.util.UUID;
  * 全局配置测试
  * </p>
  *
- * @author Caratacus
+ * @author Carry xie
  * @Date 2016-12-22
  */
 public class GlobalConfigurationTest {
