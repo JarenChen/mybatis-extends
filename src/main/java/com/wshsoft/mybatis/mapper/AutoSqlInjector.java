@@ -21,6 +21,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
@@ -271,18 +272,19 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	protected void injectDeleteByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
-		String sql = null;
+		SqlSource sqlSource = null;
 		if (batch) {
 			sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
 			StringBuilder ids = new StringBuilder();
 			ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
 			ids.append("#{item}");
 			ids.append("\n</foreach>");
-			sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), ids.toString());
+			String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), ids.toString());
+			sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		} else {
-			sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), table.getKeyColumn());
+			String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), table.getKeyColumn());
+			sqlSource = new RawSqlSource(configuration, sql, Object.class);
 		}
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
 	}
 
@@ -342,8 +344,8 @@ public class AutoSqlInjector implements ISqlInjector {
 			sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
 					sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);
 		} else {
-			sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
-					table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), modelClass);
+			sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
+					table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), Object.class);
 		}
 		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
 	}
@@ -561,7 +563,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			Iterator<TableFieldInfo> iterator = fieldList.iterator();
 			while (iterator.hasNext()) {
 				TableFieldInfo fieldInfo = iterator.next();
-				//匹配转换内容
+				// 匹配转换内容
 				String wordConvert = sqlWordConvert(fieldInfo.getProperty());
 				if (fieldInfo.getColumn().equals(wordConvert)) {
 					columns.append(wordConvert);
@@ -689,11 +691,10 @@ public class AutoSqlInjector implements ISqlInjector {
 		// 验证逻辑
 		if (fieldStrategy == FieldStrategy.NOT_EMPTY) {
 			String propertyType = fieldInfo.getPropertyType();
-			// 如果是Date类型
-			if ("java.util.Date".equals(propertyType) || "java.sql.Date".equals(propertyType)) {
-				return String.format("\n\t<if test=\"%s!=null \">", property, property);
-			} else {
+			if (StringUtils.isCharSequence(propertyType)) {
 				return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
+			} else {
+				return String.format("\n\t<if test=\"%s!=null \">", property, property);
 			}
 		} else {
 			// FieldStrategy.NOT_NULL
