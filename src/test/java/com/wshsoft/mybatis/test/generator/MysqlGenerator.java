@@ -1,13 +1,18 @@
 package com.wshsoft.mybatis.test.generator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import com.wshsoft.mybatis.generator.InjectionConfig;
+
 import com.wshsoft.mybatis.generator.AutoGenerator;
+import com.wshsoft.mybatis.generator.InjectionConfig;
 import com.wshsoft.mybatis.generator.config.DataSourceConfig;
+import com.wshsoft.mybatis.generator.config.FileOutConfig;
 import com.wshsoft.mybatis.generator.config.GlobalConfig;
 import com.wshsoft.mybatis.generator.config.PackageConfig;
 import com.wshsoft.mybatis.generator.config.StrategyConfig;
+import com.wshsoft.mybatis.generator.config.po.TableInfo;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
 
@@ -57,11 +62,12 @@ public class MysqlGenerator {
 
 		// 策略配置
 		StrategyConfig strategy = new StrategyConfig();
+		// strategy.setCapitalMode(true);// 全局大写命名
 		// strategy.setDbColumnUnderline(true);//全局下划线命名
 		// 表前缀
 		strategy.setTablePrefix(new String[]{"bmd_", "mp_"});// 此处可以修改为您的表前缀
 		// 表名生成策略
-		strategy.setNaming(NamingStrategy.remove_prefix_and_camel);
+		strategy.setNaming(NamingStrategy.remove_prefix_and_camel);// 表名生成策略
 		// strategy.setInclude(new String[] { "user" }); // 需要生成的表
 		// strategy.setExclude(new String[]{"test"}); // 排除生成的表
 		// 字段名生成策略
@@ -102,6 +108,17 @@ public class MysqlGenerator {
 				this.setMap(map);
 			}
 		};
+		//自定义文件名称
+		/*List<FileOutConfig> focList = new ArrayList<FileOutConfig>();
+		focList.add(new FileOutConfig("/template/entity.java.vm") {
+			@Override
+			public String outputFile(TableInfo tableInfo) {
+				// 自定义输入文件名称
+				return "D://my_" + tableInfo.getEntityName() + ".java";
+			}
+		});
+		cfg.setFileOutConfigList(focList);
+		*/
 		mpg.setCfg(cfg);
 
 		// 自定义模板配置，模板可以参考源码 /mybatis-extends/src/main/resources/template 使用 copy

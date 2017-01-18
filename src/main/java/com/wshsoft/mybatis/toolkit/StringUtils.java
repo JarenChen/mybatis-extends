@@ -376,6 +376,22 @@ public class StringUtils {
 
 	/**
 	 * <p>
+	 * 是否为大写命名
+	 * </p>
+	 * 
+	 * @param word
+	 *            待判断字符串
+	 * @return
+	 */
+	public static boolean isCapitalMode(String word) {
+		if (null == word) {
+			return false;
+		}
+		return word.matches("^[0-9A-Z/_]+$");
+	}
+
+	/**
+	 * <p>
 	 * Check if a String ends with a specified suffix.
 	 * </p>
 	 *

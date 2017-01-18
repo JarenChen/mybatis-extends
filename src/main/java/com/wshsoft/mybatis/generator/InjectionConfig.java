@@ -1,7 +1,9 @@
 package com.wshsoft.mybatis.generator;
 
+import java.util.List;
 import java.util.Map;
 
+import com.wshsoft.mybatis.generator.config.FileOutConfig;
 import com.wshsoft.mybatis.generator.config.builder.ConfigBuilder;
 
 /**
@@ -25,6 +27,11 @@ public abstract class InjectionConfig {
 	private Map<String, Object> map;
 
 	/**
+	 * 自定义输出文件
+	 */
+	private List<FileOutConfig> fileOutConfigList;
+
+	/**
 	 * 注入自定义 Map 对象
 	 */
 	public abstract void initMap();
@@ -43,6 +50,14 @@ public abstract class InjectionConfig {
 
 	public void setMap(Map<String, Object> map) {
 		this.map = map;
+	}
+
+	public List<FileOutConfig> getFileOutConfigList() {
+		return fileOutConfigList;
+	}
+
+	public void setFileOutConfigList(List<FileOutConfig> fileOutConfigList) {
+		this.fileOutConfigList = fileOutConfigList;
 	}
 
 }

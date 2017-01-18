@@ -1,6 +1,8 @@
 package com.wshsoft.mybatis.generator.config.po;
 
+import com.wshsoft.mybatis.generator.config.StrategyConfig;
 import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
+import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
  * <p>
@@ -25,6 +27,22 @@ public class TableField {
 
 	public void setConvert(boolean convert) {
 		this.convert = convert;
+	}
+
+	protected void setConvert(StrategyConfig strategyConfig) {
+		if (strategyConfig.isCapitalModeNaming(name)) {
+			this.convert = false;
+		} else {
+			// 转换字段
+			if (StrategyConfig.DB_COLUMN_UNDERLINE) {
+				// 包含大写处理
+				if (StringUtils.containsUpperCase(name)) {
+					this.convert = true;
+				}
+			} else if (!name.equalsIgnoreCase(propertyName)) {
+				this.convert = true;
+			}
+		}
 	}
 
 	public boolean isKeyFlag() {
@@ -55,8 +73,9 @@ public class TableField {
 		return propertyName;
 	}
 
-	public void setPropertyName(String propertyName) {
+	public void setPropertyName(StrategyConfig strategyConfig, String propertyName) {
 		this.propertyName = propertyName;
+		this.setConvert(strategyConfig);
 	}
 
 	public DbColumnType getColumnType() {

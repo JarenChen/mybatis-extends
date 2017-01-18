@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.wshsoft.mybatis.generator.config.StrategyConfig;
 import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 
@@ -18,7 +19,7 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
  * @since 2016/8/30
  */
 public class TableInfo {
-
+	private boolean convert;
 	private String name;
 	private String comment;
 
@@ -32,6 +33,34 @@ public class TableInfo {
 	private List<TableField> fields;
 	private List<String> importPackages = new ArrayList<String>();
 	private String fieldNames;
+
+	public boolean isConvert() {
+		return convert;
+	}
+
+	public void setConvert(boolean convert) {
+		this.convert = convert;
+	}
+
+	protected void setConvert(StrategyConfig strategyConfig) {
+		if (strategyConfig.containsTablePrefix(name)) {
+			// 包含前缀
+			this.convert = true;
+		} else if (strategyConfig.isCapitalModeNaming(name)) {
+			// 包含
+			this.convert = false;
+		} else {
+			// 转换字段
+			if (StrategyConfig.DB_COLUMN_UNDERLINE) {
+				// 包含大写处理
+				if (StringUtils.containsUpperCase(name)) {
+					this.convert = true;
+				}
+			} else if (!entityName.equalsIgnoreCase(name)) {
+				this.convert = true;
+			}
+		}
+	}
 
 	public String getName() {
 		return name;
@@ -60,8 +89,9 @@ public class TableInfo {
 		return entityName;
 	}
 
-	public void setEntityName(String entityName) {
+	public void setEntityName(StrategyConfig strategyConfig, String entityName) {
 		this.entityName = entityName;
+		this.setConvert(strategyConfig);
 	}
 
 	public String getMapperName() {
