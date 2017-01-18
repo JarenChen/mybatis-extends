@@ -548,34 +548,45 @@ public class AutoSqlInjector implements ISqlInjector {
 			if (entityWrapper) {
 				columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
 			}
+			List<TableFieldInfo> fieldList = table.getFieldList();
+			int _size = 0;
+			if (null != fieldList) {
+				_size = fieldList.size();
+			}
+
+			// 主键处理
 			if (StringUtils.isNotEmpty(table.getKeyProperty())) {
 				if (table.isKeyRelated()) {
 					columns.append(table.getKeyColumn()).append(" AS ").append(sqlWordConvert(table.getKeyProperty()));
 				} else {
 					columns.append(sqlWordConvert(table.getKeyProperty()));
 				}
-				columns.append(",");
-			}
-
-			List<TableFieldInfo> fieldList = table.getFieldList();
-			int _size = fieldList.size();
-			int i = 0;
-			Iterator<TableFieldInfo> iterator = fieldList.iterator();
-			while (iterator.hasNext()) {
-				TableFieldInfo fieldInfo = iterator.next();
-				// 匹配转换内容
-				String wordConvert = sqlWordConvert(fieldInfo.getProperty());
-				if (fieldInfo.getColumn().equals(wordConvert)) {
-					columns.append(wordConvert);
-				} else {
-					// 字段属性不一致
-					columns.append(fieldInfo.getColumn());
-					columns.append(" AS ").append(wordConvert);
-				}
-				if (i + 1 < _size) {
+				if (_size >= 1) {
+					// 判断其余字段是否存在
 					columns.append(",");
 				}
-				i++;
+			}
+
+			if (_size >= 1) {
+				// 字段处理
+				int i = 0;
+				Iterator<TableFieldInfo> iterator = fieldList.iterator();
+				while (iterator.hasNext()) {
+					TableFieldInfo fieldInfo = iterator.next();
+					// 匹配转换内容
+					String wordConvert = sqlWordConvert(fieldInfo.getProperty());
+					if (fieldInfo.getColumn().equals(wordConvert)) {
+						columns.append(wordConvert);
+					} else {
+						// 字段属性不一致
+						columns.append(fieldInfo.getColumn());
+						columns.append(" AS ").append(wordConvert);
+					}
+					if (i + 1 < _size) {
+						columns.append(",");
+					}
+					i++;
+				}
 			}
 			if (entityWrapper) {
 				columns.append("</otherwise></choose>");
