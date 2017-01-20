@@ -7,7 +7,7 @@ import com.wshsoft.mybatis.test.mysql.entity.NotPK;
  * 继承 BaseMapper，就自动拥有CRUD方法
  * </p>
  *
- * @author Caratacus
+ * @author Carry xie
  * @Date 2016-12-22
  */
 public interface NotPKMapper extends BaseMapper<NotPK> {

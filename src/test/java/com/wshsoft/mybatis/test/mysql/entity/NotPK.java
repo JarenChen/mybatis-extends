@@ -9,7 +9,7 @@ import java.io.Serializable;
  * 测试实体没有主键依然注入通用方法
  * </p>
  *
- * @author Caratacu
+ * @author Carry xie
  * @Date 2016-12-22
  */
 @TableName("not_pk")

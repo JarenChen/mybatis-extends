@@ -19,7 +19,7 @@ import java.util.List;
  * 循环标签 查询分页失效 测试类
  * </p>
  *
- * @author Caratacus
+ * @author Carry xie
  * @Date 2016-12-21
  */
 public class CircularLabelsTest {
