@@ -5,12 +5,17 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.generator.config.converts.MySqlTypeConvert;
+import com.wshsoft.mybatis.generator.config.converts.OracleTypeConvert;
+import com.wshsoft.mybatis.generator.config.converts.PostgreSqlTypeConvert;
+import com.wshsoft.mybatis.generator.config.converts.SqlServerTypeConvert;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 
 /**
  * <p>
  * 数据库配置
  * </p>
+ *
  * @author Carry xie
  * @since 2016/8/30
  */
@@ -20,6 +25,10 @@ public class DataSourceConfig {
 	 * 数据库类型
 	 */
 	private DbType dbType;
+	/**
+	 * 类型转换
+	 */
+	private ITypeConvert typeConvert;
 	/**
 	 * 驱动连接的URL
 	 */
@@ -59,6 +68,31 @@ public class DataSourceConfig {
 
 	public void setDbType(DbType dbType) {
 		this.dbType = dbType;
+	}
+
+	public ITypeConvert getTypeConvert() {
+		if (null == typeConvert) {
+			switch (getDbType()) {
+			case ORACLE:
+				typeConvert = new OracleTypeConvert();
+				break;
+			case SQL_SERVER:
+				typeConvert = new SqlServerTypeConvert();
+				break;
+			case POSTGRE_SQL:
+				typeConvert = new PostgreSqlTypeConvert();
+				break;
+			default:
+				// 默认 MYSQL
+				typeConvert = new MySqlTypeConvert();
+				break;
+			}
+		}
+		return typeConvert;
+	}
+
+	public void setTypeConvert(ITypeConvert typeConvert) {
+		this.typeConvert = typeConvert;
 	}
 
 	/**

@@ -15,6 +15,7 @@ import com.wshsoft.mybatis.generator.config.StrategyConfig;
 import com.wshsoft.mybatis.generator.config.po.TableInfo;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
+import com.wshsoft.mybatis.test.mysql.MyFieldTypeConvert;
 
 /**
  * <p>
@@ -54,6 +55,7 @@ public class MysqlGenerator {
 		// 数据源配置
 		DataSourceConfig dsc = new DataSourceConfig();
 		dsc.setDbType(DbType.MYSQL);
+		dsc.setTypeConvert(new MyFieldTypeConvert());
 		dsc.setDriverName("com.mysql.jdbc.Driver");
 		dsc.setUsername("root");
 		dsc.setPassword("root");
@@ -109,7 +111,8 @@ public class MysqlGenerator {
 			}
 		};
 		//自定义文件名称
-		/*List<FileOutConfig> focList = new ArrayList<FileOutConfig>();
+		/*
+		List<FileOutConfig> focList = new ArrayList<FileOutConfig>();
 		focList.add(new FileOutConfig("/template/entity.java.vm") {
 			@Override
 			public String outputFile(TableInfo tableInfo) {

@@ -99,7 +99,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * <p>
 	 * 注入SQL
 	 * </p>
-	 * 
+	 *
 	 * @param builderAssistant
 	 * @param mapperClass
 	 * @param modelClass
@@ -639,7 +639,6 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * </p>
 	 */
 	protected String sqlWhereByMap() {
-
 		StringBuilder where = new StringBuilder();
 		where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
 		where.append("\n<where>");
@@ -820,13 +819,10 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	@SuppressWarnings("serial")
 	private void createSelectMappedStatement(String mappedStatement, SqlSource sqlSource, final Class<?> resultType) {
-		MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, SqlCommandType.SELECT)
-				.resultMaps(new ArrayList<ResultMap>() {
-					{
-						add(new ResultMap.Builder(configuration, "defaultResultMap", resultType, new ArrayList<ResultMapping>(0))
-								.build());
-					}
-				}).build();
+		MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, SqlCommandType.SELECT).resultMaps(
+				new ArrayList<ResultMap>() {{
+					add(new ResultMap.Builder(configuration, "defaultResultMap", resultType, new ArrayList<ResultMapping>(0)).build());
+				}}).build();
 		// 缓存
 		configuration.addMappedStatement(ms);
 	}
@@ -843,12 +839,9 @@ public class AutoSqlInjector implements ISqlInjector {
 	@SuppressWarnings("serial")
 	private void createUpdateMappedStatement(String mappedStatement, SqlSource sqlSource, SqlCommandType sqlCommandType) {
 		MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, sqlCommandType).resultMaps(
-				new ArrayList<ResultMap>() {
-					{
-						add(new ResultMap.Builder(configuration, "defaultResultMap", int.class, new ArrayList<ResultMapping>(0))
-								.build());
-					}
-				}).build();
+				new ArrayList<ResultMap>() {{
+					add(new ResultMap.Builder(configuration, "defaultResultMap", int.class, new ArrayList<ResultMapping>(0)).build());
+				}}).build();
 		// 缓存
 		configuration.addMappedStatement(ms);
 	}

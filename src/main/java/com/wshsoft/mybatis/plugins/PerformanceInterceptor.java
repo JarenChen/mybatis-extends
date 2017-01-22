@@ -33,9 +33,7 @@ import com.wshsoft.mybatis.toolkit.SystemClock;
  * @author Carry xie
  * @Date 2016-07-07
  */
-@Intercepts({
-		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class,
-				ResultHandler.class }),
+@Intercepts({@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }),
 		@Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class PerformanceInterceptor implements Interceptor {
 
@@ -67,7 +65,7 @@ public class PerformanceInterceptor implements Interceptor {
 		long timing = end - start;
 		System.err.println(" Time：" + timing + " ms" + " - ID：" + statementId + "\n SQL Params:" + params.toString()
 				+ "\n Execute SQL：" + sql + "\n");
-		if (maxTime >0 && timing > maxTime) {
+		if (maxTime >= 1 && timing > maxTime) {
 			throw new MybatisExtendsException(" The SQL execution time is too large, please optimize ! ");
 		}
 		return result;
