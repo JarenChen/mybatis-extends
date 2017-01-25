@@ -45,10 +45,10 @@ public class MysqlGenerator {
 		gc.setAuthor("Carry xie");
 
 		// 自定义文件命名，注意 %s 会自动填充表实体属性！
-		// gc.setMapperName("%sDao");
-		// gc.setXmlName("%sDao");
-		// gc.setServiceName("MP%sService");
-		// gc.setServiceImplName("%sServiceDiy");
+		// gc.setMapperName("%sMapper");
+		// gc.setXmlName("%sMapper");
+		// gc.setServiceName("%sService");
+		// gc.setServiceImplName("%sServiceImpl");
 		// gc.setControllerName("%sAction");
 		mpg.setGlobalConfig(gc);
 
