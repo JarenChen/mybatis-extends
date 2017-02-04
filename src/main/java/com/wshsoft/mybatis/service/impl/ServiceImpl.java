@@ -10,6 +10,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wshsoft.mybatis.entity.TableInfo;
+import com.wshsoft.mybatis.enums.SqlMethod;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.mapper.BaseMapper;
 import com.wshsoft.mybatis.mapper.SqlHelper;
@@ -49,6 +50,16 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 */
 	protected SqlSession sqlSessionBatch() {
 		return SqlHelper.sqlSessionBatch(currentModleClass());
+	}
+
+	/**
+	 * 获取SqlStatement
+	 *
+	 * @param sqlMethod
+	 * @return
+	 */
+	protected String sqlStatement(SqlMethod sqlMethod) {
+		return SqlHelper.table(currentModleClass()).getSqlStatement(sqlMethod.getMethod());
 	}
 
 	/**
@@ -149,7 +160,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		try {
 			int size = entityList.size();
 			for (int i = 0; i < size; i++) {
-				baseMapper.insert(entityList.get(i));
+				batchSqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), entityList.get(i));
 				if (i % batchSize == 0) {
 					batchSqlSession.flushStatements();
 				}
@@ -198,7 +209,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		try {
 			int size = entityList.size();
 			for (int i = 0; i < size; i++) {
-				baseMapper.updateById(entityList.get(i));
+				batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), entityList.get(i));
 				if (i % 30 == 0) {
 					batchSqlSession.flushStatements();
 				}
@@ -258,27 +269,15 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper) {
-		fillWrapper(page, wrapper);
+		SqlHelper.fillWrapper(page, wrapper);
 		page.setRecords(baseMapper.selectMapsPage(page, wrapper));
 		return page;
 	}
 
 	public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
-		fillWrapper(page, wrapper);
+		SqlHelper.fillWrapper(page, wrapper);
 		page.setRecords(baseMapper.selectPage(page, wrapper));
 		return page;
 	}
 
-	/**
-	 * 填充Wrapper
-	 * 
-	 * @param page
-	 * @param wrapper
-	 */
-	protected void fillWrapper(Page<T> page, Wrapper<T> wrapper) {
-		if (null != wrapper) {
-			wrapper.orderBy(page.getOrderByField(), page.isAsc());
-			wrapper.allEq(page.getCondition());
-		}
-	}
 }

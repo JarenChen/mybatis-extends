@@ -1,10 +1,12 @@
 package com.wshsoft.mybatis.plugins;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.Properties;
-
+import com.wshsoft.mybatis.MybatisDefaultParameterHandler;
+import com.wshsoft.mybatis.entity.CountOptimize;
+import com.wshsoft.mybatis.plugins.pagination.DialectFactory;
+import com.wshsoft.mybatis.plugins.pagination.Pagination;
+import com.wshsoft.mybatis.toolkit.IOUtils;
+import com.wshsoft.mybatis.toolkit.SqlUtils;
+import com.wshsoft.mybatis.toolkit.StringUtils;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -20,13 +22,10 @@ import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import com.wshsoft.mybatis.MybatisDefaultParameterHandler;
-import com.wshsoft.mybatis.entity.CountOptimize;
-import com.wshsoft.mybatis.plugins.pagination.DialectFactory;
-import com.wshsoft.mybatis.plugins.pagination.Pagination;
-import com.wshsoft.mybatis.toolkit.IOUtils;
-import com.wshsoft.mybatis.toolkit.SqlUtils;
-import com.wshsoft.mybatis.toolkit.StringUtils;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Properties;
 
 /**
  * <p>
@@ -131,9 +130,9 @@ public class PaginationInterceptor implements Interceptor {
 			if (rowBounds instanceof Pagination) {
 				Connection connection = null;
 				try {
-					connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
 					Pagination page = (Pagination) rowBounds;
 					if (page.isSearchCount()) {
+						connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
 						/*
 						 * COUNT 查询，去掉 ORDER BY 优化执行 SQL
 						 */

@@ -3,6 +3,7 @@ package com.wshsoft.mybatis.mapper;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
@@ -49,10 +50,8 @@ public class SqlHelper {
 	 */
 	public static SqlSession sqlSessionBatch(Class<?> clazz) {
 		SqlSession sqlSession = getSqlSession(clazz, true);
-		if (sqlSession != null) {
-			return sqlSession;
-		}
-		return GlobalConfiguration.currentSessionFactory(clazz).openSession(ExecutorType.BATCH, false);
+		return (sqlSession != null) ? sqlSession : GlobalConfiguration.currentSessionFactory(clazz).openSession(
+				ExecutorType.BATCH, false);
 	}
 
 	/**
@@ -63,18 +62,16 @@ public class SqlHelper {
 	 * @return
 	 */
 	private static SqlSession getSqlSession(Class<?> clazz, boolean isBatch) {
+		SqlSession session = null;
 		try {
 			SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
 			Configuration configuration = sqlSessionFactory.getConfiguration();
-			GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(configuration);
-			if (isBatch) {
-				return globalConfiguration.getSqlsessionBatch();
-			}
-			return globalConfiguration.getSqlsessionBatch();
+			GlobalConfiguration globalConfiguration = GlobalConfiguration.getGlobalConfig(configuration);
+			session = isBatch ? globalConfiguration.getSqlsessionBatch() : globalConfiguration.getSqlSession();
 		} catch (Exception e) {
 			// ignored
 		}
-		return null;
+		return session;
 	}
 
 	/**
@@ -90,15 +87,12 @@ public class SqlHelper {
 	 */
 	public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
 		SqlSession sqlSession = getSqlSession(clazz, false);
-		if (sqlSession != null) {
-			return sqlSession;
-		}
-		return GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
+		return (sqlSession != null) ? sqlSession : GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
 	}
 
 	/**
 	 * 获取TableInfo
-	 * 
+	 *
 	 * @return TableInfo
 	 */
 	public static TableInfo table(Class<?> clazz) {
@@ -119,10 +113,7 @@ public class SqlHelper {
 	 * @return boolean
 	 */
 	public static boolean retBool(Integer result) {
-		if (null == result) {
-			return false;
-		}
-		return result >= 1;
+		return (null == result) ? false : result >= 1;
 	}
 
 	/**
@@ -157,4 +148,16 @@ public class SqlHelper {
 		return null;
 	}
 
+	/**
+	 * 填充Wrapper
+	 *
+	 * @param page
+	 * @param wrapper
+	 */
+	public static void fillWrapper(Page<?> page, Wrapper<?> wrapper) {
+		if (null != wrapper) {
+			wrapper.orderBy(page.getOrderByField(), page.isAsc());
+			wrapper.allEq(page.getCondition());
+		}
+	}
 }

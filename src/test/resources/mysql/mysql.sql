@@ -13,23 +13,11 @@ File Encoding         : 65001
 Date: 2016-12-23 16:32:46
 */
 
-SET FOREIGN_KEY_CHECKS=0;
+SET NAMES utf8;
+SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for `not_pk`
--- ----------------------------
-DROP TABLE IF EXISTS `not_pk`;
-CREATE TABLE `not_pk` (
-  `uuid` varchar(64) NOT NULL,
-  `type` varchar(64) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of not_pk
--- ----------------------------
-
--- ----------------------------
--- Table structure for `role`
+--  Table structure for `role`
 -- ----------------------------
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role` (
@@ -49,15 +37,27 @@ CREATE TABLE `role` (
 -- ----------------------------
 DROP TABLE IF EXISTS `test`;
 CREATE TABLE `test` (
-  `id` bigint(20) NOT NULL,
-  `type` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `type` varchar(255) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of test
+-- Table structure for not_pk
 -- ----------------------------
+DROP TABLE IF EXISTS `not_pk`;
+CREATE TABLE `not_pk` (
+  `uuid` varchar(64) NOT NULL,
+  `type` varchar(64) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+--  Records of `test`
+-- ----------------------------
+BEGIN;
+INSERT INTO `test` VALUES ('1', '11'), ('2', '22');
+COMMIT;
 
 -- ----------------------------
 -- Table structure for `user`
@@ -78,3 +78,4 @@ CREATE TABLE `user` (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
+SET FOREIGN_KEY_CHECKS = 1;

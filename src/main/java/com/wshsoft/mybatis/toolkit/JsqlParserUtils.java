@@ -1,4 +1,6 @@
 package com.wshsoft.mybatis.toolkit;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
@@ -12,8 +14,6 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import com.wshsoft.mybatis.entity.CountOptimize;
 

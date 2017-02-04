@@ -8,7 +8,7 @@ import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
  * PostgreSQL 字段类型转换
  * </p>
  *
- * @author hubin
+ * @author Carry xie
  * @date 2017-01-20
  */
 public class PostgreSqlTypeConvert implements ITypeConvert {

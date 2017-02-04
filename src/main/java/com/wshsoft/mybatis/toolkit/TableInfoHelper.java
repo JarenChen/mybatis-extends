@@ -34,7 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TableInfoHelper {
 
 	private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
-
 	/**
 	 * 缓存反射类表信息
 	 */
@@ -76,7 +75,7 @@ public class TableInfoHelper {
 		if (null != builderAssistant) {
 			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
 			tableInfo.setConfigMark(builderAssistant.getConfiguration());
-			globalCache = GlobalConfiguration.GlobalConfig(builderAssistant.getConfiguration());
+			globalCache = GlobalConfiguration.getGlobalConfig(builderAssistant.getConfiguration());
 		} else {
 			// 兼容测试场景
 			globalCache = GlobalConfiguration.DEFAULT;
@@ -338,7 +337,7 @@ public class TableInfoHelper {
 	 */
 	public static void initSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
 		Configuration configuration = sqlSessionFactory.getConfiguration();
-		GlobalConfiguration globalConfig = GlobalConfiguration.GlobalConfig(configuration);
+		GlobalConfiguration globalConfig = GlobalConfiguration.getGlobalConfig(configuration);
 		// SqlRunner
 		SqlRunner.FACTORY = sqlSessionFactory;
 		if (globalConfig == null) {

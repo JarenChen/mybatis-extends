@@ -7,10 +7,7 @@ import com.wshsoft.mybatis.mapper.SqlHelper;
 import com.wshsoft.mybatis.mapper.SqlRunner;
 import com.wshsoft.mybatis.mapper.Wrapper;
 import com.wshsoft.mybatis.plugins.Page;
-import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 
 import java.io.Serializable;
@@ -30,8 +27,6 @@ import java.util.Map;
 @SuppressWarnings({ "serial", "rawtypes" })
 public abstract class Model<T extends Model> implements Serializable {
 
-	private static final Log logger = LogFactory.getLog(Model.class);
-
 	/**
 	 * <p>
 	 * 插入
@@ -47,12 +42,18 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * </p>
 	 */
 	public boolean insertOrUpdate() {
-		if (StringUtils.checkValNotNull(pkVal())) {
-			// update
-			return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
-		} else {
+		if (StringUtils.checkValNull(pkVal())) {
 			// insert
-			return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
+			return insert();
+		} else {
+			/*
+			 * 更新成功直接返回，失败执行插入逻辑
+			 */
+			boolean rlt = updateById();
+			if (!rlt) {
+				return insert();
+			}
+			return rlt;
 		}
 	}
 
@@ -263,10 +264,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 */
 	public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		if (wrapper != null && StringUtils.isNotEmpty(page.getOrderByField())) {
-			wrapper.orderBy(page.getOrderByField());
-			wrapper.allEq(page.getCondition());
-		}
+		SqlHelper.fillWrapper(page, wrapper);
 		map.put("ew", wrapper);
 		List<T> tl = sqlSession().selectList(sqlStatement(SqlMethod.SELECT_PAGE), map, page);
 		page.setRecords(tl);
@@ -331,7 +329,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * 获取Session 默认自动提交
 	 * <p/>
 	 */
-	private SqlSession sqlSession() {
+	protected SqlSession sqlSession() {
 		return SqlHelper.sqlSession(getClass());
 	}
 
@@ -341,11 +339,17 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @param sqlMethod
 	 * @return
 	 */
-	private String sqlStatement(SqlMethod sqlMethod) {
+	protected String sqlStatement(SqlMethod sqlMethod) {
 		return sqlStatement(sqlMethod.getMethod());
 	}
 
-	private String sqlStatement(String sqlMethod) {
+	/**
+	 * 获取SqlStatement
+	 *
+	 * @param sqlMethod
+	 * @return
+	 */
+	protected String sqlStatement(String sqlMethod) {
 		return SqlHelper.table(getClass()).getSqlStatement(sqlMethod);
 	}
 

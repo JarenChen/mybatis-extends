@@ -37,7 +37,7 @@ public @interface TableField {
 	 */
 	String el() default "";
 
-	/*
+	/**
 	 * <p>
 	 * 是否为数据库表字段
 	 * </p>
@@ -46,8 +46,8 @@ public @interface TableField {
 	 * </p>
 	 */
 	boolean exist() default true;
-	
-	/*
+
+	/**
 	 * <p>
 	 * 字段验证
 	 * </p>

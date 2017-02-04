@@ -1,17 +1,11 @@
 package com.wshsoft.mybatis.mapper;
 
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
-import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.plugins.Page;
-import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +20,6 @@ import java.util.Map;
  */
 public class SqlRunner {
 
-	private static final Log logger = LogFactory.getLog(SqlRunner.class);
 	// 默认FACTORY
 	public static SqlSessionFactory FACTORY;
 	public static final String INSERT = "com.wshsoft.mybatis.mapper.SqlRunner.Insert";
@@ -41,14 +34,14 @@ public class SqlRunner {
 	public static final SqlRunner DEFAULT = new SqlRunner();
 	private SqlSessionFactory sqlSessionFactory;
 
+	private Class<?> clazz;
+
 	public SqlRunner() {
 		this.sqlSessionFactory = FACTORY;
 	}
 
 	public SqlRunner(Class<?> clazz) {
-		TableInfo tableInfo = SqlHelper.table(clazz);
-		GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(tableInfo.getConfigMark());
-		this.sqlSessionFactory = globalConfiguration.getSqlSessionFactory();
+		this.clazz = clazz;
 	}
 
 	public boolean insert(String sql, Object... args) {
@@ -126,7 +119,7 @@ public class SqlRunner {
 	 * <p/>
 	 */
 	private SqlSession sqlSession() {
-		return sqlSessionFactory.openSession(true);
+		return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfiguration.getSqlSession(FACTORY.getConfiguration());
 	}
 
 }

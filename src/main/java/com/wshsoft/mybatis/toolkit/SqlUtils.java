@@ -13,7 +13,7 @@ import com.wshsoft.mybatis.plugins.pagination.Pagination;
  * @Date 2016-11-13
  */
 public class SqlUtils {
-	private final static SQLFormatter sqlFormatter = new SQLFormatter();
+	private final static SqlFormatter sqlFormatter = new SqlFormatter();
 	public static final String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s ) TOTAL";
 
 	/**

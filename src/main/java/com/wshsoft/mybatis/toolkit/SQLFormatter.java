@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
  * @author Carry xie
  * 
  */
-public class SQLFormatter {
+public class SqlFormatter {
 
 	private static final Set<String> BEGIN_CLAUSES = new HashSet<String>();
 	private static final Set<String> END_CLAUSES = new HashSet<String>();
