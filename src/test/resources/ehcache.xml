@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"> 
+
 	<!--
 	name：Cache的唯一标识
 	maxElementsInMemory：内存中最大缓存对象数
