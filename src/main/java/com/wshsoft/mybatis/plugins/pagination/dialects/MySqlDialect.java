@@ -12,7 +12,8 @@ import com.wshsoft.mybatis.plugins.pagination.IDialect;
  */
 public class MySqlDialect implements IDialect {
 
-	@Override
+	public static final MySqlDialect INSTANCE = new MySqlDialect();
+
 	public String buildPaginationSql(String originalSql, int offset, int limit) {
 		StringBuilder sql = new StringBuilder(originalSql);
 		sql.append(" LIMIT ").append(offset).append(",").append(limit);

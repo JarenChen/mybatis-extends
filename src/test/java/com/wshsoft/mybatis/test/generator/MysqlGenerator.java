@@ -12,7 +12,9 @@ import com.wshsoft.mybatis.generator.config.FileOutConfig;
 import com.wshsoft.mybatis.generator.config.GlobalConfig;
 import com.wshsoft.mybatis.generator.config.PackageConfig;
 import com.wshsoft.mybatis.generator.config.StrategyConfig;
+import com.wshsoft.mybatis.generator.config.converts.MySqlTypeConvert;
 import com.wshsoft.mybatis.generator.config.po.TableInfo;
+import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
 import com.wshsoft.mybatis.test.mysql.MyFieldTypeConvert;
@@ -55,7 +57,15 @@ public class MysqlGenerator {
 		// 数据源配置
 		DataSourceConfig dsc = new DataSourceConfig();
 		dsc.setDbType(DbType.MYSQL);
-		dsc.setTypeConvert(new MyFieldTypeConvert());
+	//	dsc.setTypeConvert(new MyFieldTypeConvert());
+        dsc.setTypeConvert(new MySqlTypeConvert(){
+			// 自定义数据库表字段类型转换【可选】
+			@Override
+			public DbColumnType processTypeConvert(String fieldType) {
+				System.out.println("转换类型：" + fieldType);
+				return super.processTypeConvert(fieldType);
+			}
+		});		
 		dsc.setDriverName("com.mysql.jdbc.Driver");
 		dsc.setUsername("root");
 		dsc.setPassword("root");

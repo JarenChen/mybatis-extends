@@ -47,7 +47,7 @@ public interface IService<T> {
 	 * @param entityList
 	 *            实体对象列表
 	 * @param batchSize
-	 *
+	 *            插入批次数量
 	 * @return boolean
 	 */
 	boolean insertBatch(List<T> entityList, int batchSize);
@@ -154,6 +154,19 @@ public interface IService<T> {
 	 * @return boolean
 	 */
 	boolean updateBatchById(List<T> entityList);
+
+	/**
+	 * <p>
+	 * 根据ID 批量更新
+	 * </p>
+	 *
+	 * @param entityList
+	 *            实体对象列表
+	 * @param batchSize
+	 *            更新批次数量
+	 * @return boolean
+	 */
+	boolean updateBatchById(List<T> entityList, int batchSize);
 
 	/**
 	 * <p>

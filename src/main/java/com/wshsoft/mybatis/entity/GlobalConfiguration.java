@@ -1,5 +1,6 @@
 package com.wshsoft.mybatis.entity;
 
+import com.wshsoft.mybatis.MybatisSqlSessionTemplate;
 import com.wshsoft.mybatis.enums.DBType;
 import com.wshsoft.mybatis.enums.FieldStrategy;
 import com.wshsoft.mybatis.enums.IdType;
@@ -15,10 +16,8 @@ import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionTemplate;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
@@ -77,8 +76,6 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
 	// 单例重用SqlSession
 	private SqlSession sqlSession;
-	// 批量SqlSession
-	private SqlSession sqlsessionBatch;
 
 	public GlobalConfiguration() {
 		// 构造方法
@@ -171,8 +168,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
 		this.sqlSessionFactory = sqlSessionFactory;
-		this.sqlSession = new SqlSessionTemplate(sqlSessionFactory);
-		this.sqlsessionBatch = new SqlSessionTemplate(sqlSessionFactory, ExecutorType.BATCH);
+		this.sqlSession = new MybatisSqlSessionTemplate(sqlSessionFactory);
 	}
 
 	public boolean isCapitalMode() {
@@ -199,10 +195,6 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	public SqlSession getSqlSession() {
 		return sqlSession;
-	}
-
-	public SqlSession getSqlsessionBatch() {
-		return sqlsessionBatch;
 	}
 
 	@Override
@@ -348,10 +340,6 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	public static SqlSession getSqlSession(Configuration configuration) {
 		return getGlobalConfig(configuration).getSqlSession();
-	}
-
-	public static SqlSession getSqlsessionBatch(Configuration configuration) {
-		return getGlobalConfig(configuration).getSqlsessionBatch();
 	}
 
 	/**

@@ -12,6 +12,8 @@ import com.wshsoft.mybatis.plugins.pagination.IDialect;
  */
 public class DB2Dialect implements IDialect {
 
+	public static final DB2Dialect INSTANCE = new DB2Dialect();
+
 	private static String getRowNumber(String originalSql) {
 		StringBuilder rownumber = new StringBuilder(50).append("rownumber() over(");
 		int orderByIndex = originalSql.toLowerCase().indexOf("order by");
@@ -26,7 +28,6 @@ public class DB2Dialect implements IDialect {
 		return originalSql.toLowerCase().contains("select distinct");
 	}
 
-	@Override
 	public String buildPaginationSql(String originalSql, int offset, int limit) {
 		int startOfSelect = originalSql.toLowerCase().indexOf("select");
 		StringBuilder pagingSelect = new StringBuilder(originalSql.length() + 100)
@@ -48,5 +49,4 @@ public class DB2Dialect implements IDialect {
 		}
 		return null;
 	}
-
 }

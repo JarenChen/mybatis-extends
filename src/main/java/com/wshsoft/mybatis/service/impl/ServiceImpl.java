@@ -1,14 +1,5 @@
 package com.wshsoft.mybatis.service.impl;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.enums.SqlMethod;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
@@ -22,6 +13,14 @@ import com.wshsoft.mybatis.toolkit.MapUtils;
 import com.wshsoft.mybatis.toolkit.ReflectionKit;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -78,6 +77,46 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return SqlHelper.retBool(result);
 	}
 
+	public boolean insert(T entity) {
+		return retBool(baseMapper.insert(entity));
+	}
+
+	public boolean insertBatch(List<T> entityList) {
+		return insertBatch(entityList, 30);
+	}
+
+	/**
+	 * 批量插入
+	 *
+	 * @param entityList
+	 * @param batchSize
+	 * @return
+	 */
+	public boolean insertBatch(List<T> entityList, int batchSize) {
+		if (CollectionUtils.isEmpty(entityList)) {
+			throw new IllegalArgumentException("Error: entityList must not be empty");
+		}
+		SqlSession batchSqlSession = sqlSessionBatch();
+		try {
+			int size = entityList.size();
+			String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
+			for (int i = 0; i < size; i++) {
+				batchSqlSession.insert(sqlStatement, entityList.get(i));
+				if (i >= 1 && i % batchSize == 0) {
+					batchSqlSession.flushStatements();
+				}
+			}
+			batchSqlSession.flushStatements();
+		} catch (Exception e) {
+			logger.warn("Error: Cannot execute insertBatch Method. Cause:" + e);
+			return false;
+		} finally {
+			batchSqlSession.close();
+		}
+		return true;
+
+	}
+
 	/**
 	 * <p>
 	 * TableId 注解存在更新记录，否插入一条记录
@@ -112,14 +151,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return false;
 	}
 
-	public boolean insert(T entity) {
-		return retBool(baseMapper.insert(entity));
-	}
-
-	public boolean insertBatch(List<T> entityList) {
-		return insertBatch(entityList, 30);
-	}
-
 	public boolean insertOrUpdateBatch(List<T> entityList) {
 		return insertOrUpdateBatch(entityList, 30);
 	}
@@ -128,12 +159,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (CollectionUtils.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
+		SqlSession batchSqlSession = sqlSessionBatch();
 		try {
-			SqlSession batchSqlSession = sqlSessionBatch();
 			int size = entityList.size();
 			for (int i = 0; i < size; i++) {
 				insertOrUpdate(entityList.get(i));
-				if (i % batchSize == 0) {
+				if (i >= 1 && i % batchSize == 0) {
 					batchSqlSession.flushStatements();
 				}
 			}
@@ -141,37 +172,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		} catch (Exception e) {
 			logger.warn("Error: Cannot execute insertOrUpdateBatch Method. Cause:" + e);
 			return false;
+		} finally {
+			batchSqlSession.close();
 		}
 		return true;
-	}
-
-	/**
-	 * 批量插入
-	 *
-	 * @param entityList
-	 * @param batchSize
-	 * @return
-	 */
-	public boolean insertBatch(List<T> entityList, int batchSize) {
-		if (CollectionUtils.isEmpty(entityList)) {
-			throw new IllegalArgumentException("Error: entityList must not be empty");
-		}
-		SqlSession batchSqlSession = sqlSessionBatch();
-		try {
-			int size = entityList.size();
-			for (int i = 0; i < size; i++) {
-				batchSqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), entityList.get(i));
-				if (i % batchSize == 0) {
-					batchSqlSession.flushStatements();
-				}
-			}
-			batchSqlSession.flushStatements();
-		} catch (Exception e) {
-			logger.warn("Error: Cannot execute insertBatch Method. Cause:" + e);
-			return false;
-		}
-		return true;
-
 	}
 
 	public boolean deleteById(Serializable id) {
@@ -202,15 +206,20 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean updateBatchById(List<T> entityList) {
+		return updateBatchById(entityList, 30);
+	}
+
+	public boolean updateBatchById(List<T> entityList, int batchSize) {
 		if (CollectionUtils.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
 		SqlSession batchSqlSession = sqlSessionBatch();
 		try {
 			int size = entityList.size();
+			String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
 			for (int i = 0; i < size; i++) {
-				batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), entityList.get(i));
-				if (i % 30 == 0) {
+				batchSqlSession.update(sqlStatement, entityList.get(i));
+				if (i >= 1 && i % batchSize == 0) {
 					batchSqlSession.flushStatements();
 				}
 			}
@@ -218,6 +227,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		} catch (Exception e) {
 			logger.warn("Error: Cannot execute insertBatch Method. Cause:" + e);
 			return false;
+		} finally {
+			batchSqlSession.close();
 		}
 		return true;
 	}

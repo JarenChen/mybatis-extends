@@ -21,5 +21,5 @@ public interface IDialect {
 	 *            界限
 	 * @return 分页语句
 	 */
-	String buildPaginationSql(String originalSql, int offset, int limit);
+	public String buildPaginationSql(String originalSql, int offset, int limit);
 }

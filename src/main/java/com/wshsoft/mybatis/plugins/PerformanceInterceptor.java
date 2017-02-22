@@ -27,6 +27,7 @@ import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.plugins.pagination.DialectFactory;
 import com.wshsoft.mybatis.plugins.pagination.Pagination;
 import com.wshsoft.mybatis.toolkit.SqlUtils;
+import com.wshsoft.mybatis.toolkit.StringUtils;
 import com.wshsoft.mybatis.toolkit.SystemClock;
 
 /**
@@ -150,7 +151,14 @@ public class PerformanceInterceptor implements Interceptor {
 	}
 
 	public void setProperties(Properties prop) {
-		// TODO
+		String maxTime = prop.getProperty("maxTime");
+		String format = prop.getProperty("format");
+		if (StringUtils.isNotEmpty(maxTime)) {
+			this.maxTime = Long.parseLong(maxTime);
+		}
+		if (StringUtils.isNotEmpty(format)) {
+			this.format = Boolean.valueOf(format);
+		}
 	}
 
 	public long getMaxTime() {

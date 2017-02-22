@@ -25,7 +25,8 @@ public class SqlRunner {
 	public static final String INSERT = "com.wshsoft.mybatis.mapper.SqlRunner.Insert";
 	public static final String DELETE = "com.wshsoft.mybatis.mapper.SqlRunner.Delete";
 	public static final String UPDATE = "com.wshsoft.mybatis.mapper.SqlRunner.Update";
-	public static final String SELECT = "com.wshsoft.mybatis.mapper.SqlRunner.Select";
+	public static final String SELECT_LIST = "com.wshsoft.mybatis.mapper.SqlRunner.SelectList";
+	public static final String SELECT_OBJS = "com.wshsoft.mybatis.mapper.SqlRunner.SelectObjs";
 	public static final String COUNT = "com.wshsoft.mybatis.mapper.SqlRunner.Count";
 	public static final String SQLScript = "${sql}";
 	public static final String SQL = "sql";
@@ -70,7 +71,15 @@ public class SqlRunner {
 	}
 
 	public List<Map<String, Object>> selectList(String sql, Object... args) {
-		return sqlSession().selectList(SELECT, sqlMap(sql, args));
+		return sqlSession().selectList(SELECT_LIST, sqlMap(sql, args));
+	}
+
+	public List<Object> selectObjs(String sql, Object... args) {
+		return sqlSession().selectList(SELECT_OBJS, sqlMap(sql, args));
+	}
+
+	public Object selectObj(String sql, Object... args) {
+		return SqlHelper.getObject(selectObjs(sql, args));
 	}
 
 	public int selectCount(String sql, Object... args) {
@@ -86,7 +95,7 @@ public class SqlRunner {
 		if (null == page) {
 			return null;
 		}
-		page.setRecords(sqlSession().selectList(SELECT, sqlMap(sql, args), page));
+		page.setRecords(sqlSession().selectList(SELECT_LIST, sqlMap(sql, args), page));
 		return page;
 	}
 
