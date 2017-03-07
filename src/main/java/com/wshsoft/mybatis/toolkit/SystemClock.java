@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * 1000万：480,12,40.0%<br>
  * 100万：50,10,5.0%<br>
  * </p>
- *
+ * 
  * @author Carry xie
  * @Date 2016-08-01
  */
@@ -46,7 +46,7 @@ public class SystemClock {
     private void scheduleClockUpdating() {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
             @Override
-			public Thread newThread(Runnable runnable) {
+            public Thread newThread(Runnable runnable) {
                 Thread thread = new Thread(runnable, "System Clock");
                 thread.setDaemon(true);
                 return thread;
@@ -54,7 +54,7 @@ public class SystemClock {
         });
         scheduler.scheduleAtFixedRate(new Runnable() {
             @Override
-			public void run() {
+            public void run() {
                 now.set(System.currentTimeMillis());
             }
         }, period, period, TimeUnit.MILLISECONDS);
@@ -67,9 +67,9 @@ public class SystemClock {
     public static long now() {
         return instance().currentTimeMillis();
     }
-    
-	public static String nowDate() {
-		return new Timestamp(instance().currentTimeMillis()).toString();
-	}
+
+    public static String nowDate() {
+        return new Timestamp(instance().currentTimeMillis()).toString();
+    }
 
 }

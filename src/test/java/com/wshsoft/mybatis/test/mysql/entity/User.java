@@ -1,13 +1,13 @@
 package com.wshsoft.mybatis.test.mysql.entity;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.Date;
+
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.enums.FieldStrategy;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.Date;
 
 /**
  * <p>
@@ -21,172 +21,174 @@ import java.util.Date;
 @TableName(resultMap = "userMap")
 public class User implements Serializable {
 
-	/* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */
-	@TableField(exist = false)
-	private static final long serialVersionUID = 1L;
+    /* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 
-	/* 主键ID 注解，value 字段名，type 用户输入ID */
-	@TableId(value = "test_id")
-	private Long id;
+    /* 主键ID 注解，value 字段名，type 用户输入ID */
+    @TableId(value = "test_id")
+    private Long id;
 
-	/* 测试忽略验证 */
-	private String name;
+    /* 测试忽略验证 */
+    private String name;
 
-	private Integer age;
+    private Integer age;
 
-	/* 测试下划线字段命名类型, 字段填充 */
-	@TableField(value = "test_type", validate = FieldStrategy.IGNORED)
-	private Integer testType;
+    /* 测试下划线字段命名类型, 字段填充 */
+    @TableField(value = "test_type", validate = FieldStrategy.IGNORED)
+    private Integer testType;
 
-	@TableField(el = "role.id",value = "role_id")
-	private Role role;
+    @TableField(el = "role.id", value = "role_id")
+    private Role role;
 
-	private String desc = "默认描述";
+    private String desc = "默认描述";
 
-	// 或@TableField(el = "role,jdbcType=BIGINT)
-	@TableField(el = "phone, typeHandler=com.wshsoft.mybatis.test.mysql.typehandler.PhoneTypeHandler")
-	private PhoneNumber phone;
+    // 或@TableField(el = "role,jdbcType=BIGINT)
+    @TableField(el = "phone, typeHandler=com.wshsoft.mybatis.test.mysql.typehandler.PhoneTypeHandler")
+    private PhoneNumber phone;
 
-	private Date birthday; 
+    private Date birthday;
 
-	public Date getBirthday() {
-		return birthday;
-	}
+    public Date getBirthday() {
+        return birthday;
+    }
 
-	public void setBirthday(Date birthday) {
-		this.birthday = birthday;
-	}
-	public User() {
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
 
-	}
+    public User() {
 
-	public User(String name) {
-		this.name = name;
-	}
+    }
 
-	public User(Integer testType) {
-		this.testType = testType;
-	}
+    public User(String name) {
+        this.name = name;
+    }
 
-	public User(String name, Integer age) {
-		this.name = name;
-		this.age = age;
-	}
+    public User(Integer testType) {
+        this.testType = testType;
+    }
 
-	public User(Long id, String name) {
-		this.id = id;
-		this.name = name;
-	}
+    public User(String name, Integer age) {
+        this.name = name;
+        this.age = age;
+    }
 
-	public User(Long id, Integer age) {
-		this.id = id;
-		this.age = age;
-	}
+    public User(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
-	public User(Long id, String name, Integer age, Integer testType) {
-		this.id = id;
-		this.name = name;
-		this.age = age;
-		this.testType = testType;
-	}
+    public User(Long id, Integer age) {
+        this.id = id;
+        this.age = age;
+    }
 
-	public User(String name, Integer age, Integer testType) {
-		this.name = name;
-		this.age = age;
-		this.testType = testType;
-	}
+    public User(Long id, String name, Integer age, Integer testType) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.testType = testType;
+    }
 
-	public User(Long id, String name, Integer age, Integer testType,Date birthday) {
-		this.id = id;
-		this.name = name;
-		this.age = age;
-		this.testType = testType;
-		this.birthday=birthday;
-	}
-	
-	public User(String name, Integer age, Integer testType,Date birthday) {
-		this.name = name;
-		this.age = age;
-		this.testType = testType;
-		this.birthday=birthday;
-	}
-	public Long getId() {
-		return id;
-	}
+    public User(String name, Integer age, Integer testType) {
+        this.name = name;
+        this.age = age;
+        this.testType = testType;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public User(Long id, String name, Integer age, Integer testType, Date birthday) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.testType = testType;
+        this.birthday = birthday;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public User(String name, Integer age, Integer testType, Date birthday) {
+        this.name = name;
+        this.age = age;
+        this.testType = testType;
+        this.birthday = birthday;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Integer getAge() {
-		return age;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setAge(Integer age) {
-		this.age = age;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Integer getTestType() {
-		return testType;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setTestType(Integer testType) {
-		this.testType = testType;
-	}
+    public Integer getAge() {
+        return age;
+    }
 
-	public Role getRole() {
-		return role;
-	}
+    public void setAge(Integer age) {
+        this.age = age;
+    }
 
-	public void setRole(Role role) {
-		this.role = role;
-	}
+    public Integer getTestType() {
+        return testType;
+    }
 
-	public PhoneNumber getPhone() {
-		return phone;
-	}
+    public void setTestType(Integer testType) {
+        this.testType = testType;
+    }
 
-	public void setPhone(PhoneNumber phone) {
-		this.phone = phone;
-	}
+    public Role getRole() {
+        return role;
+    }
 
-	public String getDesc() {
-		return desc;
-	}
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
+    public PhoneNumber getPhone() {
+        return phone;
+    }
 
-	@Override
-	public String toString() {
-		return "User{" + "id=" + id + ", name='" + name + '\'' + ", age=" + age + ", testType=" + testType + ", role="
-				+ role + ", phone=" + phone + ", desc=" + desc + '}';
-	}
+    public void setPhone(PhoneNumber phone) {
+        this.phone = phone;
+    }
 
-	/**
-	 * 测试类型
-	 */
-	public static void main(String args[]) throws IllegalAccessException {
-		User user = new User();
-		user.setName("12306");
-		user.setAge(3);
-		System.err.println(User.class.getName());
-		Field[] fields = user.getClass().getDeclaredFields();
-		for (Field field : fields) {
-			System.out.println("===================================");
-			System.out.println(field.getName());
-			System.out.println(field.getType().toString());
-			field.setAccessible(true);
-			System.out.println(field.get(user));
-		}
-	}
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + "id=" + id + ", name='" + name + '\'' + ", age=" + age + ", testType=" + testType + ", role="
+                + role + ", phone=" + phone + ", desc=" + desc + '}';
+    }
+
+    /**
+     * 测试类型
+     */
+    public static void main(String args[]) throws IllegalAccessException {
+        User user = new User();
+        user.setName("12306");
+        user.setAge(3);
+        System.err.println(User.class.getName());
+        Field[] fields = user.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            System.out.println("===================================");
+            System.out.println(field.getName());
+            System.out.println(field.getType().toString());
+            field.setAccessible(true);
+            System.out.println(field.get(user));
+        }
+    }
 }

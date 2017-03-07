@@ -10,18 +10,18 @@ package com.wshsoft.mybatis.exceptions;
  */
 public class MybatisExtendsException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public MybatisExtendsException(String message) {
-		super(message);
-	}
+    public MybatisExtendsException(String message) {
+        super(message);
+    }
 
-	public MybatisExtendsException(Throwable throwable) {
-		super(throwable);
-	}
+    public MybatisExtendsException(Throwable throwable) {
+        super(throwable);
+    }
 
-	public MybatisExtendsException(String message, Throwable throwable) {
-		super(message, throwable);
-	}
+    public MybatisExtendsException(String message, Throwable throwable) {
+        super(message, throwable);
+    }
 
 }

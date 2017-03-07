@@ -19,19 +19,14 @@ import com.wshsoft.mybatis.enums.IdType;
 @Target(ElementType.FIELD)
 public @interface TableId {
 
-	/*
-	 * <p>
-	 * 字段值（驼峰命名方式，该值可无）
-	 * </p>
-	 */
-	String value() default "";
+    /*
+     * <p> 字段值（驼峰命名方式，该值可无） </p>
+     */
+    String value() default "";
 
-	/*
-	 * <p>
-	 * 主键ID，默认 INPUT
-	 * </p>
-	 * {@link IdType}
-	 */
-	IdType type() default IdType.INPUT;
+    /*
+     * <p> 主键ID，默认 INPUT </p> {@link IdType}
+     */
+    IdType type() default IdType.INPUT;
 
 }

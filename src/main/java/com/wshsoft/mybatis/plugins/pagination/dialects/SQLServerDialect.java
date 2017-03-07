@@ -12,13 +12,14 @@ import com.wshsoft.mybatis.plugins.pagination.IDialect;
  */
 public class SQLServerDialect implements IDialect {
 
-	public static final SQLServerDialect INSTANCE = new SQLServerDialect();
+    public static final SQLServerDialect INSTANCE = new SQLServerDialect();
 
-	public String buildPaginationSql(String originalSql, int offset, int limit) {
-		StringBuffer sql = new StringBuffer(originalSql);
-		sql.append(" OFFSET ").append(offset).append(" ROWS FETCH NEXT ");
-		sql.append(limit).append(" ROWS ONLY");
-		return sql.toString();
-	}
+    @Override
+    public String buildPaginationSql(String originalSql, int offset, int limit) {
+        StringBuffer sql = new StringBuffer(originalSql);
+        sql.append(" OFFSET ").append(offset).append(" ROWS FETCH NEXT ");
+        sql.append(limit).append(" ROWS ONLY");
+        return sql.toString();
+    }
 
 }

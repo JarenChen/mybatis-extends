@@ -36,20 +36,6 @@ GOTO INPUT
 call mvn clean
 call mvn -Dmaven.test.skip=true install
 
-if exist %~dp0\target\fh.war del %~dp0\target\fh.war /q
-
-
-rem cd deploy
-rem call mvn assembly:assembly
-rem cd ../bundle/war/target
-rem if exist %~dp0\bundle\war\target\epoch.war del %~dp0\bundle\war\target\epoch.war /q
-rem ren epoch  epoch.war 
-rem cd %~dp0
-echo ============================================================================
-echo =========================== package is complete=============================
-echo ============================================================================
-GOTO INPUT
-
 
 :SOURCES
 mvn dependency:sources

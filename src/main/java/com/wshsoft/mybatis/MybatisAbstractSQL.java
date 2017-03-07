@@ -1,17 +1,17 @@
 package com.wshsoft.mybatis;
 
-import com.wshsoft.mybatis.toolkit.StringUtils;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wshsoft.mybatis.toolkit.StringUtils;
+
 /**
  * <p>
  * 重定义 AbstractSQL ，实现标准TSQL的 查询条件自定义
  * </p>
- *
+ * 
  * @author Carry xie
  * @Date 2016-08-22
  */
@@ -30,7 +30,7 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
 
     /**
      * 子类泛型实现
-     *
+     * 
      * @return 泛型实例
      */
     public abstract T getSelf();
@@ -91,7 +91,7 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
     /**
      * SQL连接器
      */
-	private static class SafeAppendable implements Serializable {
+    private static class SafeAppendable implements Serializable {
         private final Appendable appendable;
         private boolean empty = true;
 
@@ -121,7 +121,7 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
     /**
      * SQL条件类
      */
-	private static class SQLCondition implements Serializable {
+    private static class SQLCondition implements Serializable {
 
         List<String> where = new ArrayList<String>();
         List<String> having = new ArrayList<String>();
@@ -139,12 +139,12 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
 
         /**
          * 构建SQL的条件
-         *
-         * @param builder     连接器
-         * @param keyword     TSQL中的关键字
-         * @param parts       SQL条件语句集合
-         * @param open        起始符号
-         * @param close       结束符号
+         * 
+         * @param builder 连接器
+         * @param keyword TSQL中的关键字
+         * @param parts SQL条件语句集合
+         * @param open 起始符号
+         * @param close 结束符号
          * @param conjunction 连接条件
          */
         private void sqlClause(SafeAppendable builder, String keyword, List<String> parts, String open, String close,
@@ -178,7 +178,7 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
 
         /**
          * 清除LIST中的NULL和空字符串
-         *
+         * 
          * @param parts 原LIST列表
          * @return
          */
@@ -195,7 +195,7 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
 
         /**
          * 按标准顺序连接并构建SQL
-         *
+         * 
          * @param builder 连接器
          * @return
          */

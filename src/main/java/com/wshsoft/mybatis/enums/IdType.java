@@ -9,49 +9,48 @@ package com.wshsoft.mybatis.enums;
  * @Date 2015-11-10
  */
 public enum IdType {
-	AUTO(0, "数据库ID自增"),
-	INPUT(1, "用户输入ID"),
-	
-	/* 以下2种类型、只有当插入对象ID 为空，才自动填充。 */
-	ID_WORKER(2, "全局唯一ID"),
-	UUID(3, "全局唯一ID");
+    AUTO(0, "数据库ID自增"),
+    INPUT(1, "用户输入ID"),
 
-	/** 主键 */
-	private final int key;
+    /* 以下2种类型、只有当插入对象ID 为空，才自动填充。 */
+    ID_WORKER(2, "全局唯一ID"),
+    UUID(3, "全局唯一ID");
 
-	/** 描述 */
-	private final String desc;
+    /** 主键 */
+    private final int key;
 
-	IdType(final int key, final String desc) {
-		this.key = key;
-		this.desc = desc;
-	}
-	
-	/**
-	 * <p>
-	 * 主键策略 （默认 ID_WORKER）
-	 * </p>
-	 * 
-	 * @param idType
-	 *            ID 策略类型
-	 * @return
-	 */
-	public static IdType getIdType(int idType) {
-		IdType[] its = IdType.values();
-		for (IdType it : its) {
-			if (it.getKey() == idType) {
-				return it;
-			}
-		}
-		return ID_WORKER;
-	}
+    /** 描述 */
+    private final String desc;
 
-	public int getKey() {
-		return this.key;
-	}
+    IdType(final int key, final String desc) {
+        this.key = key;
+        this.desc = desc;
+    }
 
-	public String getDesc() {
-		return this.desc;
-	}
+    /**
+     * <p>
+     * 主键策略 （默认 ID_WORKER）
+     * </p>
+     * 
+     * @param idType ID 策略类型
+     * @return
+     */
+    public static IdType getIdType(int idType) {
+        IdType[] its = IdType.values();
+        for (IdType it : its) {
+            if (it.getKey() == idType) {
+                return it;
+            }
+        }
+        return ID_WORKER;
+    }
+
+    public int getKey() {
+        return this.key;
+    }
+
+    public String getDesc() {
+        return this.desc;
+    }
 
 }

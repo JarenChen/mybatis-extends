@@ -28,36 +28,36 @@ import com.wshsoft.mybatis.toolkit.SystemClock;
  * @Date 2016-08-25
  */
 public class MybatisMapperRefreshTest {
-	/**
-	 * 测试 Mybatis XML 修改自动刷新
-	 */
-	public static void main(String[] args) throws IOException, InterruptedException {
-		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		mf.setGlobalConfig(new GlobalConfiguration(new MySqlInjector()));
-		Resource[] resource = new ClassPathResource[] { new ClassPathResource("mysql/UserMapper.xml") };
-		SqlSessionFactory sessionFactory = mf.build(in);
-		new MybatisMapperRefresh(resource, sessionFactory, 0, 5, true);
-		boolean isReturn = false;
-		SqlSession session = null;
-		while (!isReturn) {
-			try {
-				session = sessionFactory.openSession();
-				UserMapper userMapper = session.getMapper(UserMapper.class);
-				userMapper.selectListRow(new Pagination(1, 10));
-				resource[0].getFile().setLastModified(SystemClock.now());
-				session.commit();
-				session.close();
-				Thread.sleep(5000);
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				if (session != null) {
-					session.close();
-				}
-				Thread.sleep(5000);
-			}
-		}
-		System.exit(0);
-	}
+    /**
+     * 测试 Mybatis XML 修改自动刷新
+     */
+    public static void main(String[] args) throws IOException, InterruptedException {
+        InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
+        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
+        mf.setGlobalConfig(new GlobalConfiguration(new MySqlInjector()));
+        Resource[] resource = new ClassPathResource[] { new ClassPathResource("mysql/UserMapper.xml") };
+        SqlSessionFactory sessionFactory = mf.build(in);
+        new MybatisMapperRefresh(resource, sessionFactory, 0, 5, true);
+        boolean isReturn = false;
+        SqlSession session = null;
+        while (!isReturn) {
+            try {
+                session = sessionFactory.openSession();
+                UserMapper userMapper = session.getMapper(UserMapper.class);
+                userMapper.selectListRow(new Pagination(1, 10));
+                resource[0].getFile().setLastModified(SystemClock.now());
+                session.commit();
+                session.close();
+                Thread.sleep(5000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (session != null) {
+                    session.close();
+                }
+                Thread.sleep(5000);
+            }
+        }
+        System.exit(0);
+    }
 }

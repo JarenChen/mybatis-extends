@@ -4,38 +4,38 @@ package com.wshsoft.mybatis.entity;
  * <p>
  * 优化Count SQL实体
  * </p>
- *
+ * 
  * @author Carry xie
  * @Date 2016-11-13
  */
 public class CountOptimize {
-	/**
-	 * 是否排序
-	 */
-	private boolean orderBy = true;
-	/**
-	 * 优化后计算Count的SQL
-	 */
-	private String countSQL;
+    /**
+     * 是否排序
+     */
+    private boolean orderBy = true;
+    /**
+     * 优化后计算Count的SQL
+     */
+    private String countSQL;
 
-	public boolean isOrderBy() {
-		return orderBy;
-	}
+    public boolean isOrderBy() {
+        return orderBy;
+    }
 
-	public void setOrderBy(boolean orderBy) {
-		this.orderBy = orderBy;
-	}
+    public void setOrderBy(boolean orderBy) {
+        this.orderBy = orderBy;
+    }
 
-	public String getCountSQL() {
-		return countSQL;
-	}
+    public String getCountSQL() {
+        return countSQL;
+    }
 
-	public void setCountSQL(String countSQL) {
-		this.countSQL = countSQL;
-	}
+    public void setCountSQL(String countSQL) {
+        this.countSQL = countSQL;
+    }
 
-	public static CountOptimize newInstance() {
-		return new CountOptimize();
-	}
+    public static CountOptimize newInstance() {
+        return new CountOptimize();
+    }
 
 }

@@ -17,18 +17,14 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface TableName {
 
-	/*
-	 * <p>
-	 * 实体对应的表名
-	 * </p>
-	 */
-	String value() default "";
+    /*
+     * <p> 实体对应的表名 </p>
+     */
+    String value() default "";
 
-	/*
-	 * <p>
-	 * 实体映射结果集
-	 * </p>
-	 */
-	String resultMap() default "";
+    /*
+     * <p> 实体映射结果集 </p>
+     */
+    String resultMap() default "";
 
 }

@@ -10,6 +10,6 @@ package com.wshsoft.mybatis.test.proxy.mapper;
  */
 public interface IUserMapper {
 
-	User selectById(Long id);
-	
+    User selectById(Long id);
+
 }

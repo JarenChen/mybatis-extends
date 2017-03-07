@@ -1,5 +1,10 @@
 package com.wshsoft.mybatis.test.generator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.wshsoft.mybatis.generator.AutoGenerator;
 import com.wshsoft.mybatis.generator.InjectionConfig;
 import com.wshsoft.mybatis.generator.config.DataSourceConfig;
@@ -7,19 +12,17 @@ import com.wshsoft.mybatis.generator.config.FileOutConfig;
 import com.wshsoft.mybatis.generator.config.GlobalConfig;
 import com.wshsoft.mybatis.generator.config.PackageConfig;
 import com.wshsoft.mybatis.generator.config.StrategyConfig;
+import com.wshsoft.mybatis.generator.config.converts.SqlServerTypeConvert;
 import com.wshsoft.mybatis.generator.config.po.TableInfo;
+import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
  * 代码生成器演示
  * </p>
+ * 
  * @author Carry xie
  * @date 2016-11-01
  */
@@ -49,6 +52,14 @@ public class SQLServerGenerator {
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
         dsc.setDbType(DbType.SQL_SERVER);
+        dsc.setTypeConvert(new SqlServerTypeConvert() {
+            // 自定义数据库表字段类型转换【可选】
+            @Override
+            public DbColumnType processTypeConvert(String fieldType) {
+                System.out.println("转换类型：" + fieldType);
+                return super.processTypeConvert(fieldType);
+            }
+        });
         dsc.setDriverName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         dsc.setUsername("sa");
         dsc.setPassword("sa");
@@ -57,14 +68,12 @@ public class SQLServerGenerator {
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-		// strategy.setCapitalMode(true);// 全局大写命名
-		// strategy.setDbColumnUnderline(true);//全局下划线命名
-        strategy.setTablePrefix(new String[]{"bmd_", "mp_"});// 此处可以修改为您的表前缀
-        strategy.setNaming(NamingStrategy.remove_prefix_and_camel);// 表名生成策略
+        // strategy.setCapitalMode(true);// 全局大写命名
+        // strategy.setDbColumnUnderline(true);//全局下划线命名
+        strategy.setTablePrefix(new String[] { "bmd_", "mp_" });// 此处可以修改为您的表前缀
+        strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
         // strategy.setInclude(new String[] { "user" }); // 需要生成的表
         // strategy.setExclude(new String[]{"test"}); // 排除生成的表
-        // 字段名生成策略
-        strategy.setFieldNaming(NamingStrategy.underline_to_camel);
         // 自定义实体父类
         // strategy.setSuperEntityClass("com.wshsoft.demo.TestEntity");
         // 自定义实体，公共字段
@@ -92,25 +101,25 @@ public class SQLServerGenerator {
         pc.setController("controller");//这里是控制器包名，默认 web
         mpg.setPackageInfo(pc);
 
-		// 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值
-		InjectionConfig cfg = new InjectionConfig() {
-			@Override
-			public void initMap() {
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
-				this.setMap(map);
-			}
-		};
-		List<FileOutConfig> focList = new ArrayList<FileOutConfig>();
-		focList.add(new FileOutConfig("/template/entity.java.vm") {
-			@Override
-			public String outputFile(TableInfo tableInfo) {
-				// 自定义输入文件名称
-				return "D://my_" + tableInfo.getEntityName() + ".java";
-			}
-		});
-		cfg.setFileOutConfigList(focList);
-		mpg.setCfg(cfg);
+        // 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值
+        InjectionConfig cfg = new InjectionConfig() {
+            @Override
+            public void initMap() {
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
+                this.setMap(map);
+            }
+        };
+        List<FileOutConfig> focList = new ArrayList<FileOutConfig>();
+        focList.add(new FileOutConfig("/template/entity.java.vm") {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                // 自定义输入文件名称
+                return "D://my_" + tableInfo.getEntityName() + ".java";
+            }
+        });
+        cfg.setFileOutConfigList(focList);
+        mpg.setCfg(cfg);
 
         // 自定义模板配置，模板可以参考源码 /mybatis-extends/src/main/resources/template 使用 copy
         // 至您项目 src/main/resources/template 目录下，模板名称也可自定义如下配置：

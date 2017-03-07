@@ -16,20 +16,17 @@ import com.wshsoft.mybatis.toolkit.IdWorker;
  * @date 2016-08-18
  */
 public class ContiPerfTest {
-	
-	@Rule
-	public ContiPerfRule i = new ContiPerfRule();
 
-	/**
-	 * samples: 2000000
-	 * max: 82
-	 * average: 0.0039698
-	 * median: 0
-	 */
-	@Test
-	@PerfTest(invocations = 2000000, threads = 16)
-	public void testIdWorker() throws Exception {
-		IdWorker.getId();
-	}
+    @Rule
+    public ContiPerfRule i = new ContiPerfRule();
+
+    /**
+     * samples: 2000000 max: 82 average: 0.0039698 median: 0
+     */
+    @Test
+    @PerfTest(invocations = 2000000, threads = 16)
+    public void testIdWorker() throws Exception {
+        IdWorker.getId();
+    }
 
 }
