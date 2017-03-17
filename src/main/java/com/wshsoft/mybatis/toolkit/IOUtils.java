@@ -15,6 +15,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
 /**
  * <p>
  * IOUtils Copy org.apache.commons.io.IOUtils
@@ -25,17 +28,22 @@ import java.sql.Statement;
  */
 public class IOUtils {
 
-    /**
-     * Closes a URLConnection.
-     * 
-     * @param conn the connection to close.
-     * @since 2.4
-     */
-    public static void close(final URLConnection conn) {
-        if (conn instanceof HttpURLConnection) {
-            ((HttpURLConnection) conn).disconnect();
-        }
-    }
+	private static final Log logger = LogFactory.getLog(IOUtils.class);
+
+	private IOUtils() {
+	}
+
+	/**
+	 * Closes a URLConnection.
+	 *
+	 * @param conn the connection to close.
+	 * @since 2.4
+	 */
+	public static void close(final URLConnection conn) {
+		if (conn instanceof HttpURLConnection) {
+			((HttpURLConnection) conn).disconnect();
+		}
+	}
 
     /**
      * Closes an <code>Reader</code> unconditionally.
@@ -192,7 +200,7 @@ public class IOUtils {
                 closeable.close();
             }
         } catch (final IOException ioe) {
-            // ignore
+			logger.error("error close io", ioe);
         }
     }
 
@@ -279,7 +287,7 @@ public class IOUtils {
             try {
                 sock.close();
             } catch (final IOException ioe) {
-                // ignored
+				logger.error("error close io", ioe);
             }
         }
     }
@@ -313,7 +321,7 @@ public class IOUtils {
             try {
                 selector.close();
             } catch (final IOException ioe) {
-                // ignored
+				logger.error("error close io", ioe);
             }
         }
     }
@@ -347,7 +355,7 @@ public class IOUtils {
             try {
                 sock.close();
             } catch (final IOException ioe) {
-                // ignored
+				logger.error("error close io", ioe);
             }
         }
     }
@@ -381,7 +389,7 @@ public class IOUtils {
             try {
                 conn.close();
             } catch (Exception e) {
-                // ignored
+				logger.error("error close conn", e);
             }
         }
     }
@@ -415,7 +423,7 @@ public class IOUtils {
             try {
                 resultSet.close();
             } catch (Exception e) {
-                // ignored
+				logger.error("error close resultSet", e);
             }
         }
     }
@@ -449,7 +457,7 @@ public class IOUtils {
             try {
                 statement.close();
             } catch (Exception e) {
-                // ignored
+				logger.error("error close statement", e);
             }
         }
     }
@@ -500,8 +508,4 @@ public class IOUtils {
         }
     }
 
-    public static void main(String[] args) {
-        String java = System.getProperty("java.version");
-        System.out.println(java);
-    }
 }

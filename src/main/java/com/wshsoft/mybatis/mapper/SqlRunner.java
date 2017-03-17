@@ -125,14 +125,13 @@ public class SqlRunner {
         return new SqlRunner(clazz);
     }
 
-    /**
-     * <p>
-     * 获取Session 默认自动提交
-     * <p/>
-     */
-    private SqlSession sqlSession() {
-        return clazz != null ? SqlHelper.sqlSession(clazz) : GlobalConfiguration.getSqlSession(FACTORY
-                .getConfiguration());
-    }
+	/**
+	 * <p>
+	 * 获取Session 默认自动提交
+	 * <p/>
+	 */
+	private SqlSession sqlSession() {
+		return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfiguration.getSqlSession(FACTORY.getConfiguration());
+	}
 
 }

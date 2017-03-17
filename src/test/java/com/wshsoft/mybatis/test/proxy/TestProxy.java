@@ -18,29 +18,29 @@ import com.wshsoft.mybatis.test.proxy.mapper.UserMapperImpl;
  */
 public class TestProxy {
 
-    public static void main(String[] args) {
-        /**
-         * 代理方式一
-         */
-        IUserMapper userMapper = MapperProxyFactory.getMapper(IUserMapper.class);
-        User user = userMapper.selectById(1L);
-        System.err.println(user == null ? "代理失败" : user.toString());
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            System.err.println("\n");
-        }
+	public static void main( String[] args ) {
+		/**
+		 * 代理方式一 
+		 */
+		IUserMapper userMapper = MapperProxyFactory.getMapper(IUserMapper.class);
+		User user = userMapper.selectById(1L);
+		System.err.println((user == null) ? "代理失败" : user.toString());
+		try {
+			Thread.sleep(3000);
+		} catch ( InterruptedException e ) {
+			e.printStackTrace();
+		} finally {
+			System.err.println("\n");
+		}
 
-        /**
-         * 代理方式二
-         */
-        MyMapperProxy<IUserMapper> userDaoProxy = new MyMapperProxy<IUserMapper>();
-        IUserMapper mapper = userDaoProxy.bind(new UserMapperImpl());
-        User user1 = mapper.selectById(1L);
-        System.err.println(user1 == null ? "代理失败" : user1.toString());
-    }
+		/**
+		 * 代理方式二 
+		 */
+		MyMapperProxy<IUserMapper> userDaoProxy = new MyMapperProxy<IUserMapper>();
+		IUserMapper mapper = userDaoProxy.bind(new UserMapperImpl());
+		User user1 = mapper.selectById(1L);
+		System.err.println((user1 == null) ? "代理失败" : user1.toString());
+	}
 
 }
 

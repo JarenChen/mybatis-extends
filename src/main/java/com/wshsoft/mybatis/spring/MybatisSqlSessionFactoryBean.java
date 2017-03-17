@@ -350,17 +350,16 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         this.environment = environment;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        notNull(dataSource, "Property 'dataSource' is required");
-        notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
-        state(configuration == null && configLocation == null || !(configuration != null && configLocation != null),
-                "Property 'configuration' and 'configLocation' can not specified with together");
-        this.sqlSessionFactory = buildSqlSessionFactory();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void afterPropertiesSet() throws Exception {
+		notNull(dataSource, "Property 'dataSource' is required");
+		notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
+		state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
+				"Property 'configuration' and 'configLocation' can not specified with together");
+		this.sqlSessionFactory = buildSqlSessionFactory();
+	}
 
     /**
      * Build a {@code SqlSessionFactory} instance. The default implementation
@@ -519,17 +518,16 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                     continue;
                 }
 
-                try {
-                    // TODO
-                    MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(
-                            mapperLocation.getInputStream(), configuration, mapperLocation.toString(),
-                            configuration.getSqlFragments());
-                    xmlMapperBuilder.parse();
-                } catch (Exception e) {
-                    throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
-                } finally {
-                    ErrorContext.instance().reset();
-                }
+				try {
+					// TODO
+					MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(mapperLocation.getInputStream(),
+							configuration, mapperLocation.toString(), configuration.getSqlFragments());
+					xmlMapperBuilder.parse();
+				} catch (Exception e) {
+					throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
+				} finally {
+					ErrorContext.instance().reset();
+				}
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Parsed mapper file: '" + mapperLocation + "'");

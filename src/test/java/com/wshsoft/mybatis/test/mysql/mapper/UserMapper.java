@@ -2,6 +2,7 @@ package com.wshsoft.mybatis.test.mysql.mapper;
 
 import java.util.List;
 
+import com.wshsoft.mybatis.test.mysql.MyBaseMapper;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
@@ -33,10 +34,16 @@ public interface UserMapper extends BaseMapper<User> {
     @Insert("insert into user(test_id,name,age) values(#{id},#{name},#{age})")
     int insertInjector(User user);
 
-    /**
-     * 自定义注入方法
-     */
-    int deleteAll();
+	/**
+	 * 自定义注入方法
+	 */
+	int deleteAll();
+	
+	/**
+	 * 自定义注入逻辑删除方法<br>
+	 * com.wshsoft.mybatis.test.mysql.MetaObjectHandlerTest
+	 */
+	int deleteLogicById(@Param("id") Long id);
 
     /**
      * 根据主键批量查询

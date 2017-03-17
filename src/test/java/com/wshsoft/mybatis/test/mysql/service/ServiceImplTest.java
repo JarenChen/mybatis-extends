@@ -34,5 +34,7 @@ public class ServiceImplTest {
         }
         boolean batchResult = userService.insertBatch(userList);
         System.err.println("batchResult: " + batchResult);
+		// 注入测试
+		userService.testSqlInjector();
     }
 }

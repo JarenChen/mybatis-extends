@@ -111,7 +111,7 @@ public class SQLServerGenerator {
             }
         };
         List<FileOutConfig> focList = new ArrayList<FileOutConfig>();
-        focList.add(new FileOutConfig("/template/entity.java.vm") {
+		focList.add(new FileOutConfig("/templates/entity.java.vm") {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输入文件名称

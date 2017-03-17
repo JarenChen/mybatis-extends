@@ -35,7 +35,7 @@ public class PackageHelper {
      * @return
      */
     public static String[] convertTypeAliasesPackage(String typeAliasesPackage) {
-        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+		ResourcePatternResolver resolver = (ResourcePatternResolver) new PathMatchingResourcePatternResolver();
         MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resolver);
         String pkg = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
                 + ClassUtils.convertClassNameToResourcePath(typeAliasesPackage) + "/*.class";

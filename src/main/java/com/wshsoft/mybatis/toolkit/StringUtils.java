@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.wshsoft.mybatis.enums.SqlLike;
-
 /**
  * <p>
  * String 工具类
@@ -35,26 +33,30 @@ public class StringUtils {
      */
     public static final String PLACE_HOLDER = "{%s}";
 
-    /**
-     * <p>
-     * 判断字符串是否为空
-     * </p>
-     * 
-     * @param cs 需要判断字符串
-     * @return 判断结果
-     */
-    public static boolean isEmpty(final CharSequence cs) {
-        int strLen;
-        if (cs == null || (strLen = cs.length()) == 0) {
-            return true;
-        }
-        for (int i = 0; i < strLen; i++) {
-            if (Character.isWhitespace(cs.charAt(i)) == false) {
-                return false;
-            }
-        }
-        return true;
-    }
+	private StringUtils() {
+	}
+
+	/**
+	 * <p>
+	 * 判断字符串是否为空
+	 * </p>
+	 *
+	 * @param cs
+	 *            需要判断字符串
+	 * @return 判断结果
+	 */
+	public static boolean isEmpty(final CharSequence cs) {
+		int strLen;
+		if (cs == null || (strLen = cs.length()) == 0) {
+			return true;
+		}
+		for (int i = 0; i < strLen; i++) {
+			if (!Character.isWhitespace(cs.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
 
     /**
      * <p>
@@ -222,57 +224,32 @@ public class StringUtils {
         return srcStr;
     }
 
-    /**
-     * <p>
-     * 用%连接like
-     * </p>
-     * 
-     * @param str 原字符串
-     * @return
-     */
-    public static String concatLike(String str, SqlLike type) {
-        StringBuilder builder = new StringBuilder(str.length() + 3);
-        switch (type) {
-            case LEFT:
-                builder.append("%").append(str);
-                break;
-            case RIGHT:
-                builder.append(str).append("%");
-                break;
-            case CUSTOM:
-                builder.append(str);
-                break;
-            default:
-                builder.append("%").append(str).append("%");
-        }
-        return StringEscape.escapeString(builder.toString());
-    }
-
-    /**
-     * <p>
-     * 使用单引号包含字符串
-     * </p>
-     * 
-     * @param coll 集合
-     * @return 单引号包含的原字符串的集合形式
-     */
-    public static String quotaMarkList(Collection<?> coll) {
-        StringBuilder sqlBuild = new StringBuilder();
-        sqlBuild.append("(");
-        int _size = coll.size();
-        int i = 0;
-        Iterator<?> iterator = coll.iterator();
-        while (iterator.hasNext()) {
-            String tempVal = StringUtils.quotaMark(iterator.next());
-            sqlBuild.append(tempVal);
-            if (i + 1 < _size) {
-                sqlBuild.append(",");
-            }
-            i++;
-        }
-        sqlBuild.append(")");
-        return sqlBuild.toString();
-    }
+	/**
+	 * <p>
+	 * 使用单引号包含字符串
+	 * </p>
+	 *
+	 * @param coll
+	 *            集合
+	 * @return 单引号包含的原字符串的集合形式
+	 */
+	public static String quotaMarkList(Collection<?> coll) {
+		StringBuilder sqlBuild = new StringBuilder();
+		sqlBuild.append("(");
+		int _size = coll.size();
+		int i = 0;
+		Iterator<?> iterator = coll.iterator();
+		while (iterator.hasNext()) {
+			String tempVal = StringUtils.quotaMark(iterator.next());
+			sqlBuild.append(tempVal);
+			if (i + 1 < _size) {
+				sqlBuild.append(",");
+			}
+			i++;
+		}
+		sqlBuild.append(")");
+		return sqlBuild.toString();
+	}
 
     /**
      * <p>
@@ -317,20 +294,20 @@ public class StringUtils {
         return concatCapitalize(null, str);
     }
 
-    /**
-     * <p>
-     * 判断对象是否为空
-     * </p>
-     * 
-     * @param object
-     * @return
-     */
-    public static boolean checkValNotNull(Object object) {
-        if (object instanceof CharSequence) {
-            return isNotEmpty((CharSequence) object);
-        }
-        return object == null ? false : true;
-    }
+	/**
+	 * <p>
+	 * 判断对象是否为空
+	 * </p>
+	 *
+	 * @param object
+	 * @return
+	 */
+	public static boolean checkValNotNull(Object object) {
+		if (object instanceof CharSequence) {
+			return isNotEmpty((CharSequence) object);
+		}
+		return object != null;
+	}
 
     /**
      * <p>
@@ -434,30 +411,33 @@ public class StringUtils {
         return endsWith(str, suffix, true);
     }
 
-    /**
-     * <p>
-     * Check if a String ends with a specified suffix (optionally case
-     * insensitive).
-     * </p>
-     * 
-     * @see java.lang.String#endsWith(String)
-     * @param str the String to check, may be null
-     * @param suffix the suffix to find, may be null
-     * @param ignoreCase inidicates whether the compare should ignore case (case
-     *            insensitive) or not.
-     * @return <code>true</code> if the String starts with the prefix or both
-     *         <code>null</code>
-     */
-    private static boolean endsWith(String str, String suffix, boolean ignoreCase) {
-        if (str == null || suffix == null) {
-            return str == null && suffix == null;
-        }
-        if (suffix.length() > str.length()) {
-            return false;
-        }
-        int strOffset = str.length() - suffix.length();
-        return str.regionMatches(ignoreCase, strOffset, suffix, 0, suffix.length());
-    }
+	/**
+	 * <p>
+	 * Check if a String ends with a specified suffix (optionally case
+	 * insensitive).
+	 * </p>
+	 *
+	 * @see java.lang.String#endsWith(String)
+	 * @param str
+	 *            the String to check, may be null
+	 * @param suffix
+	 *            the suffix to find, may be null
+	 * @param ignoreCase
+	 *            inidicates whether the compare should ignore case (case
+	 *            insensitive) or not.
+	 * @return <code>true</code> if the String starts with the prefix or both
+	 *         <code>null</code>
+	 */
+	private static boolean endsWith(String str, String suffix, boolean ignoreCase) {
+		if (str == null || suffix == null) {
+			return (str == null && suffix == null);
+		}
+		if (suffix.length() > str.length()) {
+			return false;
+		}
+		int strOffset = str.length() - suffix.length();
+		return str.regionMatches(ignoreCase, strOffset, suffix, 0, suffix.length());
+	}
 
     /**
      * <p>
@@ -606,19 +586,19 @@ public class StringUtils {
         return false;
     }
 
-    /**
-     * 是否为CharSequence类型
-     * 
-     * @param propertyType
-     * @return
-     */
-    public static Boolean isCharSequence(String propertyType) {
-        Class<?> cls = null;
-        try {
-            cls = Class.forName(propertyType);
-        } catch (ClassNotFoundException e) {
-            //
-        }
-        return isCharSequence(cls);
-    }
+	/**
+	 * 是否为CharSequence类型
+	 *
+	 * @param propertyType
+	 * @return
+	 */
+	public static Boolean isCharSequence(String propertyType) {
+		Class<?> cls = null;
+		try {
+			cls = Class.forName(propertyType);
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+		return isCharSequence(cls);
+	}
 }

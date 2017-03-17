@@ -13,6 +13,7 @@ import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.enums.SqlMethod;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.mapper.BaseMapper;
+import com.wshsoft.mybatis.mapper.Condition;
 import com.wshsoft.mybatis.mapper.SqlHelper;
 import com.wshsoft.mybatis.mapper.Wrapper;
 import com.wshsoft.mybatis.plugins.Page;
@@ -111,7 +112,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             }
             batchSqlSession.flushStatements();
         } catch (Exception e) {
-            logger.warn("Error: Cannot execute insertBatch Method. Cause:" + e);
+			logger.error("Error: Cannot execute insertBatch Method. Cause:" + e);
             return false;
         } finally {
             batchSqlSession.close();
@@ -175,7 +176,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             }
             batchSqlSession.flushStatements();
         } catch (Exception e) {
-            logger.warn("Error: Cannot execute insertOrUpdateBatch Method. Cause:" + e);
+			logger.error("Error: Cannot execute insertOrUpdateBatch Method. Cause:" + e);
             return false;
         } finally {
             batchSqlSession.close();
@@ -238,7 +239,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             }
             batchSqlSession.flushStatements();
         } catch (Exception e) {
-            logger.warn("Error: Cannot execute insertBatch Method. Cause:" + e);
+			logger.error("Error: Cannot execute insertBatch Method. Cause:" + e);
             return false;
         } finally {
             batchSqlSession.close();
@@ -286,11 +287,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return baseMapper.selectList(wrapper);
     }
 
-    @Override
-    public Page<T> selectPage(Page<T> page) {
-        page.setRecords(baseMapper.selectPage(page, null));
-        return page;
-    }
+	@SuppressWarnings("unchecked")
+	public Page<T> selectPage(Page<T> page) {
+		return selectPage(page, Condition.instance());
+	}
 
     @Override
     public List<Map<String, Object>> selectMaps(Wrapper<T> wrapper) {

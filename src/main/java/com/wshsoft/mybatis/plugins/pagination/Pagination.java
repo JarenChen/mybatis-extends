@@ -35,12 +35,20 @@ public class Pagination extends RowBounds implements Serializable {
     /* 查询总记录数（默认 true） */
     private boolean searchCount = true;
 
-    /**
-     * 查询总数优化（默认 false 该属性只针对于Optimize.DEFAULT有效)
-     * 
-     * @see com.wshsoft.mybatis.enums.Optimize
-     */
-    private boolean optimizeCount = false;
+	/**
+	 * 开启排序（默认 true） 只在代码逻辑判断 并不截取sql分析
+	 * 
+	 * @see com.wshsoft.mybatis.mapper.SqlHelper fillWrapper
+	 **/
+	private boolean openSort = true;
+
+	/**
+	 * 查询总数优化（默认 false 该属性只针对于Optimize.DEFAULT有效)
+	 * 
+	 * @see com.wshsoft.mybatis.enums.Optimize
+	 *
+	 */
+	private boolean optimizeCount = false;
 
     /**
      * <p>
@@ -74,14 +82,19 @@ public class Pagination extends RowBounds implements Serializable {
         this(current, size, true);
     }
 
-    public Pagination(int current, int size, boolean searchCount) {
-        super(offsetCurrent(current, size), size);
-        if (current > 1) {
-            this.current = current;
-        }
-        this.size = size;
-        this.searchCount = searchCount;
-    }
+	public Pagination(int current, int size, boolean searchCount) {
+		this(current, size, searchCount, true);
+	}
+
+	public Pagination(int current, int size, boolean searchCount, boolean openSort) {
+		super(offsetCurrent(current, size), size);
+		if (current > 1) {
+			this.current = current;
+		}
+		this.size = size;
+		this.searchCount = searchCount;
+		this.openSort = openSort;
+	}
 
     protected static int offsetCurrent(int current, int size) {
         if (current > 0) {
@@ -163,9 +176,17 @@ public class Pagination extends RowBounds implements Serializable {
         }
     }
 
-    public boolean isAsc() {
-        return isAsc;
-    }
+	public boolean isOpenSort() {
+		return openSort;
+	}
+
+	public void setOpenSort(boolean openSort) {
+		this.openSort = openSort;
+	}
+
+	public boolean isAsc() {
+		return isAsc;
+	}
 
     public void setAsc(boolean isAsc) {
         this.isAsc = isAsc;

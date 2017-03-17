@@ -22,18 +22,18 @@ import com.wshsoft.mybatis.plugins.SqlExplainInterceptor;
 public class Sequence {
     private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
 
-    /* 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动） */
-    private final long twepoch = 1288834974657L;
-    private final long workerIdBits = 5L;/* 机器标识位数 */
-    private final long datacenterIdBits = 5L;
-    private final long maxWorkerId = -1L ^ -1L << workerIdBits;
-    private final long maxDatacenterId = -1L ^ -1L << datacenterIdBits;
-    private final long sequenceBits = 12L;/* 毫秒内自增位 */
-    private final long workerIdShift = sequenceBits;
-    private final long datacenterIdShift = sequenceBits + workerIdBits;
-    /* 时间戳左移动位 */
-    private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
-    private final long sequenceMask = -1L ^ -1L << sequenceBits;
+	/* 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动） */
+	private final long twepoch = 1288834974657L;
+	private final long workerIdBits = 5L;/* 机器标识位数 */
+	private final long datacenterIdBits = 5L;
+	private final long maxWorkerId = -1L ^ (-1L << workerIdBits);
+	private final long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
+	private final long sequenceBits = 12L;/* 毫秒内自增位 */
+	private final long workerIdShift = sequenceBits;
+	private final long datacenterIdShift = sequenceBits + workerIdBits;
+	/* 时间戳左移动位 */
+	private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
+	private final long sequenceMask = -1L ^ (-1L << sequenceBits);
 
     private long workerId;
 
@@ -76,7 +76,7 @@ public class Sequence {
                     "Clock moved backwards. Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
         }
         if (lastTimestamp == timestamp) {
-            sequence = sequence + 1 & sequenceMask;
+			sequence = (sequence + 1) & sequenceMask;
             if (sequence == 0) {
                 timestamp = tilNextMillis(lastTimestamp);
             }
@@ -86,9 +86,9 @@ public class Sequence {
 
         lastTimestamp = timestamp;
 
-        return timestamp - twepoch << timestampLeftShift | datacenterId << datacenterIdShift
-                | workerId << workerIdShift | sequence;
-    }
+		return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift) | (workerId << workerIdShift)
+				| sequence;
+	}
 
     protected long tilNextMillis(long lastTimestamp) {
         long timestamp = timeGen();
@@ -123,27 +123,27 @@ public class Sequence {
         return (mpid.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
     }
 
-    /**
-     * <p>
-     * 数据标识id部分
-     * </p>
-     */
-    protected static long getDatacenterId(long maxDatacenterId) {
-        long id = 0L;
-        try {
-            InetAddress ip = InetAddress.getLocalHost();
-            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
-            if (network == null) {
-                id = 1L;
-            } else {
-                byte[] mac = network.getHardwareAddress();
-                id = (0x000000FF & (long) mac[mac.length - 1] | 0x0000FF00 & (long) mac[mac.length - 2] << 8) >> 6;
-                id = id % (maxDatacenterId + 1);
-            }
-        } catch (Exception e) {
-            logger.warn(" getDatacenterId: " + e.getMessage());
-        }
-        return id;
-    }
+	/**
+	 * <p>
+	 * 数据标识id部分
+	 * </p>
+	 */
+	protected static long getDatacenterId(long maxDatacenterId) {
+		long id = 0L;
+		try {
+			InetAddress ip = InetAddress.getLocalHost();
+			NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+			if (network == null) {
+				id = 1L;
+			} else {
+				byte[] mac = network.getHardwareAddress();
+				id = ((0x000000FF & (long) mac[mac.length - 1]) | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
+				id = id % (maxDatacenterId + 1);
+			}
+		} catch (Exception e) {
+			logger.warn(" getDatacenterId: " + e.getMessage());
+		}
+		return id;
+	}
 
 }
