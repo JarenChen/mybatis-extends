@@ -241,6 +241,14 @@ public class AutoGenerator extends AbstractGenerator {
         }
         VelocityEngine velocity = getVelocityEngine();
         Template template = velocity.getTemplate(templatePath, ConstVal.UTF8);
+		File file = new File(outputFile);
+		if (!file.getParentFile().exists()) {
+			// 如果文件所在的目录不存在，则创建目录
+			if (!file.getParentFile().mkdirs()) {
+				logger.debug("创建文件所在的目录失败!");
+				return;
+			}
+		}
         FileOutputStream fos = new FileOutputStream(outputFile);
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos, ConstVal.UTF8));
         template.merge(context, writer);

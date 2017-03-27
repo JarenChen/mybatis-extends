@@ -59,7 +59,7 @@ class MyMapperProxy<T extends IUserMapper> implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Object rst = null;
+		Object rst;
         before();
         rst = method.invoke(t, args);
         after();

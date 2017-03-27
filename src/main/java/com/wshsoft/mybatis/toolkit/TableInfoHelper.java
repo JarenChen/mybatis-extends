@@ -70,7 +70,7 @@ public class TableInfoHelper {
             return ti;
         }
         TableInfo tableInfo = new TableInfo();
-        GlobalConfiguration globalCache = null;
+		GlobalConfiguration globalCache;
         if (null != builderAssistant) {
             tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
             tableInfo.setConfigMark(builderAssistant.getConfiguration());
@@ -176,8 +176,7 @@ public class TableInfoHelper {
      * @param clazz
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
-                                       Class<?> clazz) {
+	private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
         TableId tableId = field.getAnnotation(TableId.class);
         if (tableId != null) {
             if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
@@ -198,6 +197,8 @@ public class TableInfoHelper {
                     // 开启字段下划线申明
                     if (globalConfig.isDbColumnUnderline()) {
                         column = StringUtils.camelToUnderline(column);
+						// fixed 217
+						tableInfo.setKeyRelated(true);
                     }
                     // 全局大写命名
                     if (globalConfig.isCapitalMode()) {
@@ -210,7 +211,10 @@ public class TableInfoHelper {
             } else {
                 throwExceptionId(clazz);
             }
-        }
+		} else {
+			// fixed 217
+			tableInfo.setIdType(globalConfig.getIdType());
+		}
         return false;
     }
 
@@ -224,8 +228,7 @@ public class TableInfoHelper {
      * @param clazz
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
-                                       Class<?> clazz) {
+	private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
         String column = field.getName();
         if (globalConfig.isCapitalMode()) {
             column = column.toUpperCase();
@@ -249,7 +252,7 @@ public class TableInfoHelper {
      * </p>
      */
     private static void throwExceptionId(Class<?> clazz) {
-        StringBuffer errorMsg = new StringBuffer();
+		StringBuilder errorMsg = new StringBuilder();
         errorMsg.append("There must be only one, Discover multiple @TableId annotation in ");
         errorMsg.append(clazz.getName());
         throw new MybatisExtendsException(errorMsg.toString());
@@ -290,11 +293,11 @@ public class TableInfoHelper {
             }
             String[] columns = columnName.split(";");
             String[] els = el.split(";");
-            if (null != columns && null != els && columns.length == els.length) {
-                for (int i = 0; i < columns.length; i++) {
-                    fieldList.add(new TableFieldInfo(globalCache, columns[i], field.getName(), els[i], validate, field
-                            .getType().getName()));
-                }
+			if (columns.length == els.length) {
+				for (int i = 0; i < columns.length; i++) {
+					fieldList.add(new TableFieldInfo(globalCache, columns[i], field.getName(), els[i], validate, field.getType()
+							.getName()));
+				}
             } else {
                 String errorMsg = "Class: %s, Field: %s, 'value' 'el' Length must be consistent.";
                 throw new MybatisExtendsException(String.format(errorMsg, clazz.getName(), field.getName()));

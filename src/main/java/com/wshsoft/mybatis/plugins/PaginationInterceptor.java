@@ -77,14 +77,11 @@ public class PaginationInterceptor implements Interceptor {
 					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
 							page.isOptimizeCount());
 					orderBy = countOptimize.isOrderBy();
+					this.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
+					if (page.getTotal() <= 0) {
+						return invocation.proceed();
+					}
 				}
-				CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
-						page.isOptimizeCount());
-				this.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
-				if (page.getTotal() <= 0) {
-					return invocation.proceed();
-				}
-
 				String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
 				originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
 			} else {
@@ -114,8 +111,9 @@ public class PaginationInterceptor implements Interceptor {
 	protected void count(String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page) {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
+		Connection connection = null;
 		try {
-			Connection connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
+			connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
 			statement = connection.prepareStatement(sql);
 			DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement,
 					boundSql.getParameterObject(), boundSql);
@@ -138,6 +136,7 @@ public class PaginationInterceptor implements Interceptor {
 		} finally {
 			IOUtils.closeQuietly(statement);
 			IOUtils.closeQuietly(resultSet);
+			IOUtils.closeQuietly(connection);
 		}
 	}
 

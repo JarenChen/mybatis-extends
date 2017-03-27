@@ -2,7 +2,7 @@ package com.wshsoft.mybatis.plugins.pagination;
 
 import org.apache.ibatis.session.RowBounds;
 
-import com.wshsoft.mybatis.enums.DBType;
+import  static  com.wshsoft.mybatis.enums.DBType.getDBType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.plugins.pagination.dialects.DB2Dialect;
 import com.wshsoft.mybatis.plugins.pagination.dialects.H2Dialect;
@@ -103,33 +103,43 @@ public class DialectFactory {
 	 * 根据数据库类型选择不同分页方言
 	 * </p>
 	 * 
-	 * @param dbtype
+	 * @param dbType
 	 *            数据库类型
 	 * @return
 	 * @throws Exception
 	 */
-	private static IDialect getDialectByDbtype(String dbtype) throws Exception {
+	private static IDialect getDialectByDbtype(String dbType) {
 		IDialect dialect;
-		if (DBType.MYSQL.getDb().equalsIgnoreCase(dbtype)) {
+		switch (getDBType(dbType)) {
+		case MYSQL:
 			dialect = MySqlDialect.INSTANCE;
-		} else if (DBType.ORACLE.getDb().equalsIgnoreCase(dbtype)) {
+			break;
+		case ORACLE:
 			dialect = OracleDialect.INSTANCE;
-		} else if (DBType.DB2.getDb().equalsIgnoreCase(dbtype)) {
+			break;
+		case DB2:
 			dialect = DB2Dialect.INSTANCE;
-		} else if (DBType.H2.getDb().equalsIgnoreCase(dbtype)) {
+			break;
+		case H2:
 			dialect = H2Dialect.INSTANCE;
-		} else if (DBType.SQLSERVER.getDb().equalsIgnoreCase(dbtype)) {
+			break;
+		case SQLSERVER:
 			dialect = SQLServerDialect.INSTANCE;
-		} else if (DBType.SQLSERVER2005.getDb().equalsIgnoreCase(dbtype)) {
+			break;
+		case SQLSERVER2005:
 			dialect = SQLServer2005Dialect.INSTANCE;
-		} else if (DBType.POSTGRE.getDb().equalsIgnoreCase(dbtype)) {
+			break;
+		case POSTGRE:
 			dialect = PostgreDialect.INSTANCE;
-		} else if (DBType.HSQL.getDb().equalsIgnoreCase(dbtype)) {
+			break;
+		case HSQL:
 			dialect = HSQLDialect.INSTANCE;
-		} else if (DBType.SQLITE.getDb().equalsIgnoreCase(dbtype)) {
+			break;
+		case SQLITE:
 			dialect = SQLiteDialect.INSTANCE;
-		} else {
-			throw new MybatisExtendsException("The database is not supported！dbtype:" + dbtype);
+			break;
+		default:
+			throw new MybatisExtendsException("The Database's Not Supported! DBType:" + dbType);
 		}
 		return dialect;
 	}

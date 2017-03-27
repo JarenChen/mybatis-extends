@@ -73,7 +73,7 @@ public class TableInfo {
      * @return
      */
     public String getSqlStatement(String sqlMethod) {
-        StringBuffer statement = new StringBuffer();
+		StringBuilder statement = new StringBuilder();
         statement.append(currentNamespace);
         statement.append(".");
         statement.append(sqlMethod);

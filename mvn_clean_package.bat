@@ -35,7 +35,7 @@ GOTO INPUT
 :PACKAGE
 call mvn clean
 call mvn -Dmaven.test.skip=true install
-
+GOTO INPUT
 
 :SOURCES
 mvn dependency:sources

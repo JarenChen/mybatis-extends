@@ -132,11 +132,11 @@ public class MybatisMapperRefresh implements Runnable {
 					} catch (InterruptedException interruptedException) {
 						interruptedException.printStackTrace();
 					}
-					while (true) {
+					do {
 						try {
 							for (String filePath : fileSet) {
 								File file = new File(filePath);
-								if (file != null && file.isFile() && file.lastModified() > beforeTime) {
+								if (file.isFile() && file.lastModified() > beforeTime) {
 									globalConfig.setRefresh(true);
 									List<Resource> removeList = jarMapper.get(filePath);
 									if (removeList != null && !removeList.isEmpty()) {// 如果是jar包中的xml，将刷新jar包中存在的所有xml，后期再修改加载jar中修改过后的xml
@@ -161,7 +161,7 @@ public class MybatisMapperRefresh implements Runnable {
 							interruptedException.printStackTrace();
 						}
 
-                    }
+					} while (true);
                 }
             }, "mybatis-extends MapperRefresh").start();
         }

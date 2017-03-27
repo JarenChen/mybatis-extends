@@ -339,20 +339,18 @@ public class StringUtils {
         return false;
     }
 
-    /**
-     * <p>
-     * 是否为大写命名
-     * </p>
-     * 
-     * @param word 待判断字符串
-     * @return
-     */
-    public static boolean isCapitalMode(String word) {
-        if (null == word) {
-            return false;
-        }
-        return word.matches("^[0-9A-Z/_]+$");
-    }
+	/**
+	 * <p>
+	 * 是否为大写命名
+	 * </p>
+	 * 
+	 * @param word
+	 *            待判断字符串
+	 * @return
+	 */
+	public static boolean isCapitalMode(String word) {
+		return null != word && word.matches("^[0-9A-Z/_]+$");
+	}
 
     /**
      * <p>
@@ -573,18 +571,15 @@ public class StringUtils {
         return list;
     }
 
-    /**
-     * 是否为CharSequence类型
-     * 
-     * @param cls
-     * @return
-     */
-    public static Boolean isCharSequence(Class<?> cls) {
-        if (cls != null) {
-            return CharSequence.class.isAssignableFrom(cls);
-        }
-        return false;
-    }
+	/**
+	 * 是否为CharSequence类型
+	 *
+	 * @param cls
+	 * @return
+	 */
+	public static Boolean isCharSequence(Class<?> cls) {
+		return cls != null && CharSequence.class.isAssignableFrom(cls);
+	}
 
 	/**
 	 * 是否为CharSequence类型
@@ -593,7 +588,7 @@ public class StringUtils {
 	 * @return
 	 */
 	public static Boolean isCharSequence(String propertyType) {
-		Class<?> cls = null;
+		Class<?> cls;
 		try {
 			cls = Class.forName(propertyType);
 		} catch (ClassNotFoundException e) {

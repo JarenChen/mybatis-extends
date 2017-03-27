@@ -278,7 +278,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	protected void injectDeleteByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
-		SqlSource sqlSource = null;
+		SqlSource sqlSource;
 		if (batch) {
 			sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
 			StringBuilder ids = new StringBuilder();
@@ -340,7 +340,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.SELECT_BY_ID;
-		SqlSource sqlSource = null;
+		SqlSource sqlSource;
 		if (batch) {
 			sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
 			StringBuilder ids = new StringBuilder();
@@ -434,7 +434,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param table
 	 */
 	protected void injectSelectObjsSql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, true), table.getTableName(),
+		String sql = String.format(sqlMethod.getSql(), sqlSelectObjsColumns(table), table.getTableName(),
 				sqlWhereEntityWrapper(table));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Object.class, table);
@@ -607,6 +607,45 @@ public class AutoSqlInjector implements ISqlInjector {
 
 	/**
 	 * <p>
+	 * SQL 设置selectObj sqlselect
+	 * </p>
+	 *
+	 * @param table
+	 *            是否为包装类型查询
+	 * @return
+	 */
+	protected String sqlSelectObjsColumns(TableInfo table) {
+		StringBuilder columns = new StringBuilder();
+		/*
+		 * 普通查询
+		 */
+		columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
+		List<TableFieldInfo> fieldList = table.getFieldList();
+		// 主键处理
+		if (StringUtils.isNotEmpty(table.getKeyProperty())) {
+			if (table.isKeyRelated()) {
+				columns.append(table.getKeyColumn()).append(" AS ").append(sqlWordConvert(table.getKeyProperty()));
+			} else {
+				columns.append(sqlWordConvert(table.getKeyProperty()));
+			}
+		} else {
+			TableFieldInfo fieldInfo = fieldList.get(0);
+			// 匹配转换内容
+			String wordConvert = sqlWordConvert(fieldInfo.getProperty());
+			if (fieldInfo.getColumn().equals(wordConvert)) {
+				columns.append(wordConvert);
+			} else {
+				// 字段属性不一致
+				columns.append(fieldInfo.getColumn());
+				columns.append(" AS ").append(wordConvert);
+			}
+		}
+		columns.append("</otherwise></choose>");
+		return columns.toString();
+	}
+
+	/**
+	 * <p>
 	 * SQL 查询条件
 	 * </p>
 	 *
@@ -710,7 +749,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			if (StringUtils.isCharSequence(propertyType)) {
 				return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
 			} else {
-				return String.format("\n\t<if test=\"%s!=null \">", property, property);
+				return String.format("\n\t<if test=\"%s!=null \">", property);
 			}
 		} else {
 			// FieldStrategy.NOT_NULL

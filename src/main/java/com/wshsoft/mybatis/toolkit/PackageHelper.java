@@ -48,7 +48,7 @@ public class PackageHelper {
             Set<String> set = new HashSet<String>();
             Resource[] resources = resolver.getResources(pkg);
             if (resources != null && resources.length > 0) {
-                MetadataReader metadataReader = null;
+				MetadataReader metadataReader;
                 for (Resource resource : resources) {
                     if (resource.isReadable()) {
                         metadataReader = metadataReaderFactory.getMetadataReader(resource);

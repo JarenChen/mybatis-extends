@@ -16,7 +16,7 @@ public class H2Dialect implements IDialect {
 
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {
-        StringBuffer sql = new StringBuffer(originalSql);
+		StringBuilder sql = new StringBuilder(originalSql);
         sql.append(" limit ").append(limit);
         if (offset > 0) {
             sql.append(" offset ").append(offset);

@@ -40,19 +40,15 @@ public class VersionUtils {
 		return diff;
 	}
 
-    /**
-     * 比较版本号 true
-     * 
-     * @param version1
-     * @param version2
-     * @return boolean true v1>=v2 false相反
-     */
-    public static boolean compare(String version1, String version2) {
-        int num = compareVersion(version1, version2);
-        if (num >= 0) {
-            return true;
-        }
-        return false;
-    }
-
+	/**
+	 * 比较版本号 true
+	 * 
+	 * @param version1
+	 * @param version2
+	 * @return boolean true v1>=v2 false相反
+	 */
+	public static boolean compare(String version1, String version2) {
+		int num = compareVersion(version1, version2);
+		return num >= 0;
+	}
 }

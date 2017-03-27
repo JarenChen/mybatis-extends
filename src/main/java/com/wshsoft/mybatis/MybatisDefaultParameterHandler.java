@@ -147,9 +147,14 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @return
      */
     protected static Object populateKeys(TableInfo tableInfo, MappedStatement ms, Object parameterObject) {
-        if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty()) && null != tableInfo.getIdType()
-                && tableInfo.getIdType().getKey() >= 2) {
-            MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
+		if (null == tableInfo || StringUtils.isEmpty(tableInfo.getKeyProperty()) || null == tableInfo.getIdType()) {
+            /*
+             * 不处理
+             */
+			return parameterObject;
+		}
+		MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
+		if (tableInfo.getIdType().getKey() >= 2) {
             Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
             /* 自定义 ID */
             if (StringUtils.checkValNull(idValue)) {
@@ -159,6 +164,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.get32UUID());
                 }
             }
+		}
             /* 自定义元对象填充控制器 */
             IMetaObjectHandler metaObjectHandler = GlobalConfiguration.getMetaObjectHandler(ms.getConfiguration());
             if (null != metaObjectHandler) {
@@ -166,11 +172,6 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             }
             return metaObject.getOriginalObject();
         }
-        /*
-         * 不处理
-         */
-        return parameterObject;
-    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
@@ -218,14 +219,12 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     try {
                         typeHandler.setParameter(ps, i + 1, value, jdbcType);
                     } catch (TypeException e) {
-                        throw new TypeException("Could not set parameters for mapping: " + parameterMapping
-                                + ". Cause: " + e, e);
-                    } catch (SQLException e) {
-                        throw new TypeException("Could not set parameters for mapping: " + parameterMapping
-                                + ". Cause: " + e, e);
-                    }
-                }
-            }
-        }
-    }
+						throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);
+					} catch (SQLException e) {
+						throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);
+					}
+				}
+			}
+		}
+	}
 }

@@ -2,6 +2,7 @@ package com.wshsoft.mybatis.toolkit;
 
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ import java.util.Set;
  */
 public class SqlReservedWords {
 
-    public static Set<String> RESERVED_WORDS;
+	public static final Set<String> RESERVED_WORDS;
 
 	static {
 		String[] words = { "AUDIT", "VOLUMES", "MINVALUE", "STATIC", "FLOOR", "CATALOG", "YEAR", "TRIGGER_CATALOG", "WLM",
@@ -124,12 +125,9 @@ public class SqlReservedWords {
 				"DEC", "CASCADED", "ENCRYPTED", "CONTAINSTABLE", "DYNAMIC_FUNCTION", "CONDITION_NUMBER", "BEFORE", "DB2GENERAL",
 				"DECLARE", "SUPERUSER", "WHILE" };
 
-        RESERVED_WORDS = new HashSet<String>(words.length);
-
-        for (String word : words) {
-            RESERVED_WORDS.add(word);
-        }
-    }
+		RESERVED_WORDS = new HashSet<String>(words.length);
+		Collections.addAll(RESERVED_WORDS, words);
+	}
 
 	/**
 	 * <p>
@@ -153,18 +151,15 @@ public class SqlReservedWords {
 		return column;
 	}
 
-    /**
-     * 判断关键字中是否包含该字段
-     * 
-     * @param word
-     * @return
-     */
-    public static boolean containsWord(String word) {
-        if (null != word) {
-            return RESERVED_WORDS.contains(word.toUpperCase());
-        }
-        return false;
-    }
+	/**
+	 * 判断关键字中是否包含该字段
+	 *
+	 * @param word
+	 * @return
+	 */
+	public static boolean containsWord(String word) {
+		return null != word && RESERVED_WORDS.contains(word.toUpperCase());
+	}
 
     /**
      * Utility class - no instances allowed
