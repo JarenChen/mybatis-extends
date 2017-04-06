@@ -8,12 +8,9 @@ package com.wshsoft.mybatis.generator.config.rules;
  */
 public enum DbType {
 
-    MYSQL("mysql"),
-    ORACLE("oracle"),
-    SQL_SERVER("sql_server"),
-    POSTGRE_SQL("postgre_sql");
+    MYSQL("mysql"), ORACLE("oracle"), SQL_SERVER("sql_server"), POSTGRE_SQL("postgre_sql");
 
-    private String value;
+    private final String value;
 
     DbType(String value) {
         this.value = value;

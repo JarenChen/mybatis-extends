@@ -71,11 +71,11 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 			MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
 			RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
 
-			if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
-				return invocation.proceed();
-			}
-			BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
-			String originalSql = (String) boundSql.getSql();
+            if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
+                return invocation.proceed();
+            }
+            BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
+            String originalSql = boundSql.getSql();
 
 			if (rowBounds instanceof Pagination) {
 				Pagination page = (Pagination) rowBounds;
@@ -103,22 +103,22 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 				return invocation.proceed();
 			}
 
-			BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
-			String originalSql = (String) boundSql.getSql();
-			if (rowBounds instanceof Pagination) {
-				Pagination page = (Pagination) rowBounds;
-				if (page.isSearchCount()) {
-					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
-							page.isOptimizeCount());
-					super.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
-					if (page.getTotal() <= 0) {
-						return invocation.proceed();
-					}
-				}
-			}
-		}
-		return invocation.proceed();
-	}
+            BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
+            String originalSql = boundSql.getSql();
+            if (rowBounds instanceof Pagination) {
+                Pagination page = (Pagination) rowBounds;
+                if (page.isSearchCount()) {
+                    CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
+                            page.isOptimizeCount());
+                    super.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
+                    if (page.getTotal() <= 0) {
+                        return invocation.proceed();
+                    }
+                }
+            }
+        }
+        return invocation.proceed();
+    }
 
 	public Object plugin(Object target) {
 		if (target instanceof Executor) {

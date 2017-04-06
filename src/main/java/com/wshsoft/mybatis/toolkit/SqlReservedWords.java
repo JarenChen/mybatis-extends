@@ -1,10 +1,11 @@
-package com.wshsoft.mybatis.toolkit;
 
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
+package com.wshsoft.mybatis.toolkit;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
 
 /**
  * <p>
@@ -129,43 +130,43 @@ public class SqlReservedWords {
 		Collections.addAll(RESERVED_WORDS, words);
 	}
 
-	/**
-	 * <p>
-	 * 数据库字段转义
-	 * </p>
-	 *
-	 * @param globalConfig
-	 *            全局配置
-	 * @param column
-	 *            数据库字段
-	 * @return
-	 */
-	public static String convert(GlobalConfiguration globalConfig, String column) {
-		if (containsWord(column)) {
-			String identifierQuote = StringUtils.isEmpty(globalConfig.getIdentifierQuote()) ? globalConfig.getDbType().getQuote()
-					: globalConfig.getIdentifierQuote();
-			if (StringUtils.isNotEmpty(identifierQuote)) {
-				return String.format(identifierQuote, column);
-			}
-		}
-		return column;
-	}
-
-	/**
-	 * 判断关键字中是否包含该字段
-	 *
-	 * @param word
-	 * @return
-	 */
-	public static boolean containsWord(String word) {
-		return null != word && RESERVED_WORDS.contains(word.toUpperCase());
-	}
-
     /**
      * Utility class - no instances allowed
      */
     private SqlReservedWords() {
 
+    }
+
+    /**
+     * <p>
+     * 数据库字段转义
+     * </p>
+     *
+     * @param globalConfig
+     *            全局配置
+     * @param column
+     *            数据库字段
+     * @return
+     */
+    public static String convert(GlobalConfiguration globalConfig, String column) {
+        if (containsWord(column)) {
+            String identifierQuote = StringUtils.isEmpty(globalConfig.getIdentifierQuote()) ? globalConfig.getDbType().getQuote()
+                    : globalConfig.getIdentifierQuote();
+            if (StringUtils.isNotEmpty(identifierQuote)) {
+                return String.format(identifierQuote, column);
+            }
+        }
+        return column;
+    }
+
+    /**
+     * 判断关键字中是否包含该字段
+     *
+     * @param word
+     * @return
+     */
+    public static boolean containsWord(String word) {
+        return null != word && RESERVED_WORDS.contains(word.toUpperCase());
     }
 
 }

@@ -1,11 +1,10 @@
 package com.wshsoft.mybatis.plugins;
 
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
-import com.wshsoft.mybatis.enums.DBType;
-import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.toolkit.IOUtils;
-import com.wshsoft.mybatis.toolkit.StringUtils;
-import com.wshsoft.mybatis.toolkit.VersionUtils;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Properties;
+
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
@@ -21,10 +20,12 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.Properties;
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.enums.DBType;
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.toolkit.IOUtils;
+import com.wshsoft.mybatis.toolkit.StringUtils;
+import com.wshsoft.mybatis.toolkit.VersionUtils;
 
 /**
  * <p>
@@ -37,16 +38,15 @@ import java.util.Properties;
 @Intercepts({ @Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class SqlExplainInterceptor implements Interceptor {
 
-	private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
-
-	/**
-	 * 发现执行全表 delete update 语句是否停止执行
-	 */
-	private boolean stopProceed = false;
-	/**
-	 * Mysql支持分析SQL的最小版本
-	 */
-	private final String minMySQLVersion = "5.6.3";
+    private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
+    /**
+     * Mysql支持分析SQL的最小版本
+     */
+    private final String minMySQLVersion = "5.6.3";
+    /**
+     * 发现执行全表 delete update 语句是否停止执行
+     */
+    private boolean stopProceed = false;
 
 	public Object intercept(Invocation invocation) throws Throwable {
 		/**

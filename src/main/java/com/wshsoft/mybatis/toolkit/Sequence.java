@@ -53,15 +53,58 @@ public class Sequence {
      */
     public Sequence(long workerId, long datacenterId) {
         if (workerId > maxWorkerId || workerId < 0) {
-            throw new MybatisExtendsException(String.format("worker Id can't be greater than %d or less than 0",
-                    maxWorkerId));
+            throw new MybatisExtendsException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
         }
         if (datacenterId > maxDatacenterId || datacenterId < 0) {
-            throw new MybatisExtendsException(String.format("datacenter Id can't be greater than %d or less than 0",
-                    maxDatacenterId));
+            throw new MybatisExtendsException(
+                    String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
         }
         this.workerId = workerId;
         this.datacenterId = datacenterId;
+    }
+
+    /**
+     * <p>
+     * 获取 maxWorkerId
+     * </p>
+     */
+    protected static long getMaxWorkerId(long datacenterId, long maxWorkerId) {
+        StringBuffer mpid = new StringBuffer();
+        mpid.append(datacenterId);
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        if (StringUtils.isNotEmpty(name)) {
+            /*
+			 * GET jvmPid
+			 */
+            mpid.append(name.split("@")[0]);
+        }
+		/*
+		 * MAC + PID 的 hashcode 获取16个低位
+		 */
+        return (mpid.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
+    }
+
+    /**
+     * <p>
+     * 数据标识id部分
+     * </p>
+     */
+    protected static long getDatacenterId(long maxDatacenterId) {
+        long id = 0L;
+        try {
+            InetAddress ip = InetAddress.getLocalHost();
+            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+            if (network == null) {
+                id = 1L;
+            } else {
+                byte[] mac = network.getHardwareAddress();
+                id = ((0x000000FF & (long) mac[mac.length - 1]) | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
+                id = id % (maxDatacenterId + 1);
+            }
+        } catch (Exception e) {
+            logger.warn(" getDatacenterId: " + e.getMessage());
+        }
+        return id;
     }
 
     /**
@@ -72,8 +115,8 @@ public class Sequence {
     public synchronized long nextId() {
         long timestamp = timeGen();
         if (timestamp < lastTimestamp) {
-            throw new MybatisExtendsException(String.format(
-                    "Clock moved backwards. Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
+            throw new MybatisExtendsException(String.format("Clock moved backwards. Refusing to generate id for %d milliseconds",
+                    lastTimestamp - timestamp));
         }
         if (lastTimestamp == timestamp) {
 			sequence = (sequence + 1) & sequenceMask;
@@ -101,49 +144,5 @@ public class Sequence {
     protected long timeGen() {
         return SystemClock.now();
     }
-
-    /**
-     * <p>
-     * 获取 maxWorkerId
-     * </p>
-     */
-    protected static long getMaxWorkerId(long datacenterId, long maxWorkerId) {
-        StringBuffer mpid = new StringBuffer();
-        mpid.append(datacenterId);
-        String name = ManagementFactory.getRuntimeMXBean().getName();
-        if (StringUtils.isNotEmpty(name)) {
-            /*
-             * GET jvmPid
-             */
-            mpid.append(name.split("@")[0]);
-        }
-        /*
-         * MAC + PID 的 hashcode 获取16个低位
-         */
-        return (mpid.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
-    }
-
-	/**
-	 * <p>
-	 * 数据标识id部分
-	 * </p>
-	 */
-	protected static long getDatacenterId(long maxDatacenterId) {
-		long id = 0L;
-		try {
-			InetAddress ip = InetAddress.getLocalHost();
-			NetworkInterface network = NetworkInterface.getByInetAddress(ip);
-			if (network == null) {
-				id = 1L;
-			} else {
-				byte[] mac = network.getHardwareAddress();
-				id = ((0x000000FF & (long) mac[mac.length - 1]) | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
-				id = id % (maxDatacenterId + 1);
-			}
-		} catch (Exception e) {
-			logger.warn(" getDatacenterId: " + e.getMessage());
-		}
-		return id;
-	}
 
 }

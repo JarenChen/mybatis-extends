@@ -72,6 +72,8 @@ CREATE TABLE `user` (
   `phone` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '电话号码',
   `desc` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '描述',
   `birthday` date DEFAULT NULL COMMENT '出生日期',
+  `price` DECIMAL(10,2) NULL DEFAULT NULL COMMENT '价格',
+  `version` INT(5) NULL DEFAULT NULL COMMENT '版本号',
   PRIMARY KEY (`test_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
 

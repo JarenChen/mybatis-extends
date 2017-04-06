@@ -16,13 +16,15 @@ import java.util.StringTokenizer;
  */
 public class SqlFormatter {
 
+    public static final String WHITESPACE = " \n\r\f\t";
     private static final Set<String> BEGIN_CLAUSES = new HashSet<String>();
     private static final Set<String> END_CLAUSES = new HashSet<String>();
     private static final Set<String> LOGICAL = new HashSet<String>();
     private static final Set<String> QUANTIFIERS = new HashSet<String>();
     private static final Set<String> DML = new HashSet<String>();
     private static final Set<String> MISC = new HashSet<String>();
-    public static final String WHITESPACE = " \n\r\f\t";
+    private static final String INDENT_STRING = "    ";
+    private static final String INITIAL = "\n    ";
 
     static {
         BEGIN_CLAUSES.add("left");
@@ -62,9 +64,6 @@ public class SqlFormatter {
         MISC.add("on");
     }
 
-    private static final String INDENT_STRING = "    ";
-    private static final String INITIAL = "\n    ";
-
     public String format(String source) {
         return new FormatProcess(source).perform();
     }
@@ -78,9 +77,6 @@ public class SqlFormatter {
         boolean afterInsert;
         int inFunction;
         int parensSinceSelect;
-        private LinkedList<Integer> parenCounts = new LinkedList<Integer>();
-        private LinkedList<Boolean> afterByOrFromOrSelects = new LinkedList<Boolean>();
-
         int indent = 1;
 
         StringBuilder result = new StringBuilder();
@@ -88,9 +84,22 @@ public class SqlFormatter {
         String lastToken;
         String token;
         String lcToken;
+        private LinkedList<Integer> parenCounts = new LinkedList<Integer>();
+        private LinkedList<Boolean> afterByOrFromOrSelects = new LinkedList<Boolean>();
 
         public FormatProcess(String sql) {
             tokens = new StringTokenizer(sql, "()+*/-=<>'`\"[]," + WHITESPACE, true);
+        }
+
+        private static boolean isFunctionName(String tok) {
+            final char begin = tok.charAt(0);
+            final boolean isIdentifier = Character.isJavaIdentifierStart(begin) || '"' == begin;
+            return isIdentifier && !LOGICAL.contains(tok) && !END_CLAUSES.contains(tok) && !QUANTIFIERS.contains(tok)
+                    && !DML.contains(tok) && !MISC.contains(tok);
+        }
+
+        private static boolean isWhitespace(String token) {
+            return WHITESPACE.contains(token);
         }
 
         public String perform() {
@@ -121,52 +130,30 @@ public class SqlFormatter {
                     commaAfterByOrFromOrSelect();
                 } else if (afterOn && ",".equals(token)) {
                     commaAfterOn();
-                }
-
-                else if ("(".equals(token)) {
+                } else if ("(".equals(token)) {
                     openParen();
                 } else if (")".equals(token)) {
                     closeParen();
-                }
-
-                else if (BEGIN_CLAUSES.contains(lcToken)) {
+                } else if (BEGIN_CLAUSES.contains(lcToken)) {
                     beginNewClause();
-                }
-
-                else if (END_CLAUSES.contains(lcToken)) {
+                } else if (END_CLAUSES.contains(lcToken)) {
                     endNewClause();
-                }
-
-                else if ("select".equals(lcToken)) {
+                } else if ("select".equals(lcToken)) {
                     select();
-                }
-
-                else if (DML.contains(lcToken)) {
+                } else if (DML.contains(lcToken)) {
                     updateOrInsertOrDelete();
-                }
-
-                else if ("values".equals(lcToken)) {
+                } else if ("values".equals(lcToken)) {
                     values();
-                }
-
-                else if ("on".equals(lcToken)) {
+                } else if ("on".equals(lcToken)) {
                     on();
-                }
-
-                else if (afterBetween && lcToken.equals("and")) {
+                } else if (afterBetween && lcToken.equals("and")) {
                     misc();
                     afterBetween = false;
-                }
-
-                else if (LOGICAL.contains(lcToken)) {
+                } else if (LOGICAL.contains(lcToken)) {
                     logical();
-                }
-
-                else if (isWhitespace(token)) {
+                } else if (isWhitespace(token)) {
                     white();
-                }
-
-                else {
+                } else {
                     misc();
                 }
 
@@ -332,17 +319,6 @@ public class SqlFormatter {
                 }
             }
             parensSinceSelect++;
-        }
-
-        private static boolean isFunctionName(String tok) {
-            final char begin = tok.charAt(0);
-            final boolean isIdentifier = Character.isJavaIdentifierStart(begin) || '"' == begin;
-            return isIdentifier && !LOGICAL.contains(tok) && !END_CLAUSES.contains(tok) && !QUANTIFIERS.contains(tok)
-                    && !DML.contains(tok) && !MISC.contains(tok);
-        }
-
-        private static boolean isWhitespace(String token) {
-            return WHITESPACE.contains(token);
         }
 
         private void newline() {

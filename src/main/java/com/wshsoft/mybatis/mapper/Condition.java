@@ -16,14 +16,20 @@ public class Condition extends Wrapper {
     /**
      * 构建一个Empty条件构造 避免传递参数使用null
      */
-    public static Condition Empty() {
-        return Condition.instance();
+    public static final Condition EMPTY = Condition.create();
+
+    /**
+     * 获取实例
+     */
+    @Deprecated
+    public static Condition instance() {
+        return Condition.create();
     }
 
     /**
      * 获取实例
      */
-    public static Condition instance() {
+    public static Condition create() {
         return new Condition();
     }
 

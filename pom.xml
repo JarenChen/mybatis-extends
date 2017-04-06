@@ -8,7 +8,7 @@
     </parent>
 	<groupId>com.wshsoft</groupId>
 	<artifactId>mybatis-extends</artifactId>
-	<version>2.1.11-SNAPSHOT</version>
+	<version>2.1.12-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>mybatis-extends</name>
@@ -42,6 +42,7 @@
 		<junit.version>4.12</junit.version>
 		<contiperf.version>2.3.4</contiperf.version>
 		<velocity.version>1.7</velocity.version>
+		<h2.version>1.4.194</h2.version>
 	</properties>
 
 	<dependencies>
@@ -210,14 +211,20 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>${postgresql.version}</version>
-            <scope>test</scope>
-        </dependency>
-	<dependency>
-		<groupId>org.databene</groupId>
-		<artifactId>contiperf</artifactId>
-		<version>${contiperf.version}</version>
-		<scope>test</scope>
-	</dependency>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+			<scope>test</scope>
+		</dependency>
+	    <dependency>
+	        <groupId>org.databene</groupId>
+	        <artifactId>contiperf</artifactId>
+	        <version>${contiperf.version}</version>
+	        <scope>test</scope>
+	    </dependency>
 		<!-- test end -->
 	</dependencies>
 
@@ -236,6 +243,14 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

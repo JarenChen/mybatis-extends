@@ -105,9 +105,7 @@ public class DataSourceConfig {
         try {
             Class.forName(driverName);
             conn = DriverManager.getConnection(url, username, password);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
         return conn;

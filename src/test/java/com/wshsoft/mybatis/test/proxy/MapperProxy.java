@@ -16,7 +16,7 @@ import com.wshsoft.mybatis.test.proxy.mapper.UserMapperImpl;
  */
 public class MapperProxy<T> implements InvocationHandler {
 
-    private Class<T> methodInterface;
+    private final Class<T> methodInterface;
 
     public MapperProxy(Class<T> methodInterface) {
         this.methodInterface = methodInterface;
@@ -28,7 +28,6 @@ public class MapperProxy<T> implements InvocationHandler {
      * XML中的namespace，方法名相当于具体一个方法中的id。
      * </p>
      */
-    @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (Object.class.equals(method.getDeclaringClass())) {
             return method.invoke(this, args);

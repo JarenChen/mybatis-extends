@@ -17,6 +17,8 @@ import com.wshsoft.mybatis.generator.config.builder.ConfigBuilder;
  */
 public abstract class AbstractGenerator {
 
+    protected ConfigBuilder config;
+    protected InjectionConfig injectionConfig;
     /**
      * 数据源配置
      */
@@ -41,10 +43,6 @@ public abstract class AbstractGenerator {
      * 全局 相关配置
      */
     private GlobalConfig globalConfig;
-
-    protected ConfigBuilder config;
-
-    protected InjectionConfig injectionConfig;
 
     /**
      * 初始化配置

@@ -41,34 +41,40 @@ public class PerformanceInterceptor implements Interceptor {
 
 	private boolean format = false;
 
-	public Object intercept(Invocation invocation) throws Throwable {
-		Statement statement;
-		Object firstArg = invocation.getArgs()[0];
-		if (Proxy.isProxyClass(firstArg.getClass())) {
-			statement = (Statement) SystemMetaObject.forObject(firstArg).getValue("h.statement");
-		} else {
-			statement = (Statement) firstArg;
-		}
-		String originalSql = statement.toString();
-		int index = originalSql.indexOf(':');
-		String sql = originalSql;
-		if (index > 0) {
-			sql = originalSql.substring(index + 1, originalSql.length());
-		}
-		long start = SystemClock.now();
-		Object result = invocation.proceed();
-		long end = SystemClock.now();
-		long timing = end - start;
-		String formatSql = SqlUtils.sqlFormat(sql, format);
-		Object target = PluginUtils.realTarget(invocation.getTarget());
-		MetaObject metaObject = SystemMetaObject.forObject(target);
-		MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
-		System.err.println(" Time：" + timing + " ms" + " - ID：" + ms.getId() + "\n Execute SQL：" + formatSql + "\n");
-		if (maxTime >= 1 && timing > maxTime) {
-			throw new MybatisExtendsException(" The SQL execution time is too large, please optimize ! ");
-		}
-		return result;
-	}
+    public Object intercept(Invocation invocation) throws Throwable {
+        Statement statement;
+        Object firstArg = invocation.getArgs()[0];
+        if (Proxy.isProxyClass(firstArg.getClass())) {
+            statement = (Statement) SystemMetaObject.forObject(firstArg).getValue("h.statement");
+        } else {
+            statement = (Statement) firstArg;
+        }
+        try {
+            statement.getClass().getDeclaredField("stmt");
+            statement = (Statement) SystemMetaObject.forObject(statement).getValue("stmt.statement");
+        } catch (Exception e) {
+            // do nothing
+        }
+        String originalSql = statement.toString();
+        int index = originalSql.indexOf(':');
+        String sql = originalSql;
+        if (index > 0) {
+            sql = originalSql.substring(index + 1, originalSql.length());
+        }
+        long start = SystemClock.now();
+        Object result = invocation.proceed();
+        long end = SystemClock.now();
+        long timing = end - start;
+        String formatSql = SqlUtils.sqlFormat(sql, format);
+        Object target = PluginUtils.realTarget(invocation.getTarget());
+        MetaObject metaObject = SystemMetaObject.forObject(target);
+        MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
+        System.err.println(" Time：" + timing + " ms" + " - ID：" + ms.getId() + "\n Execute SQL：" + formatSql + "\n");
+        if (maxTime >= 1 && timing > maxTime) {
+            throw new MybatisExtendsException(" The SQL execution time is too large, please optimize ! ");
+        }
+        return result;
+    }
 
 	public Object plugin(Object target) {
 		if (target instanceof StatementHandler) {

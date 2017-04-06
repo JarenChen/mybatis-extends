@@ -25,8 +25,11 @@ public @interface TableId {
     String value() default "";
 
     /*
-     * <p> 主键ID，默认 INPUT </p> {@link IdType}
+     * <p>
+     * 主键ID
+     * </p>
+     * {@link IdType}
      */
-    IdType type() default IdType.INPUT;
+    IdType type() default IdType.NONE;
 
 }

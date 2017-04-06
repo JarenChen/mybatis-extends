@@ -59,17 +59,17 @@ public class ReflectionKit {
         Map<String, Field> fieldMaps = getFieldMap(cls);
         try {
             if (MapUtils.isEmpty(fieldMaps)) {
-                throw new MybatisExtendsException(String.format("Error: NoSuchField in %s for %s.  Cause:",
-                        cls.getSimpleName(), str));
+                throw new MybatisExtendsException(
+                        String.format("Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str));
             }
             Method method = cls.getMethod(getMethodCapitalize(fieldMaps.get(str), str));
             return method.invoke(entity);
         } catch (NoSuchMethodException e) {
-            throw new MybatisExtendsException(String.format("Error: NoSuchMethod in %s.  Cause:", cls.getSimpleName())
-                    + e);
+            throw new MybatisExtendsException(String.format("Error: NoSuchMethod in %s.  Cause:", cls.getSimpleName()) + e);
         } catch (IllegalAccessException e) {
             throw new MybatisExtendsException(String.format("Error: Cannot execute a private method. in %s.  Cause:",
-                    cls.getSimpleName()) + e);
+                    cls.getSimpleName())
+                    + e);
         } catch (InvocationTargetException e) {
             throw new MybatisExtendsException("Error: InvocationTargetException on getMethodValue.  Cause:" + e);
         }
@@ -102,8 +102,7 @@ public class ReflectionKit {
         Class<?> cls = bean.getClass();
         TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
         if (null == tableInfo) {
-            throw new MybatisExtendsException(String.format("Error: Could Not find %s in TableInfo Cache. ",
-                    cls.getSimpleName()));
+            throw new MybatisExtendsException(String.format("Error: Could Not find %s in TableInfo Cache. ", cls.getSimpleName()));
         }
         boolean result = false;
         List<TableFieldInfo> fieldList = tableInfo.getFieldList();
@@ -146,13 +145,12 @@ public class ReflectionKit {
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
 
         if (index >= params.length || index < 0) {
-            logger.warn(String.format("Warn: Index: %s, Size of %s's Parameterized Type: %s .", index,
-                    clazz.getSimpleName(), params.length));
+            logger.warn(String.format("Warn: Index: %s, Size of %s's Parameterized Type: %s .", index, clazz.getSimpleName(),
+                    params.length));
             return Object.class;
         }
         if (!(params[index] instanceof Class)) {
-            logger.warn(String.format("Warn: %s not set the actual class on superclass generic parameter",
-                    clazz.getSimpleName()));
+            logger.warn(String.format("Warn: %s not set the actual class on superclass generic parameter", clazz.getSimpleName()));
             return Object.class;
         }
 

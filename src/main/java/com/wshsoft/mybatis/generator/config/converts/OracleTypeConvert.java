@@ -13,7 +13,6 @@ import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
  */
 public class OracleTypeConvert implements ITypeConvert {
 
-    @Override
     public DbColumnType processTypeConvert(String fieldType) {
         String t = fieldType.toUpperCase();
         if (t.contains("CHAR")) {

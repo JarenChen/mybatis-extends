@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.plugins.Page;
@@ -21,8 +22,6 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
  */
 public class SqlRunner {
 
-    // 默认FACTORY
-    public static SqlSessionFactory FACTORY;
 
     public static final String INSERT = "com.wshsoft.mybatis.mapper.SqlRunner.Insert";
     public static final String DELETE = "com.wshsoft.mybatis.mapper.SqlRunner.Delete";
@@ -35,7 +34,8 @@ public class SqlRunner {
 
     // 单例Query
     public static final SqlRunner DEFAULT = new SqlRunner();
-
+    // 默认FACTORY
+    public static SqlSessionFactory FACTORY;
     private SqlSessionFactory sqlSessionFactory;
 
     private Class<?> clazz;
@@ -48,10 +48,35 @@ public class SqlRunner {
         this.clazz = clazz;
     }
 
+    /**
+     * 获取默认的SqlQuery(适用于单库)
+     *
+     * @return
+     */
+    public static SqlRunner db() {
+        // 初始化的静态变量 还是有前后加载的问题 该判断只会执行一次
+        if (DEFAULT.sqlSessionFactory == null) {
+            DEFAULT.sqlSessionFactory = FACTORY;
+        }
+        return DEFAULT;
+    }
+
+    /**
+     * 根据当前class对象获取SqlQuery(适用于多库)
+     *
+     * @param clazz
+     * @return
+     */
+    public static SqlRunner db(Class<?> clazz) {
+        return new SqlRunner(clazz);
+    }
+
+    @Transactional
     public boolean insert(String sql, Object... args) {
         return SqlHelper.retBool(sqlSession().insert(INSERT, sqlMap(sql, args)));
     }
 
+    @Transactional
     public boolean delete(String sql, Object... args) {
         return SqlHelper.retBool(sqlSession().delete(DELETE, sqlMap(sql, args)));
     }
@@ -69,6 +94,7 @@ public class SqlRunner {
         return sqlMap;
     }
 
+    @Transactional
     public boolean update(String sql, Object... args) {
         return SqlHelper.retBool(sqlSession().update(UPDATE, sqlMap(sql, args)));
     }
@@ -103,35 +129,12 @@ public class SqlRunner {
     }
 
     /**
-     * 获取默认的SqlQuery(适用于单库)
-     * 
-     * @return
+     * <p>
+     * 获取Session 默认自动提交
+     * <p/>
      */
-    public static SqlRunner db() {
-        // 初始化的静态变量 还是有前后加载的问题 该判断只会执行一次
-        if (DEFAULT.sqlSessionFactory == null) {
-            DEFAULT.sqlSessionFactory = FACTORY;
-        }
-        return DEFAULT;
+    private SqlSession sqlSession() {
+        return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfiguration.getSqlSession(FACTORY.getConfiguration());
     }
-
-    /**
-     * 根据当前class对象获取SqlQuery(适用于多库)
-     * 
-     * @param clazz
-     * @return
-     */
-    public static SqlRunner db(Class<?> clazz) {
-        return new SqlRunner(clazz);
-    }
-
-	/**
-	 * <p>
-	 * 获取Session 默认自动提交
-	 * <p/>
-	 */
-	private SqlSession sqlSession() {
-		return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfiguration.getSqlSession(FACTORY.getConfiguration());
-	}
 
 }

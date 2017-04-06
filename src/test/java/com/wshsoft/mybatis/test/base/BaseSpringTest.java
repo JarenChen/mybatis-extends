@@ -23,9 +23,11 @@ import com.wshsoft.mybatis.test.mysql.mapper.UserMapper;
 import com.wshsoft.mybatis.toolkit.IdWorker;
 
 /**
- * dao测试的基类 xiejian
+ * dao测试的基类 
  * 
+ * @author Carry xie
  * @Date 2014-5-16
+ *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:spring/spring.xml" })

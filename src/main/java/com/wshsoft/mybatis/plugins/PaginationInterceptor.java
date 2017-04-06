@@ -25,6 +25,7 @@ import com.wshsoft.mybatis.entity.CountOptimize;
 import com.wshsoft.mybatis.plugins.pagination.DialectFactory;
 import com.wshsoft.mybatis.plugins.pagination.Pagination;
 import com.wshsoft.mybatis.toolkit.IOUtils;
+import com.wshsoft.mybatis.toolkit.JdbcUtils;
 import com.wshsoft.mybatis.toolkit.PluginUtils;
 import com.wshsoft.mybatis.toolkit.SqlUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
@@ -42,14 +43,16 @@ public class PaginationInterceptor implements Interceptor {
 
 	private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
 
-	/* 溢出总页数，设置第一页 */
-	private boolean overflowCurrent = false;
-	/* Count优化方式 */
-	private String optimizeType = "default";
-	/* 方言类型 */
-	private String dialectType;
-	/* 方言实现类 */
-	private String dialectClazz;
+    /* 溢出总页数，设置第一页 */
+    private boolean overflowCurrent = false;
+    /* 是否设置动态数据源 设置之后动态获取当前数据源 */
+    private boolean dynamicDataSource = false;
+    /* Count优化方式 */
+    private String optimizeType = "default";
+    /* 方言类型 */
+    private String dialectType;
+    /* 方言实现类 */
+    private String dialectClazz;
 
 	/**
 	 * Physical Pagination Interceptor for all the queries with parameter
@@ -63,31 +66,35 @@ public class PaginationInterceptor implements Interceptor {
 			RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
 
 			/* 不需要分页的场合 */
-			if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
-				return invocation.proceed();
-			}
-			BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
-			String originalSql = (String) boundSql.getSql();
-
-			if (rowBounds instanceof Pagination) {
-				MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
-				Pagination page = (Pagination) rowBounds;
-				boolean orderBy = true;
-				if (page.isSearchCount()) {
-					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
-							page.isOptimizeCount());
-					orderBy = countOptimize.isOrderBy();
-					this.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
-					if (page.getTotal() <= 0) {
-						return invocation.proceed();
-					}
-				}
-				String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
-				originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
-			} else {
-				// support physical Pagination for RowBounds
-				originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dialectType, dialectClazz);
-			}
+            if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
+                return invocation.proceed();
+            }
+            BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
+            String originalSql = boundSql.getSql();
+            MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
+            if (isDynamicDataSource()) {
+                try (Connection connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection()) {
+                    dialectType = JdbcUtils.getDbType(connection.getMetaData().getURL()).getDb();
+                }
+            }
+            if (rowBounds instanceof Pagination) {
+                Pagination page = (Pagination) rowBounds;
+                boolean orderBy = true;
+                if (page.isSearchCount()) {
+                    CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
+                            page.isOptimizeCount());
+                    orderBy = countOptimize.isOrderBy();
+                    this.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
+                    if (page.getTotal() <= 0) {
+                        return invocation.proceed();
+                    }
+                }
+                String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
+                originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
+            } else {
+                // support physical Pagination for RowBounds
+                originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dialectType, dialectClazz);
+            }
 
 			/*
 			 * <p> 禁用内存分页 </p>
@@ -174,4 +181,11 @@ public class PaginationInterceptor implements Interceptor {
 		this.optimizeType = optimizeType;
 	}
 
+    public boolean isDynamicDataSource() {
+        return dynamicDataSource;
+    }
+
+    public void setDynamicDataSource(boolean dynamicDataSource) {
+        this.dynamicDataSource = dynamicDataSource;
+    }
 }

@@ -36,7 +36,6 @@ public class IdWorkerTest {
 
     public class Task implements Runnable {
 
-        @Override
         public void run() {
             try {
                 long id = IdWorker.getId();

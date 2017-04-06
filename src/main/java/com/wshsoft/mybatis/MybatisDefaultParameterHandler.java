@@ -46,11 +46,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @see org.apache.ibatis.mapping.BoundSql
      */
     private static Field additionalParametersField;
-    private final TypeHandlerRegistry typeHandlerRegistry;
-    private final MappedStatement mappedStatement;
-    private final Object parameterObject;
-    private BoundSql boundSql;
-    private Configuration configuration;
+
     static {
         try {
             additionalParametersField = BoundSql.class.getDeclaredField("additionalParameters");
@@ -59,6 +55,12 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             // ignored, Because it will never happen.
         }
     }
+
+    private final TypeHandlerRegistry typeHandlerRegistry;
+    private final MappedStatement mappedStatement;
+    private final Object parameterObject;
+    private BoundSql boundSql;
+    private Configuration configuration;
 
     public MybatisDefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
         super(mappedStatement, processBatch(mappedStatement, parameterObject), boundSql);
@@ -218,13 +220,11 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     }
                     try {
                         typeHandler.setParameter(ps, i + 1, value, jdbcType);
-                    } catch (TypeException e) {
-						throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);
-					} catch (SQLException e) {
-						throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);
-					}
-				}
-			}
-		}
-	}
+                    } catch (TypeException | SQLException e) {
+                        throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);
+                    }
+                }
+            }
+        }
+    }
 }

@@ -235,7 +235,8 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
                 Class<?> javaTypeClass = resolveClass(javaType);
                 JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
                 @SuppressWarnings("unchecked")
-                Class<? extends TypeHandler<?>> typeHandlerClass = (Class<? extends TypeHandler<?>>) resolveClass(typeHandler);
+                Class<? extends TypeHandler<?>> typeHandlerClass = (Class<? extends TypeHandler<?>>) resolveClass(
+                        typeHandler);
                 ParameterMapping parameterMapping = builderAssistant.buildParameterMapping(parameterClass, property,
                         javaTypeClass, jdbcTypeEnum, resultMap, modeEnum, typeHandlerClass, numericScale);
                 parameterMappings.add(parameterMapping);
@@ -262,10 +263,8 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
             throws Exception {
         ErrorContext.instance().activity("processing " + resultMapNode.getValueBasedIdentifier());
         String id = resultMapNode.getStringAttribute("id", resultMapNode.getValueBasedIdentifier());
-        String type = resultMapNode.getStringAttribute(
-                "type",
-                resultMapNode.getStringAttribute("ofType",
-                        resultMapNode.getStringAttribute("resultType", resultMapNode.getStringAttribute("javaType"))));
+        String type = resultMapNode.getStringAttribute("type", resultMapNode.getStringAttribute("ofType",
+                resultMapNode.getStringAttribute("resultType", resultMapNode.getStringAttribute("javaType"))));
         String extend = resultMapNode.getStringAttribute("extends");
         Boolean autoMapping = resultMapNode.getBooleanAttribute("autoMapping");
         Class<?> typeClass = resolveClass(type);
@@ -383,8 +382,8 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
         String typeHandler = context.getStringAttribute("typeHandler");
         String resultSet = context.getStringAttribute("resultSet");
         String foreignColumn = context.getStringAttribute("foreignColumn");
-        boolean lazy = "lazy".equals(context.getStringAttribute("fetchType",
-                configuration.isLazyLoadingEnabled() ? "lazy" : "eager"));
+        boolean lazy = "lazy".equals(
+                context.getStringAttribute("fetchType", configuration.isLazyLoadingEnabled() ? "lazy" : "eager"));
         Class<?> javaTypeClass = resolveClass(javaType);
         @SuppressWarnings("unchecked")
         Class<? extends TypeHandler<?>> typeHandlerClass = (Class<? extends TypeHandler<?>>) resolveClass(typeHandler);

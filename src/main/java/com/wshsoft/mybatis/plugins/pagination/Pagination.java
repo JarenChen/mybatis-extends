@@ -142,12 +142,12 @@ public class Pagination extends RowBounds implements Serializable {
         return this.pages;
     }
 
-    public void setCurrent(int current) {
-        this.current = current;
-    }
-
     public int getCurrent() {
         return current;
+    }
+
+    public void setCurrent(int current) {
+        this.current = current;
     }
 
     public boolean isSearchCount() {

@@ -1,12 +1,5 @@
-package com.wshsoft.mybatis.mapper;
 
-import com.wshsoft.mybatis.enums.SqlLike;
-import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
-import com.wshsoft.mybatis.toolkit.ArrayUtils;
-import com.wshsoft.mybatis.toolkit.CollectionUtils;
-import com.wshsoft.mybatis.toolkit.MapUtils;
-import com.wshsoft.mybatis.toolkit.SqlUtils;
-import com.wshsoft.mybatis.toolkit.StringUtils;
+package com.wshsoft.mybatis.mapper;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -15,6 +8,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.wshsoft.mybatis.enums.SqlLike;
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.toolkit.ArrayUtils;
+import com.wshsoft.mybatis.toolkit.CollectionUtils;
+import com.wshsoft.mybatis.toolkit.MapUtils;
+
+import com.wshsoft.mybatis.toolkit.SqlUtils;
+import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
  * <p>
@@ -36,32 +38,26 @@ public abstract class Wrapper<T> implements Serializable {
 
 	private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
 
-	private static final String DEFAULT_PARAM_ALIAS = "ew";
-
-	private Map<String, Object> paramNameValuePairs = new HashMap<String, Object>(4);
-
-	private AtomicInteger paramNameSeq = new AtomicInteger(0);
-
-	protected String paramAlias = null;
-	/**
-	 * SQL 查询字段内容，例如：id,name,age
-	 */
-	protected String sqlSelect = null;
-
-	/**
-	 * 实现了TSQL语法的SQL实体
-	 */
-	protected SqlPlus sql = new SqlPlus();
-
-	/**
-	 * 自定义是否输出sql为 WHERE OR AND OR OR
-	 */
-	protected Boolean isWhere;
-
-	/**
-	 * 拼接WHERE后应该是AND还是OR
-	 */
-	protected String AND_OR = "AND";
+    private static final String DEFAULT_PARAM_ALIAS = "ew";
+    protected String paramAlias = null;
+    /**
+     * SQL 查询字段内容，例如：id,name,age
+     */
+    protected String sqlSelect = null;
+    /**
+     * 实现了TSQL语法的SQL实体
+     */
+    protected SqlPlus sql = new SqlPlus();
+    /**
+     * 自定义是否输出sql为 WHERE OR AND OR OR
+     */
+    protected Boolean isWhere;
+    /**
+     * 拼接WHERE后应该是AND还是OR
+     */
+    protected String AND_OR = "AND";
+    private Map<String, Object> paramNameValuePairs = new HashMap<String, Object>(4);
+    private AtomicInteger paramNameSeq = new AtomicInteger(0);
 
 	/**
 	 * 兼容EntityWrapper
@@ -91,13 +87,13 @@ public abstract class Wrapper<T> implements Serializable {
 	 */
 	public abstract String getSqlSegment();
 
-	public String toString() {
-		String sqlSegment = getSqlSegment();
-		if (StringUtils.isNotEmpty(sqlSegment)) {
-			sqlSegment = sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+\\}", "\\?");
-		}
-		return sqlSegment;
-	}
+    public String toString() {
+        String sqlSegment = getSqlSegment();
+        if (StringUtils.isNotEmpty(sqlSegment)) {
+            sqlSegment = sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}", "\\?");
+        }
+        return sqlSegment;
+    }
 
 	/**
 	 * <p>

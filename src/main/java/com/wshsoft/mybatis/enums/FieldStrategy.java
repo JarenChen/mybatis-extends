@@ -9,9 +9,7 @@ package com.wshsoft.mybatis.enums;
  * @Date 2016-09-09
  */
 public enum FieldStrategy {
-    IGNORED(0, "ignored"),
-    NOT_NULL(1, "not null"),
-    NOT_EMPTY(2, "not empty");
+    IGNORED(0, "ignored"), NOT_NULL(1, "not null"), NOT_EMPTY(2, "not empty");
 
     /** 主键 */
     private final int key;
@@ -24,14 +22,6 @@ public enum FieldStrategy {
         this.desc = desc;
     }
 
-    public int getKey() {
-        return this.key;
-    }
-
-    public String getDesc() {
-        return this.desc;
-    }
-
     public static FieldStrategy getFieldStrategy(int key) {
         FieldStrategy[] fss = FieldStrategy.values();
         for (FieldStrategy fs : fss) {
@@ -40,6 +30,14 @@ public enum FieldStrategy {
             }
         }
         return FieldStrategy.NOT_NULL;
+    }
+
+    public int getKey() {
+        return this.key;
+    }
+
+    public String getDesc() {
+        return this.desc;
     }
 
 }

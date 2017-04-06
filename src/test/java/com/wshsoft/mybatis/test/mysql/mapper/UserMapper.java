@@ -2,12 +2,11 @@ package com.wshsoft.mybatis.test.mysql.mapper;
 
 import java.util.List;
 
-import com.wshsoft.mybatis.test.mysql.MyBaseMapper;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
-import com.wshsoft.mybatis.mapper.BaseMapper;
+import com.wshsoft.mybatis.test.mysql.MyBaseMapper;
 import com.wshsoft.mybatis.test.mysql.entity.User;
 
 /**
@@ -18,7 +17,7 @@ import com.wshsoft.mybatis.test.mysql.entity.User;
  * @author Carry xie
  * @Date 2016-01-23
  */
-public interface UserMapper extends BaseMapper<User> {
+public interface UserMapper extends MyBaseMapper<User> {
 
     /**
      * 用户列表，分页显示

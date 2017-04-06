@@ -58,6 +58,10 @@ public class PackageConfig {
         return parent;
     }
 
+    public void setParent(String parent) {
+        this.parent = parent;
+    }
+
     public String getModuleName() {
         return moduleName;
     }
@@ -104,10 +108,6 @@ public class PackageConfig {
 
     public void setXml(String xml) {
         this.xml = xml;
-    }
-
-    public void setParent(String parent) {
-        this.parent = parent;
     }
 
     public String getController() {

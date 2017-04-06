@@ -18,6 +18,10 @@ public class CountOptimize {
      */
     private String countSQL;
 
+    public static CountOptimize newInstance() {
+        return new CountOptimize();
+    }
+
     public boolean isOrderBy() {
         return orderBy;
     }
@@ -32,10 +36,6 @@ public class CountOptimize {
 
     public void setCountSQL(String countSQL) {
         this.countSQL = countSQL;
-    }
-
-    public static CountOptimize newInstance() {
-        return new CountOptimize();
     }
 
 }

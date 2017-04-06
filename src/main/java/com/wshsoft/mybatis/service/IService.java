@@ -29,7 +29,18 @@ public interface IService<T> {
 
     /**
      * <p>
-     * 插入（批量）
+     * 插入一条记录（选择字段， null 字段不插入）
+     * </p>
+     *
+     * @param entity
+     *            实体对象
+     * @return boolean
+     */
+    boolean insertAllColumn(T entity);
+
+    /**
+     * <p>
+     * 插入（批量），该方法不适合 Oracle
      * </p>
      * 
      * @param entityList 实体对象列表
@@ -118,6 +129,17 @@ public interface IService<T> {
      * @return boolean
      */
     boolean updateById(T entity);
+
+    /**
+     * <p>
+     * 根据 ID 选择修改
+     * </p>
+     *
+     * @param entity
+     *            实体对象
+     * @return boolean
+     */
+    boolean updateAllColumnById(T entity);
 
     /**
      * <p>

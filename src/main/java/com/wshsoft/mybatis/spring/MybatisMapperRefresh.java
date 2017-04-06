@@ -43,6 +43,10 @@ import com.wshsoft.mybatis.toolkit.SystemClock;
  */
 public class MybatisMapperRefresh implements Runnable {
     private static final Log logger = LogFactory.getLog(MybatisMapperRefresh.class);
+    /**
+     * 记录jar包存在的mapper
+     */
+    private static Map<String, List<Resource>> jarMapper = new HashMap<String, List<Resource>>();
     private SqlSessionFactory sqlSessionFactory;
     private Resource[] mapperLocations;
     private Long beforeTime = 0L;
@@ -67,11 +71,6 @@ public class MybatisMapperRefresh implements Runnable {
      * 刷新间隔时间
      */
     private int sleepSeconds = 20;
-
-    /**
-     * 记录jar包存在的mapper
-     */
-    private static Map<String, List<Resource>> jarMapper = new HashMap<String, List<Resource>>();
 
     public MybatisMapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, int delaySeconds,
                                 int sleepSeconds, boolean enabled) {

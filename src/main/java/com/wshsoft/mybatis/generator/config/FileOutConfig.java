@@ -16,11 +16,6 @@ public abstract class FileOutConfig {
      */
     private String templatePath;
 
-    /**
-     * 输出文件
-     */
-    public abstract String outputFile(TableInfo tableInfo);
-
     public FileOutConfig() {
 
     }
@@ -28,6 +23,11 @@ public abstract class FileOutConfig {
     public FileOutConfig(String templatePath) {
         this.templatePath = templatePath;
     }
+
+    /**
+     * 输出文件
+     */
+    public abstract String outputFile(TableInfo tableInfo);
 
     public String getTemplatePath() {
         return templatePath;

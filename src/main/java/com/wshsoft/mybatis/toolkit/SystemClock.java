@@ -35,17 +35,20 @@ public class SystemClock {
         scheduleClockUpdating();
     }
 
-    private static class InstanceHolder {
-        public static final SystemClock INSTANCE = new SystemClock(1);
-    }
-
     private static SystemClock instance() {
         return InstanceHolder.INSTANCE;
     }
 
+    public static long now() {
+        return instance().currentTimeMillis();
+    }
+
+    public static String nowDate() {
+        return new Timestamp(instance().currentTimeMillis()).toString();
+    }
+
     private void scheduleClockUpdating() {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-            @Override
             public Thread newThread(Runnable runnable) {
                 Thread thread = new Thread(runnable, "System Clock");
                 thread.setDaemon(true);
@@ -53,7 +56,6 @@ public class SystemClock {
             }
         });
         scheduler.scheduleAtFixedRate(new Runnable() {
-            @Override
             public void run() {
                 now.set(System.currentTimeMillis());
             }
@@ -64,12 +66,9 @@ public class SystemClock {
         return now.get();
     }
 
-    public static long now() {
-        return instance().currentTimeMillis();
-    }
+    private static class InstanceHolder {
 
-    public static String nowDate() {
-        return new Timestamp(instance().currentTimeMillis()).toString();
+        public static final SystemClock INSTANCE = new SystemClock(1);
     }
 
 }

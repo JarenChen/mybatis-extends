@@ -13,7 +13,6 @@ import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
  */
 public class PostgreSqlTypeConvert implements ITypeConvert {
 
-    @Override
     public DbColumnType processTypeConvert(String fieldType) {
         String t = fieldType.toLowerCase();
         if (t.contains("char") || t.contains("text")) {

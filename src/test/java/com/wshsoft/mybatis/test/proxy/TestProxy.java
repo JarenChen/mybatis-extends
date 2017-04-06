@@ -57,7 +57,6 @@ class MyMapperProxy<T extends IUserMapper> implements InvocationHandler {
         return (T) Proxy.newProxyInstance(t.getClass().getClassLoader(), t.getClass().getInterfaces(), this);
     }
 
-    @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		Object rst;
         before();

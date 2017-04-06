@@ -2,11 +2,13 @@ package com.wshsoft.mybatis.test.mysql.entity;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
+import com.wshsoft.mybatis.annotations.Version;
 import com.wshsoft.mybatis.enums.FieldStrategy;
 
 /**
@@ -34,6 +36,9 @@ public class User implements Serializable {
 
     private Integer age;
 
+    /*BigDecimal 测试*/
+    private BigDecimal price;
+
     /* 测试下划线字段命名类型, 字段填充 */
     @TableField(value = "test_type", validate = FieldStrategy.IGNORED)
     private Integer testType;
@@ -42,6 +47,9 @@ public class User implements Serializable {
     private Role role;
 
     private String desc = "默认描述";
+
+    @Version
+    private Integer version;
 
     // 或@TableField(el = "role,jdbcType=BIGINT)
     @TableField(el = "phone, typeHandler=com.wshsoft.mybatis.test.mysql.typehandler.PhoneTypeHandler")
@@ -96,6 +104,7 @@ public class User implements Serializable {
         this.age = age;
         this.testType = testType;
     }
+    
 
     public User(Long id, String name, Integer age, Integer testType, Date birthday) {
         this.id = id;
@@ -111,7 +120,7 @@ public class User implements Serializable {
         this.testType = testType;
         this.birthday = birthday;
     }
-
+    
     public Long getId() {
         return id;
     }
@@ -126,6 +135,14 @@ public class User implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public Integer getAge() {
@@ -166,6 +183,14 @@ public class User implements Serializable {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+	
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     @Override

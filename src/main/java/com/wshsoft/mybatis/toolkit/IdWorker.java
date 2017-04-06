@@ -16,7 +16,7 @@ public class IdWorker {
     /**
      * 主机和进程的机器码
      */
-    private static Sequence worker = new Sequence();
+    private static final Sequence worker = new Sequence();
 
     public static long getId() {
         return worker.nextId();

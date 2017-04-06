@@ -67,7 +67,6 @@ public class Test extends Model<Test> {
         return id;
     }
 
-    @Override
     public String toString() {
         return "{id=" + id + ",type=" + type + "}";
     }
