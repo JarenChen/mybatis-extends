@@ -12,15 +12,15 @@ import java.lang.reflect.Proxy;
  */
 public class MapperProxyFactory {
 
-    public static <T> T getMapper(Class<T> type) {
-        return newInstance(type);
-    }
+	public static <T> T getMapper(Class<T> type) {
+		return newInstance(type);
+	}
 
-    @SuppressWarnings("unchecked")
-    public static <T> T newInstance(Class<T> methodInterface) {
-        final MapperProxy<T> methodProxy = new MapperProxy<T>(methodInterface);
-        return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                new Class[] { methodInterface }, methodProxy);
-    }
+	@SuppressWarnings("unchecked")
+	public static <T> T newInstance(Class<T> methodInterface) {
+		final MapperProxy<T> methodProxy = new MapperProxy<T>(methodInterface);
+		return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+				new Class[] { methodInterface }, methodProxy);
+	}
 
 }

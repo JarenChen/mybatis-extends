@@ -22,37 +22,37 @@ import com.wshsoft.mybatis.toolkit.IOUtils;
  */
 public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
-    private GlobalConfiguration globalConfig = GlobalConfiguration.defaults();
+	private GlobalConfiguration globalConfig = GlobalConfiguration.defaults();
 
-    @Override
-    public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
-        try {
-            MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
-            return globalConfig.signGlobalConfig(build(parser.parse()));
-        } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error building SqlSession.", e);
-        } finally {
-            ErrorContext.instance().reset();
-            IOUtils.closeQuietly(reader);
-        }
-    }
+	@Override
+	public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
+		try {
+			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
+			return globalConfig.signGlobalConfig(build(parser.parse()));
+		} catch (Exception e) {
+			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
+		} finally {
+			ErrorContext.instance().reset();
+			IOUtils.closeQuietly(reader);
+		}
+	}
 
-    @Override
-    public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
-        try {
-            MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
-            return globalConfig.signGlobalConfig(build(parser.parse()));
-        } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error building SqlSession.", e);
-        } finally {
-            ErrorContext.instance().reset();
-            IOUtils.closeQuietly(inputStream);
-        }
-    }
+	@Override
+	public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
+		try {
+			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
+			return globalConfig.signGlobalConfig(build(parser.parse()));
+		} catch (Exception e) {
+			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
+		} finally {
+			ErrorContext.instance().reset();
+			IOUtils.closeQuietly(inputStream);
+		}
+	}
 
-    // TODO 注入全局配置
-    public void setGlobalConfig(GlobalConfiguration globalConfig) {
-        this.globalConfig = globalConfig;
-    }
+	// TODO 注入全局配置
+	public void setGlobalConfig(GlobalConfiguration globalConfig) {
+		this.globalConfig = globalConfig;
+	}
 
 }

@@ -10,15 +10,15 @@ package com.wshsoft.mybatis.test.ioc;
  */
 public class Bmw implements ICar {
 
-    @Override
-    public boolean start() {
-        System.err.println(" 宝马X6 点火启动... ");
-        return false;
-    }
+	@Override
+	public boolean start() {
+		System.err.println(" 宝马X6 点火启动... ");
+		return false;
+	}
 
-    @Override
-    public void driver() {
-        System.err.println(" 走你！ 宝马X6 ... ");
-    }
+	@Override
+	public void driver() {
+		System.err.println(" 走你！ 宝马X6 ... ");
+	}
 
 }

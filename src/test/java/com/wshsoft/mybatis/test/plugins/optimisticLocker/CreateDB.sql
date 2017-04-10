@@ -19,7 +19,7 @@ IF EXISTS time_version_user;
 CREATE TABLE time_version_user (
 	id bigint (11) NOT NULL ,
 	NAME VARCHAR (20),
-	version datetime,
+	version timestamp,
 	PRIMARY KEY (`id`)
 ) ENGINE = INNODB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
 

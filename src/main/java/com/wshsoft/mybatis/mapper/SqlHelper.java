@@ -26,49 +26,50 @@ import com.wshsoft.mybatis.toolkit.TableInfoHelper;
  */
 public class SqlHelper {
 
-    private static final Log logger = LogFactory.getLog(SqlHelper.class);
+	private static final Log logger = LogFactory.getLog(SqlHelper.class);
 
-    /**
-     * 获取Session 默认自动提交
-     * <p>
-     * 特别说明:这里获取SqlSession时这里虽然设置了自动提交但是如果事务托管了的话 是不起作用的 切记!!
-     * <p/>
-     * 
-     * @return SqlSession
-     */
-    public static SqlSession sqlSession(Class<?> clazz) {
-        return sqlSession(clazz, true);
-    }
+	/**
+	 * 获取Session 默认自动提交
+	 * <p>
+	 * 特别说明:这里获取SqlSession时这里虽然设置了自动提交但是如果事务托管了的话 是不起作用的 切记!!
+	 * <p/>
+	 * 
+	 * @return SqlSession
+	 */
+	public static SqlSession sqlSession(Class<?> clazz) {
+		return sqlSession(clazz, true);
+	}
 
-    /**
-     * <p>
-     * 批量操作 SqlSession
-     * </p>
-     * 
-     * @param clazz 实体类
-     * @return SqlSession
-     */
-    public static SqlSession sqlSessionBatch(Class<?> clazz) {
-        return GlobalConfiguration.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
-    }
+	/**
+	 * <p>
+	 * 批量操作 SqlSession
+	 * </p>
+	 * 
+	 * @param clazz
+	 *            实体类
+	 * @return SqlSession
+	 */
+	public static SqlSession sqlSessionBatch(Class<?> clazz) {
+		return GlobalConfiguration.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
+	}
 
-    /**
-     * 获取sqlSessionå
-     * 
-     * @param clazz
-     * @return
-     */
-    private static SqlSession getSqlSession(Class<?> clazz) {
-        SqlSession session = null;
-        try {
-            SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
-            Configuration configuration = sqlSessionFactory.getConfiguration();
-            session = GlobalConfiguration.getGlobalConfig(configuration).getSqlSession();
-        } catch (Exception e) {
-            // ignored
-        }
-        return session;
-    }
+	/**
+	 * 获取sqlSessionå
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	private static SqlSession getSqlSession(Class<?> clazz) {
+		SqlSession session = null;
+		try {
+			SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
+			Configuration configuration = sqlSessionFactory.getConfiguration();
+			session = GlobalConfiguration.getGlobalConfig(configuration).getSqlSession();
+		} catch (Exception e) {
+			// ignored
+		}
+		return session;
+	}
 
 	/**
 	 * <p>
@@ -83,21 +84,22 @@ public class SqlHelper {
 	 */
 	public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
 		SqlSession sqlSession = getSqlSession(clazz);
-		return (sqlSession != null) ? sqlSession : GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
+		return (sqlSession != null) ? sqlSession
+				: GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
 	}
 
-    /**
-     * 获取TableInfo
-     * 
-     * @return TableInfo
-     */
-    public static TableInfo table(Class<?> clazz) {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
-        if (null == tableInfo) {
-            throw new MybatisExtendsException("Error: Cannot execute table Method, ClassGenricType not found .");
-        }
-        return tableInfo;
-    }
+	/**
+	 * 获取TableInfo
+	 * 
+	 * @return TableInfo
+	 */
+	public static TableInfo table(Class<?> clazz) {
+		TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
+		if (null == tableInfo) {
+			throw new MybatisExtendsException("Error: Cannot execute table Method, ClassGenricType not found .");
+		}
+		return tableInfo;
+	}
 
 	/**
 	 * <p>
@@ -124,25 +126,25 @@ public class SqlHelper {
 		return (null == result) ? 0 : result;
 	}
 
-    /**
-     * <p>
-     * 从list中取第一条数据返回对应List中泛型的单个结果
-     * </p>
-     * 
-     * @param list
-     * @param <E>
-     * @return
-     */
-    public static <E> E getObject(List<E> list) {
-        if (CollectionUtils.isNotEmpty(list)) {
-            int size = list.size();
-            if (size > 1) {
-                logger.warn(String.format("Warn: execute Method There are  %s results.", size));
-            }
-            return list.get(0);
-        }
-        return null;
-    }
+	/**
+	 * <p>
+	 * 从list中取第一条数据返回对应List中泛型的单个结果
+	 * </p>
+	 * 
+	 * @param list
+	 * @param <E>
+	 * @return
+	 */
+	public static <E> E getObject(List<E> list) {
+		if (CollectionUtils.isNotEmpty(list)) {
+			int size = list.size();
+			if (size > 1) {
+				logger.warn(String.format("Warn: execute Method There are  %s results.", size));
+			}
+			return list.get(0);
+		}
+		return null;
+	}
 
 	/**
 	 * 填充Wrapper
@@ -154,11 +156,31 @@ public class SqlHelper {
 		if (null == page) {
 			return;
 		}
-		if (null != wrapper) {
+		if (isWrapperEmpty(wrapper)) {
 			if (page.isOpenSort()) {
 				wrapper.orderBy(page.getOrderByField(), page.isAsc());
 			}
 			wrapper.allEq(page.getCondition());
 		}
+	}
+
+	/**
+	 * 判断Wrapper为空
+	 *
+	 * @param wrapper
+	 * @return
+	 */
+	public static boolean isWrapperEmpty(Wrapper<?> wrapper) {
+		return null == wrapper || Condition.EMPTY.equals(wrapper);
+	}
+
+	/**
+	 * 判断Wrapper不为空
+	 *
+	 * @param wrapper
+	 * @return
+	 */
+	public static boolean isWrapperNotEmpty(Wrapper<?> wrapper) {
+		return !isWrapperEmpty(wrapper);
 	}
 }

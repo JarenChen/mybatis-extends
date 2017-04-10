@@ -2,7 +2,7 @@ package com.wshsoft.mybatis.plugins.pagination;
 
 import org.apache.ibatis.session.RowBounds;
 
-import  static  com.wshsoft.mybatis.enums.DBType.getDBType;
+import static com.wshsoft.mybatis.enums.DBType.getDBType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.plugins.pagination.dialects.DB2Dialect;
 import com.wshsoft.mybatis.plugins.pagination.dialects.H2Dialect;
@@ -44,11 +44,13 @@ public class DialectFactory {
 	public static String buildPaginationSql(Pagination page, String buildSql, String dialectType, String dialectClazz)
 			throws Exception {
 		// fix #172, 196
-		return getiDialect(dialectType, dialectClazz).buildPaginationSql(buildSql, page.getOffsetCurrent(), page.getSize());
+		return getiDialect(dialectType, dialectClazz).buildPaginationSql(buildSql, page.getOffsetCurrent(),
+				page.getSize());
 	}
-	
+
 	/**
-	 * Physical Pagination Interceptor for all the queries with parameter {@link org.apache.ibatis.session.RowBounds}
+	 * Physical Pagination Interceptor for all the queries with parameter
+	 * {@link org.apache.ibatis.session.RowBounds}
 	 * 
 	 * @param rowBounds
 	 * @param buildSql
@@ -57,10 +59,11 @@ public class DialectFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String buildPaginationSql(RowBounds rowBounds, String buildSql, String dialectType, String dialectClazz)
-			throws Exception {
+	public static String buildPaginationSql(RowBounds rowBounds, String buildSql, String dialectType,
+			String dialectClazz) throws Exception {
 		// fix #196
-		return getiDialect(dialectType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(), rowBounds.getLimit());
+		return getiDialect(dialectType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(),
+				rowBounds.getLimit());
 	}
 
 	/**
@@ -93,7 +96,8 @@ public class DialectFactory {
 		}
 		/* 未配置方言则抛出异常 */
 		if (dialect == null) {
-			throw new MybatisExtendsException("The value of the dialect property in mybatis configuration.xml is not defined.");
+			throw new MybatisExtendsException(
+					"The value of the dialect property in mybatis configuration.xml is not defined.");
 		}
 		return dialect;
 	}

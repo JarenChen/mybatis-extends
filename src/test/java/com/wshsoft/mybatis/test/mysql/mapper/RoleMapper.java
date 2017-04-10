@@ -10,7 +10,7 @@ import com.wshsoft.mybatis.test.mysql.entity.Role;
  * @Date 2016-09-09
  */
 public interface RoleMapper extends BaseMapper<Role> {
-    @Delete("DELETE FROM role")
-    public void deleteAll();
+	@Delete("DELETE FROM role")
+	public void deleteAll();
 
 }

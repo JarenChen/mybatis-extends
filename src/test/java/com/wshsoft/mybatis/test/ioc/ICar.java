@@ -10,8 +10,8 @@ package com.wshsoft.mybatis.test.ioc;
  */
 public interface ICar {
 
-    boolean start();
+	boolean start();
 
-    void driver();
+	void driver();
 
 }

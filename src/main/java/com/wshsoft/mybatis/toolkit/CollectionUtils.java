@@ -24,16 +24,16 @@ public class CollectionUtils {
 		return (coll == null || coll.isEmpty());
 	}
 
-    /**
-     * <p>
-     * 校验集合是否不为空
-     * </p>
-     * 
-     * @param coll
-     * @return boolean
-     */
-    public static boolean isNotEmpty(Collection<?> coll) {
-        return !isEmpty(coll);
-    }
+	/**
+	 * <p>
+	 * 校验集合是否不为空
+	 * </p>
+	 * 
+	 * @param coll
+	 * @return boolean
+	 */
+	public static boolean isNotEmpty(Collection<?> coll) {
+		return !isEmpty(coll);
+	}
 
 }

@@ -17,57 +17,57 @@ import com.wshsoft.mybatis.annotations.TableName;
 @TableName(resultMap = "RoleMap")
 public class Role implements Serializable {
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+	@TableField(exist = false)
+	private static final long serialVersionUID = 1L;
 
-    /** 主键 */
-    @TableId
-    private Long id;
+	/** 主键 */
+	@TableId
+	private Long id;
 
-    /** 角色 */
-    private String name;
+	/** 角色 */
+	private String name;
 
-    /** 排序 */
-    private Integer sort;
+	/** 排序 */
+	private Integer sort;
 
-    /** 描述 */
-    private String description;
+	/** 描述 */
+	private String description;
 
-    public Long getId() {
-        return this.id;
-    }
+	public Long getId() {
+		return this.id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getName() {
-        return this.name;
-    }
+	public String getName() {
+		return this.name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public Integer getSort() {
-        return this.sort;
-    }
+	public Integer getSort() {
+		return this.sort;
+	}
 
-    public void setSort(Integer sort) {
-        this.sort = sort;
-    }
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
 
-    public String getDescription() {
-        return this.description;
-    }
+	public String getDescription() {
+		return this.description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    @Override
-    public String toString() {
-        return "Role{" + "id=" + id + ", name='" + name + '\'' + ", sort=" + sort
-                + ", description='" + description + '\'' + '}';
-    }
+	@Override
+	public String toString() {
+		return "Role{" + "id=" + id + ", name='" + name + '\'' + ", sort=" + sort + ", description='" + description
+				+ '\'' + '}';
+	}
 }

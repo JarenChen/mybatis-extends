@@ -1,18 +1,3 @@
-/**
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package com.wshsoft.mybatis.plugins;
 
 import java.sql.Connection;
@@ -48,8 +33,8 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
  * @Date 2016-01-23
  */
 @Intercepts({
-		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class,
-				ResultHandler.class }),
+		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class,
+				RowBounds.class, ResultHandler.class }),
 		@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
 public class CachePaginationInterceptor extends PaginationInterceptor implements Interceptor {
 	/* Count优化方式 */
@@ -63,6 +48,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 	 * Physical Pagination Interceptor for all the queries with parameter
 	 * {@link org.apache.ibatis.session.RowBounds}
 	 */
+	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 
 		Object target = invocation.getTarget();
@@ -71,11 +57,11 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 			MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
 			RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
 
-            if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
-                return invocation.proceed();
-            }
-            BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
-            String originalSql = boundSql.getSql();
+			if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
+				return invocation.proceed();
+			}
+			BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
+			String originalSql = boundSql.getSql();
 
 			if (rowBounds instanceof Pagination) {
 				Pagination page = (Pagination) rowBounds;
@@ -96,30 +82,32 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 			metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
 			metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
 		} else {
-			MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
-			Object parameterObject = invocation.getArgs()[1];
 			RowBounds rowBounds = (RowBounds) invocation.getArgs()[2];
 			if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
 				return invocation.proceed();
 			}
+			MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
+			Executor executor = (Executor) invocation.getTarget();
+			Connection connection = executor.getTransaction().getConnection();
+			Object parameterObject = invocation.getArgs()[1];
+			BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
+			String originalSql = boundSql.getSql();
+			if (rowBounds instanceof Pagination) {
+				Pagination page = (Pagination) rowBounds;
+				if (page.isSearchCount()) {
+					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
+							page.isOptimizeCount());
+					super.queryTotal(countOptimize.getCountSQL(), mappedStatement, boundSql, page, connection);
+					if (page.getTotal() <= 0) {
+						return invocation.proceed();
+					}
+				}
+			}
+		}
+		return invocation.proceed();
+	}
 
-            BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
-            String originalSql = boundSql.getSql();
-            if (rowBounds instanceof Pagination) {
-                Pagination page = (Pagination) rowBounds;
-                if (page.isSearchCount()) {
-                    CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
-                            page.isOptimizeCount());
-                    super.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
-                    if (page.getTotal() <= 0) {
-                        return invocation.proceed();
-                    }
-                }
-            }
-        }
-        return invocation.proceed();
-    }
-
+	@Override
 	public Object plugin(Object target) {
 		if (target instanceof Executor) {
 			return Plugin.wrap(target, this);
@@ -130,6 +118,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 		return target;
 	}
 
+	@Override
 	public void setProperties(Properties prop) {
 		String dialectType = prop.getProperty("dialectType");
 		String dialectClazz = prop.getProperty("dialectClazz");
@@ -141,10 +130,12 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 		}
 	}
 
+	@Override
 	public void setDialectType(String dialectType) {
 		this.dialectType = dialectType;
 	}
 
+	@Override
 	public void setOptimizeType(String optimizeType) {
 		this.optimizeType = optimizeType;
 	}

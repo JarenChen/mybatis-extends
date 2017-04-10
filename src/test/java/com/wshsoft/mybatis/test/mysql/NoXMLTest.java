@@ -25,38 +25,38 @@ import com.wshsoft.mybatis.toolkit.IdWorker;
  */
 public class NoXMLTest {
 
-    public static void main(String[] args) {
-        /*
-         * 加载配置文件
-         */
-        InputStream in = NoXMLTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-        SqlSessionFactory sessionFactory = mf.build(in);
-        SqlSession sqlSession = sessionFactory.openSession();
-        /**
-         * 查询是否有结果
-         */
-        TestMapper testMapper = sqlSession.getMapper(TestMapper.class);
-        testMapper.insert(new Test(IdWorker.getId(), "Carry xie"));
-        List<Map<String, Object>> list = testMapper.selectMaps(null);
-        List<Map<String, Object>> list1 = testMapper.selectMapsPage(RowBounds.DEFAULT, null);
-        List<Map<String, Object>> list2 = testMapper.selectMapsPage(new Page<Object>(1, 5), null);
-        System.out.println(list);
-        System.out.println(list1);
-        System.out.println(list2);
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("type", null);
-        map.put("id", null);
-        List<Test> tests = testMapper.selectByMap(map);
-        if (null != tests) {
-            for (Test test : tests) {
-                System.out.println("id:" + test.getId() + " , type:" + test.getType());
-            }
-        } else {
-            System.err.println(" tests is null. ");
-        }
-        testMapper.delete(null);
+	public static void main(String[] args) {
+		/*
+		 * 加载配置文件
+		 */
+		InputStream in = NoXMLTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
+		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
+		SqlSessionFactory sessionFactory = mf.build(in);
+		SqlSession sqlSession = sessionFactory.openSession();
+		/**
+		 * 查询是否有结果
+		 */
+		TestMapper testMapper = sqlSession.getMapper(TestMapper.class);
+		testMapper.insert(new Test(IdWorker.getId(), "Carry xie"));
+		List<Map<String, Object>> list = testMapper.selectMaps(null);
+		List<Map<String, Object>> list1 = testMapper.selectMapsPage(RowBounds.DEFAULT, null);
+		List<Map<String, Object>> list2 = testMapper.selectMapsPage(new Page<Object>(1, 5), null);
+		System.out.println(list);
+		System.out.println(list1);
+		System.out.println(list2);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("type", null);
+		map.put("id", null);
+		List<Test> tests = testMapper.selectByMap(map);
+		if (null != tests) {
+			for (Test test : tests) {
+				System.out.println("id:" + test.getId() + " , type:" + test.getType());
+			}
+		} else {
+			System.err.println(" tests is null. ");
+		}
+		testMapper.delete(null);
 
-    }
+	}
 
 }

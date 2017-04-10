@@ -15,26 +15,26 @@ import com.wshsoft.mybatis.annotations.TableName;
 @TableName("not_pk")
 public class NotPK implements Serializable {
 
-    // 静态属性会自动忽略
-    private static final long serialVersionUID = 1L;
+	// 静态属性会自动忽略
+	private static final long serialVersionUID = 1L;
 
-    private String uuid;
+	private String uuid;
 
-    private String type;
+	private String type;
 
-    public String getUuid() {
-        return uuid;
-    }
+	public String getUuid() {
+		return uuid;
+	}
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
-    public String getType() {
-        return type;
-    }
+	public String getType() {
+		return type;
+	}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+	public void setType(String type) {
+		this.type = type;
+	}
 }

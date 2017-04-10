@@ -27,19 +27,19 @@ import com.wshsoft.mybatis.toolkit.TableInfoHelper;
  */
 public class EntityWrapperTest {
 
-    // 初始化
-    static {
-        TableInfoHelper.initTableInfo(null, User.class);
-    }
+	// 初始化
+	static {
+		TableInfoHelper.initTableInfo(null, User.class);
+	}
 
-    /*
-     * User 查询包装器
-     */
-    private EntityWrapper<User> ew = new EntityWrapper<User>();
+	/*
+	 * User 查询包装器
+	 */
+	private EntityWrapper<User> ew = new EntityWrapper<User>();
 
-    @Test
-    public void test() {
-        /*
+	@Test
+	public void test() {
+		/*
 		 * 无条件测试
 		 */
 		Assert.assertNull(ew.toString());
@@ -145,8 +145,9 @@ public class EntityWrapperTest {
 				.groupBy("x2,x3").having("x1=11").having("x3=433").orderBy("dd").orderBy("d1,d2");
 		System.out.println(ew.toString());
 		Assert.assertEquals("AND (name=? AND id=1) \n" + "OR (status=? OR status=1 AND nlike NOT LIKE ?) \n"
-				+ "AND (new=xx AND hhh LIKE ?) \n" + "AND (pwd=11 AND n1 IS NOT NULL AND n2 IS NOT NULL AND n3 IS NULL)\n"
-				+ "GROUP BY x1, x2,x3\n" + "HAVING (x1=11 AND x3=433)\n" + "ORDER BY dd, d1,d2", ew.toString());
+				+ "AND (new=xx AND hhh LIKE ?) \n"
+				+ "AND (pwd=11 AND n1 IS NOT NULL AND n2 IS NOT NULL AND n3 IS NULL)\n" + "GROUP BY x1, x2,x3\n"
+				+ "HAVING (x1=11 AND x3=433)\n" + "ORDER BY dd, d1,d2", ew.toString());
 	}
 
 	@Test
@@ -274,7 +275,7 @@ public class EntityWrapperTest {
 	public void testInstance() {
 		String val1 = "'''";
 		String val2 = "\\";
-        String sqlPart = Condition.create().between("test_type", val1, val2).toString();
+		String sqlPart = Condition.create().between("test_type", val1, val2).toString();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (test_type BETWEEN ? AND ?)", sqlPart);
 	}
@@ -289,7 +290,8 @@ public class EntityWrapperTest {
 		map.put("allEq1", "22");
 		map.put("allEq2", 3333);
 		map.put("allEq3", 66.99);
-        String sqlPart = Condition.create().gt("gt", 1).le("le", 2).lt("le", 3).ge("ge", 4).eq("eq", 5).allEq(map).toString();
+		String sqlPart = Condition.create().gt("gt", 1).le("le", 2).lt("le", 3).ge("ge", 4).eq("eq", 5).allEq(map)
+				.toString();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals(
 				"WHERE (gt > ? AND le <= ? AND le < ? AND ge >= ? AND eq = ? AND allEq3 = ? AND allEq1 = ? AND allEq2 = ?)",
@@ -301,8 +303,8 @@ public class EntityWrapperTest {
 	 */
 	@Test
 	public void testlike() {
-        String sqlPart = Condition.create().like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT)
-				.like("right", "right", SqlLike.RIGHT).toString();
+		String sqlPart = Condition.create().like("default", "default", SqlLike.DEFAULT)
+				.like("left", "left", SqlLike.LEFT).like("right", "right", SqlLike.RIGHT).toString();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (default LIKE ? AND left LIKE ? AND right LIKE ?)", sqlPart);
 	}
@@ -319,10 +321,13 @@ public class EntityWrapperTest {
 		ew.setParamAlias("ceshi");
 		ew.or("sql = {0}", "sql").like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT);
 		ew.in("aaabbbcc", "1,3,4");
-		String sqlPart = ew.in("bbb", Arrays.asList(new String[] { "a", "b", "c" })).like("right", "right", SqlLike.RIGHT).isWhere(true)
-				.eq("bool", true).between("ee","1111","222").toString();
+		String sqlPart = ew.in("bbb", Arrays.asList(new String[] { "a", "b", "c" }))
+				.like("right", "right", SqlLike.RIGHT).isWhere(true).eq("bool", true).between("ee", "1111", "222")
+				.toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (sql = ? AND default LIKE ? AND left LIKE ? AND aaabbbcc IN (?,?,?) AND bbb IN (?,?,?) AND right LIKE ? AND bool = ? AND ee BETWEEN ? AND ?)", sqlPart);
+		Assert.assertEquals(
+				"WHERE (sql = ? AND default LIKE ? AND left LIKE ? AND aaabbbcc IN (?,?,?) AND bbb IN (?,?,?) AND right LIKE ? AND bool = ? AND ee BETWEEN ? AND ?)",
+				sqlPart);
 		System.out.println(ew.getSqlSegment());
 	}
 }

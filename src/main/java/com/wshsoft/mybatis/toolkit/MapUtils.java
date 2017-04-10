@@ -20,14 +20,14 @@ public class MapUtils {
 		return (map == null || map.isEmpty());
 	}
 
-    /**
-     * 判断Map是否不为空
-     * 
-     * @param map
-     * @return
-     */
-    public static boolean isNotEmpty(Map<?, ?> map) {
-        return !isEmpty(map);
-    }
+	/**
+	 * 判断Map是否不为空
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public static boolean isNotEmpty(Map<?, ?> map) {
+		return !isEmpty(map);
+	}
 
 }

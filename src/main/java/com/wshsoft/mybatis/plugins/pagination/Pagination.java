@@ -18,22 +18,22 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
  */
 public class Pagination extends RowBounds implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /* 总数 */
-    private int total;
+	/* 总数 */
+	private int total;
 
-    /* 每页显示条数，默认 10 */
-    private int size = 10;
+	/* 每页显示条数，默认 10 */
+	private int size = 10;
 
-    /* 总页数 */
-    private int pages;
+	/* 总页数 */
+	private int pages;
 
-    /* 当前页 */
-    private int current = 1;
+	/* 当前页 */
+	private int current = 1;
 
-    /* 查询总记录数（默认 true） */
-    private boolean searchCount = true;
+	/* 查询总记录数（默认 true） */
+	private boolean searchCount = true;
 
 	/**
 	 * 开启排序（默认 true） 只在代码逻辑判断 并不截取sql分析
@@ -50,37 +50,39 @@ public class Pagination extends RowBounds implements Serializable {
 	 */
 	private boolean optimizeCount = false;
 
-    /**
-     * <p>
-     * SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）
-     * </p>
-     * <p>
-     * DESC 表示按倒序排序(即：从大到小排序)<br>
-     * ASC 表示按正序排序(即：从小到大排序)
-     * </p>
-     */
-    private String orderByField;
+	/**
+	 * <p>
+	 * SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）
+	 * </p>
+	 * <p>
+	 * DESC 表示按倒序排序(即：从大到小排序)<br>
+	 * ASC 表示按正序排序(即：从小到大排序)
+	 * </p>
+	 */
+	private String orderByField;
 
-    /**
-     * 是否为升序 ASC（ 默认： true ）
-     */
-    private boolean isAsc = true;
+	/**
+	 * 是否为升序 ASC（ 默认： true ）
+	 */
+	private boolean isAsc = true;
 
-    public Pagination() {
-        super();
-    }
+	public Pagination() {
+		super();
+	}
 
-    /**
-     * <p>
-     * 分页构造函数
-     * </p>
-     * 
-     * @param current 当前页
-     * @param size 每页显示条数
-     */
-    public Pagination(int current, int size) {
-        this(current, size, true);
-    }
+	/**
+	 * <p>
+	 * 分页构造函数
+	 * </p>
+	 * 
+	 * @param current
+	 *            当前页
+	 * @param size
+	 *            每页显示条数
+	 */
+	public Pagination(int current, int size) {
+		this(current, size, true);
+	}
 
 	public Pagination(int current, int size, boolean searchCount) {
 		this(current, size, searchCount, true);
@@ -96,85 +98,85 @@ public class Pagination extends RowBounds implements Serializable {
 		this.openSort = openSort;
 	}
 
-    protected static int offsetCurrent(int current, int size) {
-        if (current > 0) {
-            return (current - 1) * size;
-        }
-        return 0;
-    }
+	protected static int offsetCurrent(int current, int size) {
+		if (current > 0) {
+			return (current - 1) * size;
+		}
+		return 0;
+	}
 
-    public int getOffsetCurrent() {
-        return offsetCurrent(this.current, this.size);
-    }
+	public int getOffsetCurrent() {
+		return offsetCurrent(this.current, this.size);
+	}
 
-    public boolean hasPrevious() {
-        return this.current > 1;
-    }
+	public boolean hasPrevious() {
+		return this.current > 1;
+	}
 
-    public boolean hasNext() {
-        return this.current < this.pages;
-    }
+	public boolean hasNext() {
+		return this.current < this.pages;
+	}
 
-    public int getTotal() {
-        return total;
-    }
+	public int getTotal() {
+		return total;
+	}
 
-    public void setTotal(int total) {
-        this.total = total;
-    }
+	public void setTotal(int total) {
+		this.total = total;
+	}
 
-    public int getSize() {
-        return size;
-    }
+	public int getSize() {
+		return size;
+	}
 
-    public void setSize(int size) {
-        this.size = size;
-    }
+	public void setSize(int size) {
+		this.size = size;
+	}
 
-    public int getPages() {
-        if (this.size == 0) {
-            return 0;
-        }
-        this.pages = this.total / this.size;
-        if (this.total % this.size != 0) {
-            this.pages++;
-        }
-        return this.pages;
-    }
+	public int getPages() {
+		if (this.size == 0) {
+			return 0;
+		}
+		this.pages = this.total / this.size;
+		if (this.total % this.size != 0) {
+			this.pages++;
+		}
+		return this.pages;
+	}
 
-    public int getCurrent() {
-        return current;
-    }
+	public int getCurrent() {
+		return current;
+	}
 
-    public void setCurrent(int current) {
-        this.current = current;
-    }
+	public void setCurrent(int current) {
+		this.current = current;
+	}
 
-    public boolean isSearchCount() {
-        return searchCount;
-    }
+	public boolean isSearchCount() {
+		return searchCount;
+	}
 
-    public void setSearchCount(boolean searchCount) {
-        this.searchCount = searchCount;
-    }
+	public void setSearchCount(boolean searchCount) {
+		this.searchCount = searchCount;
+	}
 
-    public boolean isOptimizeCount() {
-        return optimizeCount;
-    }
+	public boolean isOptimizeCount() {
+		return optimizeCount;
+	}
 
-    public void setOptimizeCount(boolean optimizeCount) {
-        this.optimizeCount = optimizeCount;
-    }
+	public void setOptimizeCount(boolean optimizeCount) {
+		this.optimizeCount = optimizeCount;
+	}
 
-    public String getOrderByField() {
-        return orderByField;
-    }
+	public String getOrderByField() {
+		return orderByField;
+	}
 
-    public void setOrderByField(String orderByField) {
-        if (StringUtils.isNotEmpty(orderByField)) {
-            this.orderByField = orderByField;
-        }
-    }
+	public void setOrderByField(String orderByField) {
+		if (StringUtils.isNotEmpty(orderByField)) {
+			this.orderByField = orderByField;
+		}
+	}
 
 	public boolean isOpenSort() {
 		return openSort;
@@ -188,13 +190,13 @@ public class Pagination extends RowBounds implements Serializable {
 		return isAsc;
 	}
 
-    public void setAsc(boolean isAsc) {
-        this.isAsc = isAsc;
-    }
+	public void setAsc(boolean isAsc) {
+		this.isAsc = isAsc;
+	}
 
-    @Override
-    public String toString() {
-        return "Pagination { total=" + total + " ,size=" + size + " ,pages=" + pages + " ,current=" + current + " }";
-    }
+	@Override
+	public String toString() {
+		return "Pagination { total=" + total + " ,size=" + size + " ,pages=" + pages + " ,current=" + current + " }";
+	}
 
 }

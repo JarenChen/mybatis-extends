@@ -23,18 +23,18 @@ import com.wshsoft.mybatis.test.mysql.entity.User;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:spring/spring-servlet.xml" })
 public class ServiceImplTest {
-    @Autowired
-    private IUserService userService;
+	@Autowired
+	private IUserService userService;
 
-    @Test
-    public void testInsertBatch() throws IOException {
-        List<User> userList = new ArrayList<User>();
-        for (int i = 0; i < 10; i++) {
-            userList.add(new User("u-" + i, i, i));
-        }
-        boolean batchResult = userService.insertBatch(userList);
-        System.err.println("batchResult: " + batchResult);
+	@Test
+	public void testInsertBatch() throws IOException {
+		List<User> userList = new ArrayList<User>();
+		for (int i = 0; i < 10; i++) {
+			userList.add(new User("u-" + i, i, i));
+		}
+		boolean batchResult = userService.insertBatch(userList);
+		System.err.println("batchResult: " + batchResult);
 		// 注入测试
 		userService.testSqlInjector();
-    }
+	}
 }

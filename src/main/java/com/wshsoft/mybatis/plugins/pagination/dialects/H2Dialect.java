@@ -12,15 +12,15 @@ import com.wshsoft.mybatis.plugins.pagination.IDialect;
  */
 public class H2Dialect implements IDialect {
 
-    public static final H2Dialect INSTANCE = new H2Dialect();
+	public static final H2Dialect INSTANCE = new H2Dialect();
 
-    @Override
-    public String buildPaginationSql(String originalSql, int offset, int limit) {
+	@Override
+	public String buildPaginationSql(String originalSql, int offset, int limit) {
 		StringBuilder sql = new StringBuilder(originalSql);
-        sql.append(" limit ").append(limit);
-        if (offset > 0) {
-            sql.append(" offset ").append(offset);
-        }
-        return sql.toString();
-    }
+		sql.append(" limit ").append(limit);
+		if (offset > 0) {
+			sql.append(" offset ").append(offset);
+		}
+		return sql.toString();
+	}
 }

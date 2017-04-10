@@ -1,5 +1,8 @@
 package com.wshsoft.mybatis.entity;
 
+import java.lang.reflect.Field;
+import com.wshsoft.mybatis.annotations.TableField;
+import com.wshsoft.mybatis.annotations.TableLogic;
 import com.wshsoft.mybatis.enums.FieldStrategy;
 import com.wshsoft.mybatis.toolkit.SqlReservedWords;
 import com.wshsoft.mybatis.toolkit.StringUtils;
@@ -14,130 +17,178 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
  */
 public class TableFieldInfo {
 
-    /**
-     * <p>
-     * 是否有存在字段名与属性名关联
-     * </p>
-     * true , false
-     */
-    private boolean related = false;
+	/**
+	 * <p>
+	 * 是否有存在字段名与属性名关联
+	 * </p>
+	 * true , false
+	 */
+	private boolean related = false;
 
-    /**
-     * 字段名
-     */
-    private String column;
+	/**
+	 * 字段名
+	 */
+	private String column;
 
-    /**
-     * 属性名
-     */
-    private String property;
+	/**
+	 * 属性名
+	 */
+	private String property;
 
-    /**
-     * 属性表达式#{property}, 可以指定jdbcType, typeHandler等
-     */
-    private String el;
-    /**
-     * 属性类型
-     */
-    private String propertyType;
+	/**
+	 * 属性表达式#{property}, 可以指定jdbcType, typeHandler等
+	 */
+	private String el;
+	/**
+	 * 属性类型
+	 */
+	private String propertyType;
 
-    /**
-     * 字段策略【 默认，自判断 null 】
-     */
-    private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
+	/**
+	 * 字段策略【 默认，自判断 null 】
+	 */
+	private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
 
-    /**
-     * <p>
-     * 存在 TableField 注解构造函数
-     * </p>
-     */
-    public TableFieldInfo(GlobalConfiguration globalConfig, String column, String property, String el,
-                          FieldStrategy fieldStrategy, String propertyType) {
-        if (globalConfig.isDbColumnUnderline()) {
-            /* 开启字段下划线申明 */
-            this.related = true;
-        } else if (!column.equals(property)) {
-            /* 没有开启下划线申明 但是column与property不等的情况下设置related为true */
-            this.related = true;
-        }
-        this.setColumn(globalConfig, column);
-        this.property = property;
-        this.el = el;
-        /*
-         * 优先使用单个字段注解，否则使用全局配置
-         */
-        if (fieldStrategy != FieldStrategy.NOT_NULL) {
-            this.fieldStrategy = fieldStrategy;
-        } else {
-            this.fieldStrategy = globalConfig.getFieldStrategy();
-        }
-        this.propertyType = propertyType;
-    }
+	/**
+	 * 逻辑删除值
+	 */
+	private String logicDeleteValue;
 
-    public TableFieldInfo(GlobalConfiguration globalConfig, String column, String propertyType) {
-        if (globalConfig.isDbColumnUnderline()) {
-            /* 开启字段下划线申明 */
-            this.related = true;
-            this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
-        } else {
-            this.setColumn(globalConfig, column);
-        }
-        this.property = column;
-        this.el = column;
-        this.fieldStrategy = globalConfig.getFieldStrategy();
-        this.propertyType = propertyType;
-    }
+	/**
+	 * <p>
+	 * 存在 TableField 注解构造函数
+	 * </p>
+	 */
+	public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, String column, String el, Field field,
+			TableField tableField) {
+		this.property = field.getName();
+		this.propertyType = field.getType().getName();
+		/*
+		 * 1、开启字段下划线申明<br> 2、没有开启下划线申明，但是column与property不等的情况<br> 设置 related 为
+		 * true
+		 */
+		if (globalConfig.isDbColumnUnderline() || !column.equals(this.property)) {
+			this.setRelated(true);
+		}
+		this.setColumn(globalConfig, column);
+		this.el = el;
+		/*
+		 * 优先使用单个字段注解，否则使用全局配置<br> 自定义字段验证策略 fixed-239
+		 */
+		if (FieldStrategy.NOT_NULL != tableField.validate()) {
+			this.fieldStrategy = tableField.validate();
+		} else {
+			this.fieldStrategy = globalConfig.getFieldStrategy();
+		}
+		tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
+	}
 
-    public boolean isRelated() {
-        return related;
-    }
+	public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field) {
+		if (globalConfig.isDbColumnUnderline()) {
+			/* 开启字段下划线申明 */
+			this.related = true;
+			this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
+		} else {
+			this.setColumn(globalConfig, field.getName());
+		}
+		this.property = field.getName();
+		this.el = field.getName();
+		this.fieldStrategy = globalConfig.getFieldStrategy();
+		this.propertyType = field.getType().getName();
+		tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
+	}
 
-    public void setRelated(boolean related) {
-        this.related = related;
-    }
+	/**
+	 * <p>
+	 * 逻辑删除初始化
+	 * </p>
+	 *
+	 * @param globalConfig
+	 *            全局配置
+	 * @param field
+	 *            字段属性对象
+	 */
+	private boolean initLogicDelete(GlobalConfiguration globalConfig, Field field) {
+		String deleteValue = globalConfig.getLogicDeleteValue();
+		if (null == deleteValue) {
+			/* 获取注解属性，逻辑处理字段 */
+			TableLogic tableLogic = field.getAnnotation(TableLogic.class);
+			if (null != tableLogic) {
+				if (StringUtils.isNotEmpty(tableLogic.value())) {
+					deleteValue = tableLogic.value();
+				}
+				this.logicDeleteValue = deleteValue;
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public String getColumn() {
-        return column;
-    }
+	public boolean isRelated() {
+		return related;
+	}
 
-    public void setColumn(GlobalConfiguration globalConfig, String column) {
-        String temp = SqlReservedWords.convert(globalConfig, column);
-        if (globalConfig.isCapitalMode() && !isRelated()) {
-            // 全局大写，非注解指定
-            temp = temp.toUpperCase();
-        }
-        this.column = temp;
-    }
+	public void setRelated(boolean related) {
+		this.related = related;
+	}
 
-    public String getProperty() {
-        return property;
-    }
+	public String getColumn() {
+		return column;
+	}
 
-    public void setProperty(String property) {
-        this.property = property;
-    }
+	public void setColumn(GlobalConfiguration globalConfig, String column) {
+		String temp = SqlReservedWords.convert(globalConfig, column);
+		if (globalConfig.isCapitalMode() && !isRelated()) {
+			// 全局大写，非注解指定
+			temp = temp.toUpperCase();
+		}
+		this.column = temp;
+	}
 
-    public String getEl() {
-        return el;
-    }
+	public String getProperty() {
+		return property;
+	}
 
-    public void setEl(String el) {
-        this.el = el;
-    }
+	public void setProperty(String property) {
+		this.property = property;
+	}
 
-    public FieldStrategy getFieldStrategy() {
-        return fieldStrategy;
-    }
+	public String getEl() {
+		return el;
+	}
 
-    public void setFieldStrategy(FieldStrategy fieldStrategy) {
-        this.fieldStrategy = fieldStrategy;
-    }
+	public void setEl(String el) {
+		this.el = el;
+	}
 
-    public String getPropertyType() {
-        return propertyType;
-    }
+	public FieldStrategy getFieldStrategy() {
+		return fieldStrategy;
+	}
 
-    public void setPropertyType(String propertyType) {
-        this.propertyType = propertyType;
-    }
+	public void setFieldStrategy(FieldStrategy fieldStrategy) {
+		this.fieldStrategy = fieldStrategy;
+	}
+
+	public String getPropertyType() {
+		return propertyType;
+	}
+
+	public void setPropertyType(String propertyType) {
+		this.propertyType = propertyType;
+	}
+
+	/**
+	 * 是否开启逻辑删除
+	 */
+	public boolean isLogicDelete() {
+		return StringUtils.isNotEmpty(logicDeleteValue);
+	}
+
+	public String getLogicDeleteValue() {
+		return logicDeleteValue;
+	}
+
+	public void setLogicDeleteValue(String logicDeleteValue) {
+		this.logicDeleteValue = logicDeleteValue;
+	}
 }

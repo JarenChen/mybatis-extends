@@ -18,23 +18,23 @@ import com.wshsoft.mybatis.test.proxy.mapper.UserMapperImpl;
  */
 public class TestProxy {
 
-	public static void main( String[] args ) {
+	public static void main(String[] args) {
 		/**
-		 * 代理方式一 
+		 * 代理方式一
 		 */
 		IUserMapper userMapper = MapperProxyFactory.getMapper(IUserMapper.class);
 		User user = userMapper.selectById(1L);
 		System.err.println((user == null) ? "代理失败" : user.toString());
 		try {
 			Thread.sleep(3000);
-		} catch ( InterruptedException e ) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {
 			System.err.println("\n");
 		}
 
 		/**
-		 * 代理方式二 
+		 * 代理方式二
 		 */
 		MyMapperProxy<IUserMapper> userDaoProxy = new MyMapperProxy<IUserMapper>();
 		IUserMapper mapper = userDaoProxy.bind(new UserMapperImpl());
@@ -49,27 +49,28 @@ public class TestProxy {
  */
 class MyMapperProxy<T extends IUserMapper> implements InvocationHandler {
 
-    private T t;
+	private T t;
 
-    @SuppressWarnings("unchecked")
-    public T bind(T t) {
-        this.t = t;
-        return (T) Proxy.newProxyInstance(t.getClass().getClassLoader(), t.getClass().getInterfaces(), this);
-    }
+	@SuppressWarnings("unchecked")
+	public T bind(T t) {
+		this.t = t;
+		return (T) Proxy.newProxyInstance(t.getClass().getClassLoader(), t.getClass().getInterfaces(), this);
+	}
 
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+	@Override
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		Object rst;
-        before();
-        rst = method.invoke(t, args);
-        after();
-        return rst;
-    }
+		before();
+		rst = method.invoke(t, args);
+		after();
+		return rst;
+	}
 
-    private void before() {
-        System.out.println("before ...");
-    }
+	private void before() {
+		System.out.println("before ...");
+	}
 
-    private void after() {
-        System.out.println("after");
-    }
+	private void after() {
+		System.out.println("after");
+	}
 }

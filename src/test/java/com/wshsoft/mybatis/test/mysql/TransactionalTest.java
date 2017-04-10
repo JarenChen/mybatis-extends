@@ -20,29 +20,29 @@ import com.wshsoft.mybatis.toolkit.IdWorker;
  */
 public class TransactionalTest {
 
-    /**
-     * <p>
-     * 事务测试
-     * </p>
-     */
-    public static void main(String[] args) {
-        /*
-         * 加载配置文件
-         */
-        InputStream in = TransactionalTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-        SqlSessionFactory sessionFactory = mf.build(in);
-        SqlSession sqlSession = sessionFactory.openSession();
-        /**
-         * 插入
-         */
-        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-        int rlt = userMapper.insert(new User(IdWorker.getId(), "1", 1, 1));
-        System.err.println("--------- insertInjector --------- " + rlt);
+	/**
+	 * <p>
+	 * 事务测试
+	 * </p>
+	 */
+	public static void main(String[] args) {
+		/*
+		 * 加载配置文件
+		 */
+		InputStream in = TransactionalTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
+		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
+		SqlSessionFactory sessionFactory = mf.build(in);
+		SqlSession sqlSession = sessionFactory.openSession();
+		/**
+		 * 插入
+		 */
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		int rlt = userMapper.insert(new User(IdWorker.getId(), "1", 1, 1));
+		System.err.println("--------- insertInjector --------- " + rlt);
 
-        //session.commit();
-        sqlSession.rollback();
-        sqlSession.close();
-    }
+		// session.commit();
+		sqlSession.rollback();
+		sqlSession.close();
+	}
 
 }

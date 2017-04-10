@@ -38,26 +38,26 @@ public abstract class Wrapper<T> implements Serializable {
 
 	private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
 
-    private static final String DEFAULT_PARAM_ALIAS = "ew";
-    protected String paramAlias = null;
-    /**
-     * SQL 查询字段内容，例如：id,name,age
-     */
-    protected String sqlSelect = null;
-    /**
-     * 实现了TSQL语法的SQL实体
-     */
-    protected SqlPlus sql = new SqlPlus();
-    /**
-     * 自定义是否输出sql为 WHERE OR AND OR OR
-     */
-    protected Boolean isWhere;
-    /**
-     * 拼接WHERE后应该是AND还是OR
-     */
-    protected String AND_OR = "AND";
-    private Map<String, Object> paramNameValuePairs = new HashMap<String, Object>(4);
-    private AtomicInteger paramNameSeq = new AtomicInteger(0);
+	private static final String DEFAULT_PARAM_ALIAS = "ew";
+	protected String paramAlias = null;
+	/**
+	 * SQL 查询字段内容，例如：id,name,age
+	 */
+	protected String sqlSelect = null;
+	/**
+	 * 实现了TSQL语法的SQL实体
+	 */
+	protected SqlPlus sql = new SqlPlus();
+	/**
+	 * 自定义是否输出sql为 WHERE OR AND OR OR
+	 */
+	protected Boolean isWhere;
+	/**
+	 * 拼接WHERE后应该是AND还是OR
+	 */
+	protected String AND_OR = "AND";
+	private Map<String, Object> paramNameValuePairs = new HashMap<String, Object>(4);
+	private AtomicInteger paramNameSeq = new AtomicInteger(0);
 
 	/**
 	 * 兼容EntityWrapper
@@ -87,13 +87,15 @@ public abstract class Wrapper<T> implements Serializable {
 	 */
 	public abstract String getSqlSegment();
 
-    public String toString() {
-        String sqlSegment = getSqlSegment();
-        if (StringUtils.isNotEmpty(sqlSegment)) {
-            sqlSegment = sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}", "\\?");
-        }
-        return sqlSegment;
-    }
+	@Override
+	public String toString() {
+		String sqlSegment = getSqlSegment();
+		if (StringUtils.isNotEmpty(sqlSegment)) {
+			sqlSegment = sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}",
+					"\\?");
+		}
+		return sqlSegment;
+	}
 
 	/**
 	 * <p>
@@ -752,8 +754,8 @@ public abstract class Wrapper<T> implements Serializable {
 	 * ALL the {<b>i</b>} will be replaced with #{MPGENVAL<b>i</b>}<BR>
 	 * <BR>
 	 * ew.where("sample_name=<b>{0}</b>", "haha").and("sample_age &gt;<b>{0}</b>
-	 * and sample_age&lt;<b>{1}</b>", 18, 30) <b>TO</b>
-	 * sample_name=<b>#{MPGENVAL1}</b> and sample_age&gt;#<b>{MPGENVAL2}</b> and
+	 * and sample_age&lt;<b>{1}</b>", 18, 30) <b>TO</b> sample_name=
+	 * <b>#{MPGENVAL1}</b> and sample_age&gt;#<b>{MPGENVAL2}</b> and
 	 * sample_age&lt;<b>#{MPGENVAL3}</b><BR>
 	 * </p>
 	 *
