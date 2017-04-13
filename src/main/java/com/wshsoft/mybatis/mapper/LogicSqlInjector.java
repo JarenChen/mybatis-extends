@@ -5,9 +5,11 @@ import java.util.Map;
 
 import org.apache.ibatis.mapping.SqlSource;
 
+import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.entity.TableFieldInfo;
 import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.enums.SqlMethod;
+import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
  * <p>
@@ -48,6 +50,9 @@ public class LogicSqlInjector extends AutoSqlInjector {
 		}
 	}
 
+	/**
+	 * 根据 SQL 删除
+	 */
 	@Override
 	protected void injectDeleteSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		if (table.isLogicDelete()) {
@@ -63,12 +68,15 @@ public class LogicSqlInjector extends AutoSqlInjector {
 		}
 	}
 
+	/**
+	 * 根据 MAP 删除
+	 */
 	@Override
 	protected void injectDeleteByMapSql(Class<?> mapperClass, TableInfo table) {
 		if (table.isLogicDelete()) {
 			// 逻辑删除注入
 			SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_MAP;
-			String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlLogicSet(table), sqlWhereByMap());
+			String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlLogicSet(table), sqlWhereByMap(table));
 			SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
 			this.addUpdateMappedStatement(mapperClass, Map.class, sqlMethod.getMethod(), sqlSource);
 		} else {
@@ -99,6 +107,113 @@ public class LogicSqlInjector extends AutoSqlInjector {
 			}
 		}
 		return set.toString();
+	}
+
+	// ------------ 处理逻辑删除条件过滤 ------------
+
+	@Override
+	protected String sqlWhere(TableInfo table) {
+		if (table.isLogicDelete()) {
+			StringBuilder where = new StringBuilder("\n<where>");
+			// 过滤逻辑
+			List<TableFieldInfo> fieldList = table.getFieldList();
+			int i=0;
+			for (TableFieldInfo fieldInfo : fieldList) {
+				if (fieldInfo.isLogicDelete()) {
+					if (++i > 1) {
+						where.append(" AND ");
+					}
+					where.append(fieldInfo.getColumn()).append("!=").append(fieldInfo.getLogicDeleteValue());
+				}
+			}
+			// EW 逻辑
+	        if (StringUtils.isNotEmpty(table.getKeyProperty())) {
+	            where.append("\n<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">");
+	            where.append(" AND ").append(table.getKeyColumn()).append("=#{ew.").append(table.getKeyProperty()).append("}");
+	            where.append("</if>");
+	        }
+	        for (TableFieldInfo fieldInfo : fieldList) {
+	            where.append(convertIfTag(fieldInfo, "ew.", false));
+	            where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.").append(fieldInfo.getEl()).append("}");
+	            where.append(convertIfTag(fieldInfo, true));
+	        }
+	        where.append("\n</where>");
+			return where.toString();
+		}
+		// 正常逻辑
+		return super.sqlWhere(table);
+	}
+
+	@Override
+	protected String sqlWhereEntityWrapper(TableInfo table) {
+		if (table.isLogicDelete()) {
+			StringBuilder where = new StringBuilder("\n<where>");
+			// 过滤逻辑
+			List<TableFieldInfo> fieldList = table.getFieldList();
+			int i=0;
+			for (TableFieldInfo fieldInfo : fieldList) {
+				if (fieldInfo.isLogicDelete()) {
+					if (++i > 1) {
+						where.append(" AND ");
+					}
+					where.append(fieldInfo.getColumn()).append("!=").append(fieldInfo.getLogicDeleteValue());
+				}
+			}
+			// EW 逻辑
+	        where.append("\n<if test=\"ew!=null\">\n<if test=\"ew.entity!=null\">");
+	        if (StringUtils.isNotEmpty(table.getKeyProperty())) {
+	            where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
+	            where.append(" AND ").append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append("}");
+	            where.append("</if>");
+	        }
+ 			for (TableFieldInfo fieldInfo : fieldList) {
+	            where.append(convertIfTag(fieldInfo, "ew.entity.", false));
+	            where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.entity.").append(fieldInfo.getEl()).append("}");
+	            where.append(convertIfTag(fieldInfo, true));
+	        }
+	        where.append("\n</if>\n<if test=\"ew.sqlSegment!=null\">${ew.sqlSegment}</if>");
+	        where.append("\n</if>");
+	        where.append("\n</where>");
+	        return where.toString();
+		}
+		// 正常逻辑
+		return super.sqlWhereEntityWrapper(table);
+	}
+
+	@Override
+	protected String sqlWhereByMap(TableInfo table) {
+		if (table.isLogicDelete()) {
+			StringBuilder where = new StringBuilder();
+			where.append("\n<where>");
+			// 过滤逻辑
+			List<TableFieldInfo> fieldList = table.getFieldList();
+			int i=0;
+			for (TableFieldInfo fieldInfo : fieldList) {
+				if (fieldInfo.isLogicDelete()) {
+					if (++i > 1) {
+						where.append("AND ");
+					}
+					where.append(fieldInfo.getColumn()).append("!=").append(fieldInfo.getLogicDeleteValue());
+				}
+			}
+			// MAP 逻辑
+			where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
+			where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
+			where.append("\n<if test=\"cm[k] != null\">");
+			String quote = GlobalConfiguration.getIdentifierQuote(configuration);
+			if (StringUtils.isNotEmpty(quote)) {
+				where.append(quote).append("${k}").append(quote).append("=#{cm[${k}]}");
+			} else {
+				where.append("\n${k} = #{cm[${k}]}");
+			}
+			where.append("</if>");
+			where.append("\n</foreach>");
+			where.append("\n</if>");
+			where.append("\n</where>");
+			return where.toString();
+		}
+		// 正常逻辑
+		return super.sqlWhereByMap(table);
 	}
 
 }

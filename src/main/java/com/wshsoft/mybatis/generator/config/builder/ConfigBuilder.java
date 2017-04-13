@@ -337,60 +337,87 @@ public class ConfigBuilder {
 		if (isInclude && isExclude) {
 			throw new RuntimeException("<strategy> 标签中 <include> 与 <exclude> 只能配置一项！");
 		}
-		List<TableInfo> tableList = new ArrayList<>();
-		Set<String> notExistTables = new HashSet<>();
-		NamingStrategy strategy = config.getNaming();
-		try (PreparedStatement prepareStatement = connection.prepareStatement(querySQL.getTableCommentsSql());
-				ResultSet results = prepareStatement.executeQuery()) {
-			TableInfo tableInfo;
-			while (results.next()) {
-				String tableName = results.getString(querySQL.getTableName());
-				if (StringUtils.isNotEmpty(tableName)) {
-					String tableComment = results.getString(querySQL.getTableComment());
-					tableInfo = new TableInfo();
-					if (isInclude) {
-						for (String includeTab : config.getInclude()) {
-							if (includeTab.equalsIgnoreCase(tableName)) {
-								tableInfo.setName(tableName);
-								tableInfo.setComment(tableComment);
-							} else {
-								notExistTables.add(includeTab);
-							}
-						}
-					} else if (isExclude) {
-						for (String excludeTab : config.getExclude()) {
-							if (!excludeTab.equalsIgnoreCase(tableName)) {
-								tableInfo.setName(tableName);
-								tableInfo.setComment(tableComment);
-							} else {
-								notExistTables.add(excludeTab);
-							}
-						}
-					} else {
-						tableInfo.setName(tableName);
-						tableInfo.setComment(tableComment);
-					}
-					if (StringUtils.isNotEmpty(tableInfo.getName())) {
-						List<TableField> fieldList = getListFields(tableInfo.getName(), strategy);
-						tableInfo.setFields(fieldList);
-						tableList.add(tableInfo);
-					}
-				} else {
-					System.err.println("当前数据库为空！！！");
-				}
-			}
-			// 将已经存在的表移除
-			for (TableInfo tabInfo : tableList) {
-				notExistTables.remove(tabInfo.getName());
-			}
-			if (notExistTables.size() > 0) {
-				System.err.println("表 " + notExistTables + " 在数据库中不存在！！！");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return processTable(tableList, strategy, config.getTablePrefix());
-	}
+        //所有的表信息
+        List<TableInfo> tableList = new ArrayList<>();
+
+        //需要反向生成或排除的表信息
+        List<TableInfo> includeTableList = new ArrayList<>();
+        List<TableInfo> excludeTableList = new ArrayList<>();
+
+        //不存在的表名
+        Set<String> notExistTables = new HashSet<>();
+
+        NamingStrategy strategy = config.getNaming();
+        PreparedStatement pstate = null;
+        try {
+            pstate = connection.prepareStatement(querySQL.getTableCommentsSql());
+            ResultSet results = pstate.executeQuery();
+            TableInfo tableInfo;
+            while (results.next()) {
+                String tableName = results.getString(querySQL.getTableName());
+                if (StringUtils.isNotEmpty(tableName)) {
+                    String tableComment = results.getString(querySQL.getTableComment());
+                    tableInfo = new TableInfo();
+                    tableInfo.setName(tableName);
+                    tableInfo.setComment(tableComment);
+                    if (isInclude) {
+                        for (String includeTab : config.getInclude()) {
+                            if (includeTab.equalsIgnoreCase(tableName)) {
+                                includeTableList.add(tableInfo);
+                            } else {
+                                notExistTables.add(includeTab);
+                            }
+                        }
+                    } else if (isExclude) {
+                        for (String excludeTab : config.getExclude()) {
+                            if (excludeTab.equalsIgnoreCase(tableName)) {
+                                excludeTableList.add(tableInfo);
+                            } else {
+                                notExistTables.add(excludeTab);
+                            }
+                        }
+                    }
+                    List<TableField> fieldList = getListFields(tableName, strategy);
+                    tableInfo.setFields(fieldList);
+                    tableList.add(tableInfo);
+                } else {
+                    System.err.println("当前数据库为空！！！");
+                }
+            }
+            // 将已经存在的表移除，获取配置中数据库不存在的表
+            for (TableInfo tabInfo : tableList) {
+                notExistTables.remove(tabInfo.getName());
+            }
+
+            if (notExistTables.size() > 0) {
+                System.err.println("表 " + notExistTables + " 在数据库中不存在！！！");
+            }
+
+            // 需要反向生成的表信息
+            if (isExclude) {
+                tableList.removeAll(excludeTableList);
+                includeTableList = tableList;
+            }
+            if (!isInclude && !isExclude){
+                includeTableList = tableList;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // 释放资源
+            try {
+                if (pstate != null) {
+                    pstate.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return processTable(includeTableList, strategy, config.getTablePrefix());
+    }
 
 	/**
 	 * 判断主键是否为identity，目前仅对mysql进行检查
