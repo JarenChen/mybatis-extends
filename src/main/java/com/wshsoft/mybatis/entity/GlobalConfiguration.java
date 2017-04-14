@@ -1,6 +1,5 @@
 package com.wshsoft.mybatis.entity;
 
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
@@ -38,9 +37,8 @@ import com.wshsoft.mybatis.toolkit.TableInfoHelper;
  * @author Carry xie
  * @Date 2016-12-06
  */
-@SuppressWarnings("serial")
-public class GlobalConfiguration implements Cloneable, Serializable {
-
+public class GlobalConfiguration implements Cloneable {
+	// 日志
 	private static final Log logger = LogFactory.getLog(GlobalConfiguration.class);
 	/**
 	 * 默认参数
@@ -52,10 +50,12 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	public static final String LOGIC_DELETE_DEFAULT_VALUE = "1";
 	// 逻辑删除全局值
 	private String logicDeleteValue = null;
+	// 逻辑未删除全局值
+	private String logicNotDeleteValue = null;
 	/**
 	 * 缓存全局信息
 	 */
-	private static final Map<String, GlobalConfiguration> GLOBAL_CONFIG = new ConcurrentHashMap<String, GlobalConfiguration>();
+	private static final Map<String, GlobalConfiguration> GLOBAL_CONFIG = new ConcurrentHashMap<>();
 	// 数据库类型（默认 MySql）
 	private DBType dbType = DBType.MYSQL;
 	// 主键类型（默认 ID_WORKER）
@@ -79,7 +79,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	// 缓存当前Configuration的SqlSessionFactory
 	private SqlSessionFactory sqlSessionFactory;
 	// 缓存已注入CRUD的Mapper信息
-	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
+	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<>();
 	// 单例重用SqlSession
 	private SqlSession sqlSession;
 
@@ -171,6 +171,14 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	public void setLogicDeleteValue(String logicDeleteValue) {
 		this.logicDeleteValue = logicDeleteValue;
+	}
+
+	public String getLogicNotDeleteValue() {
+		return logicNotDeleteValue;
+	}
+
+	public void setLogicNotDeleteValue(String logicNotDeleteValue) {
+		this.logicNotDeleteValue = logicNotDeleteValue;
 	}
 
 	public static DBType getDbType(Configuration configuration) {
@@ -343,6 +351,9 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	}
 
 	public String getIdentifierQuote() {
+		if (StringUtils.isEmpty(identifierQuote)) {
+			return dbType.getQuote();
+		}
 		return identifierQuote;
 	}
 

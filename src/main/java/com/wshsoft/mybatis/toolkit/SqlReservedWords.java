@@ -136,7 +136,7 @@ public class SqlReservedWords {
 				"PARAMETER_MODE", "LIMIT", "LINKTYPE", "NULLS", "DEC", "CASCADED", "ENCRYPTED", "CONTAINSTABLE",
 				"DYNAMIC_FUNCTION", "CONDITION_NUMBER", "BEFORE", "DB2GENERAL", "DECLARE", "SUPERUSER", "WHILE" };
 
-		RESERVED_WORDS = new HashSet<String>(words.length);
+		RESERVED_WORDS = new HashSet<>(words.length);
 		Collections.addAll(RESERVED_WORDS, words);
 	}
 
@@ -159,12 +159,13 @@ public class SqlReservedWords {
 	 * @return
 	 */
 	public static String convert(GlobalConfiguration globalConfig, String column) {
-		if (containsWord(column)) {
-			String identifierQuote = StringUtils.isEmpty(globalConfig.getIdentifierQuote())
-					? globalConfig.getDbType().getQuote() : globalConfig.getIdentifierQuote();
-			if (StringUtils.isNotEmpty(identifierQuote)) {
-				return String.format(identifierQuote, column);
-			}
+		return containsWord(column) ? convertQuote(globalConfig, column) : column;
+	}
+
+	public static String convertQuote(GlobalConfiguration globalConfig, String column) {
+		String identifierQuote = globalConfig.getIdentifierQuote();
+		if (StringUtils.isNotEmpty(identifierQuote)) {
+			return String.format(identifierQuote, column);
 		}
 		return column;
 	}

@@ -54,28 +54,31 @@ public class TableFieldInfo {
 	 */
 	private String logicDeleteValue;
 
-    /**
-     * <p>
-     * 存在 TableField 注解构造函数
-     * </p>
-     */
-    public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, String column,
-                          String el, Field field, TableField tableField) {
-        this.property = field.getName();
-        this.propertyType = field.getType().getName();
-        /*
-         * 1、开启字段下划线申明<br>
-         * 2、没有开启下划线申明，但是column与property不等的情况<br>
-         * 设置 related 为 true
-         */
-        if (globalConfig.isDbColumnUnderline() || !column.equals(this.property)) {
-            this.setRelated(true);
-        }
-        this.setColumn(globalConfig, column);
-        this.el = el;
-        /*
-         * 优先使用单个字段注解，否则使用全局配置<br>
-         * 自定义字段验证策略 fixed-239
+	/**
+	 * 逻辑未删除值
+	 */
+	private String logicNotDeleteValue;
+
+	/**
+	 * <p>
+	 * 存在 TableField 注解构造函数
+	 * </p>
+	 */
+	public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, String column, String el, Field field,
+			TableField tableField) {
+		this.property = field.getName();
+		this.propertyType = field.getType().getName();
+		/*
+		 * 1、开启字段下划线申明<br> 2、没有开启下划线申明，但是column与property不等的情况<br> 设置 related 为
+		 * true
+		 */
+		if (globalConfig.isDbColumnUnderline() || !column.equals(this.property)) {
+			this.setRelated(true);
+		}
+		this.setColumn(globalConfig, column);
+		this.el = el;
+		/*
+		 * 优先使用单个字段注解，否则使用全局配置<br> 自定义字段验证策略 fixed-239
 		 */
 		if (FieldStrategy.NOT_NULL != tableField.validate()) {
 			this.fieldStrategy = tableField.validate();
@@ -85,20 +88,20 @@ public class TableFieldInfo {
 		tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
 	}
 
-    public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field) {
-        if (globalConfig.isDbColumnUnderline()) {
-            /* 开启字段下划线申明 */
-            this.related = true;
-            this.setColumn(globalConfig, StringUtils.camelToUnderline(field.getName()));
-        } else {
-            this.setColumn(globalConfig, field.getName());
-        }
-        this.property = field.getName();
-        this.el = field.getName();
-        this.fieldStrategy = globalConfig.getFieldStrategy();
-        this.propertyType = field.getType().getName();
-        tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
-    }
+	public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field) {
+		if (globalConfig.isDbColumnUnderline()) {
+			/* 开启字段下划线申明 */
+			this.related = true;
+			this.setColumn(globalConfig, StringUtils.camelToUnderline(field.getName()));
+		} else {
+			this.setColumn(globalConfig, field.getName());
+		}
+		this.property = field.getName();
+		this.el = field.getName();
+		this.fieldStrategy = globalConfig.getFieldStrategy();
+		this.propertyType = field.getType().getName();
+		tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
+	}
 
 	/**
 	 * <p>
@@ -117,7 +120,12 @@ public class TableFieldInfo {
 			TableLogic tableLogic = field.getAnnotation(TableLogic.class);
 			if (null != tableLogic) {
 				if (StringUtils.isNotEmpty(tableLogic.value())) {
-					deleteValue = tableLogic.value();
+					this.logicNotDeleteValue = tableLogic.value();
+				} else {
+					this.logicNotDeleteValue = globalConfig.getLogicNotDeleteValue();
+				}
+				if (StringUtils.isNotEmpty(tableLogic.delval())) {
+					deleteValue = tableLogic.delval();
 				}
 				this.logicDeleteValue = deleteValue;
 				return true;
@@ -193,4 +201,13 @@ public class TableFieldInfo {
 	public void setLogicDeleteValue(String logicDeleteValue) {
 		this.logicDeleteValue = logicDeleteValue;
 	}
+
+	public String getLogicNotDeleteValue() {
+		return logicNotDeleteValue;
+	}
+
+	public void setLogicNotDeleteValue(String logicNotDeleteValue) {
+		this.logicNotDeleteValue = logicNotDeleteValue;
+	}
+
 }
