@@ -9,7 +9,7 @@
 	<bean id="sqlSessionFactory"
 		class="com.wshsoft.mybatis.spring.MybatisSqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<property name="configLocation" value="classpath:xml/mybatis-config.xml" />
 		<property name="typeAliasesPackage"
 			value="com.wshsoft.mybatis.test.mysql.entity;com.wshsoft.mybatis.test.plugin.OptimisticLocker.entity" />
 		<property name="mapperLocations" value="classpath:mysql/*Mapper.xml" />

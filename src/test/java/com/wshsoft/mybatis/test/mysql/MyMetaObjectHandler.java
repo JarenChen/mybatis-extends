@@ -31,5 +31,9 @@ public class MyMetaObjectHandler implements IMetaObjectHandler {
 			metaObject.setValue("testType", 3);
 		}
 	}
+	
+    @Override
+    public void updateFill(MetaObject metaObject) {
 
+    }
 }

@@ -23,4 +23,10 @@ public interface IMetaObjectHandler {
 	 */
 	void insertFill(MetaObject metaObject);
 
+    /**
+     * 更新元对象字段填充（用于更新时对公共字段的填充）
+     * 
+     * @param metaObject 元对象
+     */
+    void updateFill(MetaObject metaObject);
 }
