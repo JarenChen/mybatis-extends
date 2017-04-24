@@ -109,15 +109,11 @@ public class LogicSqlInjector extends AutoSqlInjector {
 				ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
 				ids.append("#{item}");
 				ids.append("\n</foreach>");
-				sqlSource = languageDriver.createSqlSource(
-						configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
-								table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)),
-						modelClass);
+				sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
+								table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)), modelClass);
 			} else {
-				sqlSource = new RawSqlSource(configuration,
-						String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(),
-								table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)),
-						Object.class);
+				sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(),
+								table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)), Object.class);
 			}
 			this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
 		} else {
@@ -273,7 +269,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
 			where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
 			where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
 			where.append("\n<if test=\"cm[k] != null\">");
-			where.append(SqlReservedWords.convert(getGlobalConfig(), "${k}")).append(" = #{cm[${k}]}");
+			where.append(SqlReservedWords.convert(getGlobalConfig(), "\n${k}")).append(" = #{cm[${k}]}");
 			where.append("</if>");
 			where.append("\n</foreach>");
 			where.append("\n</if>");

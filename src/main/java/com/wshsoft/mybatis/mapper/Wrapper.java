@@ -87,15 +87,13 @@ public abstract class Wrapper<T> implements Serializable {
 	 */
 	public abstract String getSqlSegment();
 
-	@Override
-	public String toString() {
-		String sqlSegment = getSqlSegment();
-		if (StringUtils.isNotEmpty(sqlSegment)) {
-			sqlSegment = sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}",
-					"\\?");
-		}
-		return sqlSegment;
-	}
+    public String toString() {
+        String sqlSegment = getSqlSegment();
+        if (StringUtils.isNotEmpty(sqlSegment)) {
+            sqlSegment = sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}", "\\?");
+        }
+        return sqlSegment;
+    }
 
 	/**
 	 * <p>
@@ -796,15 +794,29 @@ public abstract class Wrapper<T> implements Serializable {
 		return this;
 	}
 
-	/**
-	 * Fix issue 200.
-	 * 
-	 * @since 2.0.3
-	 * @return
-	 */
-	public Map<String, Object> getParamNameValuePairs() {
-		return paramNameValuePairs;
-	}
+    /**
+     * <p>
+     * SQL LIMIT
+     * </p>
+     *
+     * @param begin 起始
+     * @param end   结束
+     * @return this
+     */
+    public Wrapper<T> limit(int begin, int end) {
+        sql.LIMIT(begin, end);
+        return this;
+    }
+
+    /**
+     * Fix issue 200.
+     *
+     * @return
+     * @since 2.0.3
+     */
+    public Map<String, Object> getParamNameValuePairs() {
+        return paramNameValuePairs;
+    }
 
 	public String getParamAlias() {
 		return StringUtils.isEmpty(paramAlias) ? DEFAULT_PARAM_ALIAS : paramAlias;

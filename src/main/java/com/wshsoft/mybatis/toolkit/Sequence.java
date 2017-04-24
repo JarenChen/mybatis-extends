@@ -101,8 +101,7 @@ public class Sequence {
 				id = 1L;
 			} else {
 				byte[] mac = network.getHardwareAddress();
-				id = ((0x000000FF & (long) mac[mac.length - 1])
-						| (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
+                id = ((0x000000FF & (long) mac[mac.length - 1]) | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
 				id = id % (maxDatacenterId + 1);
 			}
 		} catch (Exception e) {

@@ -1,15 +1,15 @@
 package com.wshsoft.mybatis.test.generator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.wshsoft.mybatis.generator.AutoGenerator;
 import com.wshsoft.mybatis.generator.InjectionConfig;
-import com.wshsoft.mybatis.generator.config.DataSourceConfig;
-import com.wshsoft.mybatis.generator.config.GlobalConfig;
-import com.wshsoft.mybatis.generator.config.PackageConfig;
-import com.wshsoft.mybatis.generator.config.StrategyConfig;
+import com.wshsoft.mybatis.generator.config.*;
 import com.wshsoft.mybatis.generator.config.converts.MySqlTypeConvert;
+import com.wshsoft.mybatis.generator.config.po.TableInfo;
 import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
@@ -114,17 +114,25 @@ public class MysqlGenerator {
 				this.setMap(map);
 			}
 		};
-		// 自定义文件名称
+		// 自定义文件名称   --start
 		/*
-		 * List<FileOutConfig> focList = new ArrayList<FileOutConfig>();
-		 * focList.add(new FileOutConfig("/templates/entity.java.vm") {
-		 * 
-		 * @Override public String outputFile(TableInfo tableInfo) { //
-		 * 自定义输入文件名称 return "D://my_" + tableInfo.getEntityName() + ".java"; }
-		 * }); cfg.setFileOutConfigList(focList);
-		 */
+		List<FileOutConfig> focList = new ArrayList<>();
+        focList.add(new FileOutConfig("/templates/mapper.xml.vm") {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                return "/develop/code/xml/" + tableInfo.getEntityName() + ".xml";
+            }
+        });
+        cfg.setFileOutConfigList(focList);
+       */
 		mpg.setCfg(cfg);
 
+        // 关闭默认 xml 生成，调整生成 至 根目录 --start
+		/*  
+        TemplateConfig tc = new TemplateConfig();
+        tc.setXml(null);
+        mpg.setTemplate(tc);
+        */
 		// 自定义模板配置，模板可以参考源码 /mybatis-extends/src/main/resources/template 使用 copy
 		// 至您项目 src/main/resources/template 目录下，模板名称也可自定义如下配置：
 		// TemplateConfig tc = new TemplateConfig();

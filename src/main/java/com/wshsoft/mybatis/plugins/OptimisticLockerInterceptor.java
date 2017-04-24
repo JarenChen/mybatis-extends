@@ -63,8 +63,7 @@ import net.sf.jsqlparser.statement.update.Update;
  * @author Carry xie
  * @since 2017-04-08
  */
-@Intercepts({
-		@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
+@Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public final class OptimisticLockerInterceptor implements Interceptor {
 
 	/**
@@ -207,17 +206,16 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		}
 	}
 
-	private ParameterMapping getVersionMappingInstance(Configuration configuration) {
-		if (parameterMapping == null) {
-			synchronized (OptimisticLockerInterceptor.class) {
-				if (parameterMapping == null) {
-					parameterMapping = new ParameterMapping.Builder(configuration, "originVersionValue",
-							new UnknownTypeHandler(configuration.getTypeHandlerRegistry())).build();
-				}
-			}
-		}
-		return parameterMapping;
-	}
+    private ParameterMapping getVersionMappingInstance(Configuration configuration) {
+        if (parameterMapping == null) {
+            synchronized (OptimisticLockerInterceptor.class) {
+                if (parameterMapping == null) {
+                    parameterMapping = new ParameterMapping.Builder(configuration, "originVersionValue", new UnknownTypeHandler(configuration.getTypeHandlerRegistry())).build();
+                }
+            }
+        }
+        return parameterMapping;
+    }
 
 	@Override
 	public Object plugin(Object target) {

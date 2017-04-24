@@ -232,40 +232,35 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
 		}
 	}
 
-	private void settingsElement(Properties props) throws Exception {
-		configuration.setAutoMappingBehavior(
-				AutoMappingBehavior.valueOf(props.getProperty("autoMappingBehavior", "PARTIAL")));
-		configuration.setAutoMappingUnknownColumnBehavior(AutoMappingUnknownColumnBehavior
-				.valueOf(props.getProperty("autoMappingUnknownColumnBehavior", "NONE")));
-		configuration.setCacheEnabled(booleanValueOf(props.getProperty("cacheEnabled"), true));
-		configuration.setProxyFactory((ProxyFactory) createInstance(props.getProperty("proxyFactory")));
-		configuration.setLazyLoadingEnabled(booleanValueOf(props.getProperty("lazyLoadingEnabled"), false));
-		configuration.setAggressiveLazyLoading(booleanValueOf(props.getProperty("aggressiveLazyLoading"), false));
-		configuration
-				.setMultipleResultSetsEnabled(booleanValueOf(props.getProperty("multipleResultSetsEnabled"), true));
-		configuration.setUseColumnLabel(booleanValueOf(props.getProperty("useColumnLabel"), true));
-		configuration.setUseGeneratedKeys(booleanValueOf(props.getProperty("useGeneratedKeys"), false));
-		configuration.setDefaultExecutorType(ExecutorType.valueOf(props.getProperty("defaultExecutorType", "SIMPLE")));
-		configuration.setDefaultStatementTimeout(integerValueOf(props.getProperty("defaultStatementTimeout"), null));
-		configuration.setDefaultFetchSize(integerValueOf(props.getProperty("defaultFetchSize"), null));
-		configuration.setMapUnderscoreToCamelCase(booleanValueOf(props.getProperty("mapUnderscoreToCamelCase"), false));
-		configuration.setSafeRowBoundsEnabled(booleanValueOf(props.getProperty("safeRowBoundsEnabled"), false));
-		configuration.setLocalCacheScope(LocalCacheScope.valueOf(props.getProperty("localCacheScope", "SESSION")));
-		configuration.setJdbcTypeForNull(JdbcType.valueOf(props.getProperty("jdbcTypeForNull", "OTHER")));
-		configuration.setLazyLoadTriggerMethods(
-				stringSetValueOf(props.getProperty("lazyLoadTriggerMethods"), "equals,clone,hashCode,toString"));
-		configuration.setSafeResultHandlerEnabled(booleanValueOf(props.getProperty("safeResultHandlerEnabled"), true));
-		configuration.setDefaultScriptingLanguage(resolveClass(props.getProperty("defaultScriptingLanguage")));
-		configuration.setCallSettersOnNulls(booleanValueOf(props.getProperty("callSettersOnNulls"), false));
-		configuration.setUseActualParamName(booleanValueOf(props.getProperty("useActualParamName"), true));
-		configuration
-				.setReturnInstanceForEmptyRow(booleanValueOf(props.getProperty("returnInstanceForEmptyRow"), false));
-		configuration.setLogPrefix(props.getProperty("logPrefix"));
-		@SuppressWarnings("unchecked")
-		Class<? extends Log> logImpl = (Class<? extends Log>) resolveClass(props.getProperty("logImpl"));
-		configuration.setLogImpl(logImpl);
-		configuration.setConfigurationFactory(resolveClass(props.getProperty("configurationFactory")));
-	}
+    private void settingsElement(Properties props) throws Exception {
+        configuration.setAutoMappingBehavior(AutoMappingBehavior.valueOf(props.getProperty("autoMappingBehavior", "PARTIAL")));
+        configuration.setAutoMappingUnknownColumnBehavior(AutoMappingUnknownColumnBehavior.valueOf(props.getProperty("autoMappingUnknownColumnBehavior", "NONE")));
+        configuration.setCacheEnabled(booleanValueOf(props.getProperty("cacheEnabled"), true));
+        configuration.setProxyFactory((ProxyFactory) createInstance(props.getProperty("proxyFactory")));
+        configuration.setLazyLoadingEnabled(booleanValueOf(props.getProperty("lazyLoadingEnabled"), false));
+        configuration.setAggressiveLazyLoading(booleanValueOf(props.getProperty("aggressiveLazyLoading"), false));
+        configuration.setMultipleResultSetsEnabled(booleanValueOf(props.getProperty("multipleResultSetsEnabled"), true));
+        configuration.setUseColumnLabel(booleanValueOf(props.getProperty("useColumnLabel"), true));
+        configuration.setUseGeneratedKeys(booleanValueOf(props.getProperty("useGeneratedKeys"), false));
+        configuration.setDefaultExecutorType(ExecutorType.valueOf(props.getProperty("defaultExecutorType", "SIMPLE")));
+        configuration.setDefaultStatementTimeout(integerValueOf(props.getProperty("defaultStatementTimeout"), null));
+        configuration.setDefaultFetchSize(integerValueOf(props.getProperty("defaultFetchSize"), null));
+        configuration.setMapUnderscoreToCamelCase(booleanValueOf(props.getProperty("mapUnderscoreToCamelCase"), false));
+        configuration.setSafeRowBoundsEnabled(booleanValueOf(props.getProperty("safeRowBoundsEnabled"), false));
+        configuration.setLocalCacheScope(LocalCacheScope.valueOf(props.getProperty("localCacheScope", "SESSION")));
+        configuration.setJdbcTypeForNull(JdbcType.valueOf(props.getProperty("jdbcTypeForNull", "OTHER")));
+        configuration.setLazyLoadTriggerMethods(stringSetValueOf(props.getProperty("lazyLoadTriggerMethods"), "equals,clone,hashCode,toString"));
+        configuration.setSafeResultHandlerEnabled(booleanValueOf(props.getProperty("safeResultHandlerEnabled"), true));
+        configuration.setDefaultScriptingLanguage(resolveClass(props.getProperty("defaultScriptingLanguage")));
+        configuration.setCallSettersOnNulls(booleanValueOf(props.getProperty("callSettersOnNulls"), false));
+        configuration.setUseActualParamName(booleanValueOf(props.getProperty("useActualParamName"), true));
+        configuration.setReturnInstanceForEmptyRow(booleanValueOf(props.getProperty("returnInstanceForEmptyRow"), false));
+        configuration.setLogPrefix(props.getProperty("logPrefix"));
+        @SuppressWarnings("unchecked")
+        Class<? extends Log> logImpl = (Class<? extends Log>) resolveClass(props.getProperty("logImpl"));
+        configuration.setLogImpl(logImpl);
+        configuration.setConfigurationFactory(resolveClass(props.getProperty("configurationFactory")));
+    }
 
 	private void environmentsElement(XNode context) throws Exception {
 		if (context != null) {

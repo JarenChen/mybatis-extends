@@ -2,7 +2,7 @@ package com.wshsoft.mybatis.test.mysql;
 
 import org.apache.ibatis.reflection.MetaObject;
 
-import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
+import com.wshsoft.mybatis.mapper.MetaObjectHandler;
 
 /**
  * <p>
@@ -12,12 +12,11 @@ import com.wshsoft.mybatis.mapper.IMetaObjectHandler;
  * @author Carry xie
  * @Date 2016-08-28
  */
-public class MyMetaObjectHandler implements IMetaObjectHandler {
+public class MyMetaObjectHandler extends MetaObjectHandler {
 
 	/**
 	 * 测试 user 表 name 字段为空自动填充
 	 */
-	@Override
 	public void insertFill(MetaObject metaObject) {
 		// Object name = metaObject.getValue("name");
 		// if (null == name) {

@@ -10,7 +10,7 @@ import org.apache.ibatis.reflection.MetaObject;
  * @author Carry xie
  * @Date 2016-08-28
  */
-public interface IMetaObjectHandler {
+public abstract class MetaObjectHandler {
 
 	/**
 	 * <p>
@@ -21,12 +21,27 @@ public interface IMetaObjectHandler {
 	 *            元对象
 	 * @return
 	 */
-	void insertFill(MetaObject metaObject);
+    public abstract void insertFill(MetaObject metaObject);
 
     /**
      * 更新元对象字段填充（用于更新时对公共字段的填充）
      * 
      * @param metaObject 元对象
      */
-    void updateFill(MetaObject metaObject);
+    public abstract void updateFill(MetaObject metaObject);
+
+    /**
+     * 开启插入填充
+     */
+    public boolean openInsertFill() {
+        return true;
+    }
+
+    /**
+     * 开启更新填充
+     */
+    public boolean openUpdateFill() {
+        return true;
+    }
+
 }

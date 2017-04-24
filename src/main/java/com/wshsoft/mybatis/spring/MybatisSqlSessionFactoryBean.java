@@ -12,6 +12,8 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.builder.xml.XMLConfigBuilder;
+import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -27,6 +29,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.TypeHandler;
+import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -55,10 +58,9 @@ import com.wshsoft.mybatis.toolkit.PackageHelper;
  * @author Carry xie
  * @Date 2016-01-23
  */
-public class MybatisSqlSessionFactoryBean
-		implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
+public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
 
-	private static final Log LOGGER = LogFactory.getLog(MybatisSqlSessionFactoryBean.class);
+    private static final Log LOGGER = LogFactory.getLog(SqlSessionFactoryBean.class);
 
 	private Resource configLocation;
 
@@ -76,8 +78,8 @@ public class MybatisSqlSessionFactoryBean
 
 	private SqlSessionFactory sqlSessionFactory;
 
-	// EnvironmentAware requires spring 3.1
-	private String environment = MybatisSqlSessionFactoryBean.class.getSimpleName();
+    //EnvironmentAware requires spring 3.1
+    private String environment = SqlSessionFactoryBean.class.getSimpleName();
 
 	private boolean failFast;
 
@@ -397,20 +399,18 @@ public class MybatisSqlSessionFactoryBean
 				configuration.getVariables().putAll(this.configurationProperties);
 			}
 		} else if (this.configLocation != null) {
-			xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null,
-					this.configurationProperties);
-			configuration = xmlConfigBuilder.getConfiguration();
-		} else {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(
-						"Property 'configuration' or 'configLocation' not specified, using default Mybatis-Extends Configuration");
-			}
-			// TODO 使用自定义配置
-			configuration = new MybatisConfiguration();
-			if (this.configurationProperties != null) {
-				configuration.setVariables(this.configurationProperties);
-			}
-		}
+            xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
+            configuration = xmlConfigBuilder.getConfiguration();
+        } else {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
+            }
+            // TODO 使用自定义配置
+            configuration = new MybatisConfiguration();
+            if (this.configurationProperties != null) {
+                configuration.setVariables(this.configurationProperties);
+            }
+        }
 
 		if (this.objectFactory != null) {
 			configuration.setObjectFactory(this.objectFactory);
@@ -531,17 +531,16 @@ public class MybatisSqlSessionFactoryBean
 					continue;
 				}
 
-				try {
-					// TODO
-					MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(
-							mapperLocation.getInputStream(), configuration, mapperLocation.toString(),
-							configuration.getSqlFragments());
-					xmlMapperBuilder.parse();
-				} catch (Exception e) {
-					throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
-				} finally {
-					ErrorContext.instance().reset();
-				}
+                try {
+                    // TODO
+                    MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(mapperLocation.getInputStream(),
+                            configuration, mapperLocation.toString(), configuration.getSqlFragments());
+                    xmlMapperBuilder.parse();
+                } catch (Exception e) {
+                    throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
+                } finally {
+                    ErrorContext.instance().reset();
+                }
 
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Parsed mapper file: '" + mapperLocation + "'");

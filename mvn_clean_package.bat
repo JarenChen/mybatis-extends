@@ -18,7 +18,7 @@ IF %cmd% == q GOTO END
 
 :ECLIPSE
 call mvn eclipse:clean
-call mvn eclipse:eclipse -U -DdownloadSources=true -DdownloadJavadocs=false
+call mvn eclipse:eclipse -U -DdownloadSources=true -DdownloadJavadocs=true
 echo ============================================================================
 echo =========================== eclipse is complete===============================
 echo ============================================================================
