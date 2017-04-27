@@ -45,17 +45,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	/**
 	 * @see org.apache.ibatis.mapping.BoundSql
 	 */
-	private static Field additionalParametersField;
-
-	static {
-		try {
-			additionalParametersField = BoundSql.class.getDeclaredField("additionalParameters");
-			additionalParametersField.setAccessible(true);
-		} catch (NoSuchFieldException e) {
-			// ignored, Because it will never happen.
-		}
-	}
-
+	private static final Field additionalParametersField = getAdditionalParametersField();
 	private final TypeHandlerRegistry typeHandlerRegistry;
 	private final MappedStatement mappedStatement;
 	private final Object parameterObject;
@@ -71,49 +61,66 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 		this.boundSql = boundSql;
 	}
 
-    /**
-     * <p>
-     * 批量（填充主键 ID）
-     * </p>
-     *
-     * @param ms
-     * @param parameterObject 插入数据库对象
-     * @return
-     */
-    protected static Object processBatch(MappedStatement ms, Object parameterObject) {
-        boolean isFill = false;
-        // 全局配置是否配置填充器
-        MetaObjectHandler metaObjectHandler = GlobalConfiguration.getMetaObjectHandler(ms.getConfiguration());
-        /* 只处理插入或更新操作 */
-        if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
-            isFill = true;
-        } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE
-                && metaObjectHandler.openUpdateFill()) {
-            isFill = true;
-        }
-        if (isFill) {
-            Collection<Object> parameters = getParameters(parameterObject);
-            if (null != parameters) {
-                List<Object> objList = new ArrayList<>();
-                for (Object parameter : parameters) {
-                    TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
-                    if (null != tableInfo) {
-                        objList.add(populateKeys(metaObjectHandler, tableInfo, ms, parameter));
-                    } else {
-                        /*
-                         * 非表映射类不处理
+	/**
+	 * 反射获取BoundSql中additionalParameters参数字段
+	 *
+	 * @return
+	 * @see org.apache.ibatis.mapping.BoundSql
+	 */
+	private static Field getAdditionalParametersField() {
+		try {
+			Field additionalParametersField = BoundSql.class.getDeclaredField("additionalParameters");
+			additionalParametersField.setAccessible(true);
+			return additionalParametersField;
+		} catch (NoSuchFieldException e) {
+			// ignored, Because it will never happen.
+		}
+		return null;
+	}
+
+	/**
+	 * <p>
+	 * 批量（填充主键 ID）
+	 * </p>
+	 *
+	 * @param ms
+	 * @param parameterObject
+	 *            插入数据库对象
+	 * @return
+	 */
+	protected static Object processBatch(MappedStatement ms, Object parameterObject) {
+		boolean isFill = false;
+		// 全局配置是否配置填充器
+		MetaObjectHandler metaObjectHandler = GlobalConfiguration.getMetaObjectHandler(ms.getConfiguration());
+		/* 只处理插入或更新操作 */
+		if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
+			isFill = true;
+		} else if (ms.getSqlCommandType() == SqlCommandType.UPDATE && metaObjectHandler.openUpdateFill()) {
+			isFill = true;
+		}
+		if (isFill) {
+			Collection<Object> parameters = getParameters(parameterObject);
+			if (null != parameters) {
+				List<Object> objList = new ArrayList<>();
+				for (Object parameter : parameters) {
+					TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
+					if (null != tableInfo) {
+						objList.add(populateKeys(metaObjectHandler, tableInfo, ms, parameter));
+					} else {
+						/*
+						 * 非表映射类不处理
 						 */
-                        objList.add(parameter);
-                    }
-                }
-                return objList;
-            } else {
-                TableInfo tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
-                return populateKeys(metaObjectHandler, tableInfo, ms, parameterObject);
-            }
-        }
-        return parameterObject;
-    }
+						objList.add(parameter);
+					}
+				}
+				return objList;
+			} else {
+				TableInfo tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
+				return populateKeys(metaObjectHandler, tableInfo, ms, parameterObject);
+			}
+		}
+		return parameterObject;
+	}
 
 	/**
 	 * <p>
@@ -146,47 +153,51 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 		return parameters;
 	}
 
-    /**
-     * <p>
-     * 自定义元对象填充控制器
-     * </p>
-     *
-     * @param metaObjectHandler 元数据填充处理器
-     * @param tableInfo         数据库表反射信息
-     * @param ms                MappedStatement
-     * @param parameterObject   插入数据库对象
-     * @return Object
-     */
-    protected static Object populateKeys(MetaObjectHandler metaObjectHandler, TableInfo tableInfo,
-                                         MappedStatement ms, Object parameterObject) {
-        if (null == tableInfo || StringUtils.isEmpty(tableInfo.getKeyProperty()) || null == tableInfo.getIdType()) {
-            /* 不处理 */
-            return parameterObject;
-        }
-        /* 自定义元对象填充控制器 */
-        MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
-        if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
-            if (tableInfo.getIdType().getKey() >= 2) {
-                Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
-            /* 自定义 ID */
-                if (StringUtils.checkValNull(idValue)) {
-                    if (tableInfo.getIdType() == IdType.ID_WORKER) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
-                    } else if (tableInfo.getIdType() == IdType.UUID) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.get32UUID());
-                    }
-                }
-            }
-            // 插入填充
-            if (metaObjectHandler.openInsertFill()) {
-                metaObjectHandler.insertFill(metaObject);
-            }
-        } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE && metaObjectHandler.openUpdateFill()) {
-            // 更新填充
-            metaObjectHandler.updateFill(metaObject);
-        }
-        return metaObject.getOriginalObject();
-    }
+	/**
+	 * <p>
+	 * 自定义元对象填充控制器
+	 * </p>
+	 *
+	 * @param metaObjectHandler
+	 *            元数据填充处理器
+	 * @param tableInfo
+	 *            数据库表反射信息
+	 * @param ms
+	 *            MappedStatement
+	 * @param parameterObject
+	 *            插入数据库对象
+	 * @return Object
+	 */
+	protected static Object populateKeys(MetaObjectHandler metaObjectHandler, TableInfo tableInfo, MappedStatement ms,
+			Object parameterObject) {
+		if (null == tableInfo || StringUtils.isEmpty(tableInfo.getKeyProperty()) || null == tableInfo.getIdType()) {
+			/* 不处理 */
+			return parameterObject;
+		}
+		/* 自定义元对象填充控制器 */
+		MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
+		if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
+			if (tableInfo.getIdType().getKey() >= 2) {
+				Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
+				/* 自定义 ID */
+				if (StringUtils.checkValNull(idValue)) {
+					if (tableInfo.getIdType() == IdType.ID_WORKER) {
+						metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
+					} else if (tableInfo.getIdType() == IdType.UUID) {
+						metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.get32UUID());
+					}
+				}
+			}
+			// 插入填充
+			if (metaObjectHandler.openInsertFill()) {
+				metaObjectHandler.insertFill(metaObject);
+			}
+		} else if (ms.getSqlCommandType() == SqlCommandType.UPDATE && metaObjectHandler.openUpdateFill()) {
+			// 更新填充
+			metaObjectHandler.updateFill(metaObject);
+		}
+		return metaObject.getOriginalObject();
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override

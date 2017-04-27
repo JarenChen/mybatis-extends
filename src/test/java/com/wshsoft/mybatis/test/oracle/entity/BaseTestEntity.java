@@ -12,21 +12,19 @@ import com.wshsoft.mybatis.annotations.TableId;
 @KeySequence("SEQ_TEST")
 public class BaseTestEntity implements Serializable {
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+	@TableField(exist = false)
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键ID
-     */
-    @TableId(value = "ID")
-    private Long id;
+	/**
+	 * 主键ID
+	 */
+	@TableId(value = "ID")
+	private Long id;
 
+	public BaseTestEntity() {
 
-    public BaseTestEntity() {
+	}
 
-    }
-    
-    
 	public Long getId() {
 		return id;
 	}
@@ -34,7 +32,5 @@ public class BaseTestEntity implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-
 
 }

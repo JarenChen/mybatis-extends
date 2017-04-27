@@ -196,9 +196,9 @@ public class SqlUtilsTest {
 		System.out.println(countsql);
 		System.out.println(orderBy);
 		Assert.assertFalse(orderBy);
-        Assert.assertEquals("SELECT COUNT(DISTINCT *)\n" + "FROM user a\n" + "\tLEFT JOIN (SELECT uuid\n" + "\t\tFROM user2\n"
-                + "\t\t) b ON b.id = a.aid\n" + "WHERE a = 1", countsql);
-    }
+		Assert.assertEquals("SELECT COUNT(DISTINCT *)\n" + "FROM user a\n" + "\tLEFT JOIN (SELECT uuid\n"
+				+ "\t\tFROM user2\n" + "\t\t) b ON b.id = a.aid\n" + "WHERE a = 1", countsql);
+	}
 
 	/**
 	 * 测试aliDruid方式
@@ -212,10 +212,10 @@ public class SqlUtilsTest {
 		boolean orderBy = countOptimize.isOrderBy();
 		System.out.println(countsql);
 		System.out.println(orderBy);
-        Assert.assertFalse(orderBy);
-        Assert.assertEquals("SELECT COUNT(*)\n" + "FROM (SELECT *\n" + "\tFROM user a\n" + "\t\tLEFT JOIN (SELECT uuid\n"
-                + "\t\t\tFROM user2\n" + "\t\t\t) b ON b.id = a.aid\n" + "\tWHERE a = 1\n" + "\tGROUP BY a.id\n"
-                + "\t) ALIAS_COUNT", countsql);
+		Assert.assertFalse(orderBy);
+		Assert.assertEquals("SELECT COUNT(*)\n" + "FROM (SELECT *\n" + "\tFROM user a\n"
+				+ "\t\tLEFT JOIN (SELECT uuid\n" + "\t\t\tFROM user2\n" + "\t\t\t) b ON b.id = a.aid\n"
+				+ "\tWHERE a = 1\n" + "\tGROUP BY a.id\n" + "\t) ALIAS_COUNT", countsql);
 	}
 
 	/**
@@ -231,9 +231,9 @@ public class SqlUtilsTest {
 		System.out.println(countsql);
 		System.out.println(orderBy);
 		Assert.assertFalse(orderBy);
-        Assert.assertEquals("SELECT COUNT(*)\n" + "FROM (SELECT *\n" + "\tFROM user a\n" + "\t\tLEFT JOIN (SELECT uuid\n"
-                + "\t\t\tFROM user2\n" + "\t\t\t) b ON b.id = a.aid\n" + "\tWHERE a = 1\n" + "\tGROUP BY a.id\n"
-                + "\t) ALIAS_COUNT", countsql);
+		Assert.assertEquals("SELECT COUNT(*)\n" + "FROM (SELECT *\n" + "\tFROM user a\n"
+				+ "\t\tLEFT JOIN (SELECT uuid\n" + "\t\t\tFROM user2\n" + "\t\t\t) b ON b.id = a.aid\n"
+				+ "\tWHERE a = 1\n" + "\tGROUP BY a.id\n" + "\t) ALIAS_COUNT", countsql);
 	}
 
 }

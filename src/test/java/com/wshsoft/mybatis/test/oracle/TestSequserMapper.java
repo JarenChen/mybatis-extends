@@ -8,5 +8,4 @@ import com.wshsoft.mybatis.test.oracle.entity.TestSequser;
  */
 public interface TestSequserMapper extends BaseMapper<TestSequser> {
 
-
 }

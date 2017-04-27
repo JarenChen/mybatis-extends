@@ -18,10 +18,10 @@ import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
  */
 public class TableInfo {
 
-    /**
-     * 表主键ID 类型
-     */
-    private IdType idType = IdType.NONE;
+	/**
+	 * 表主键ID 类型
+	 */
+	private IdType idType = IdType.NONE;
 
 	/**
 	 * 表名称
@@ -46,20 +46,20 @@ public class TableInfo {
 	 */
 	private String keyProperty;
 
-    /**
-     * 表主键ID 字段名
-     */
-    private String keyColumn;
-    /**
-     * <p>
-     * 表主键ID Sequence
-     * </p>
-     */
-    private KeySequence keySequence;
-    /**
-     * 表字段信息列表
-     */
-    private List<TableFieldInfo> fieldList;
+	/**
+	 * 表主键ID 字段名
+	 */
+	private String keyColumn;
+	/**
+	 * <p>
+	 * 表主键ID Sequence
+	 * </p>
+	 */
+	private KeySequence keySequence;
+	/**
+	 * 表字段信息列表
+	 */
+	private List<TableFieldInfo> fieldList;
 
 	/**
 	 * 命名空间
@@ -139,17 +139,17 @@ public class TableInfo {
 		this.keyColumn = keyColumn;
 	}
 
-    public KeySequence getKeySequence() {
-        return keySequence;
-    }
+	public KeySequence getKeySequence() {
+		return keySequence;
+	}
 
-    public void setKeySequence(KeySequence keySequence) {
-        this.keySequence = keySequence;
-    }
+	public void setKeySequence(KeySequence keySequence) {
+		this.keySequence = keySequence;
+	}
 
-    public List<TableFieldInfo> getFieldList() {
-        return fieldList;
-    }
+	public List<TableFieldInfo> getFieldList() {
+		return fieldList;
+	}
 
 	public void setFieldList(GlobalConfiguration globalConfig, List<TableFieldInfo> fieldList) {
 		this.fieldList = fieldList;

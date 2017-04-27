@@ -43,25 +43,25 @@ public class GlobalConfiguration implements Cloneable {
 	/**
 	 * 默认参数
 	 */
-    public static final GlobalConfiguration DEFAULT = new GlobalConfiguration();
-    // 逻辑删除全局值
-    private String logicDeleteValue = null;
-    // 逻辑未删除全局值
-    private String logicNotDeleteValue = null;
-    /**
-     * 缓存全局信息
-     */
-    private static final Map<String, GlobalConfiguration> GLOBAL_CONFIG = new ConcurrentHashMap<>();
-    // 数据库类型（默认 MySql）
-    private DBType dbType = DBType.MYSQL;
-    // 主键类型（默认 ID_WORKER）
-    private IdType idType = IdType.ID_WORKER;
-    // 表名、字段名、是否使用下划线命名（默认 false）
-    private boolean dbColumnUnderline = false;
-    // SQL注入器
-    private ISqlInjector sqlInjector;
-    // 元对象字段填充控制器
-    private MetaObjectHandler metaObjectHandler = new DefaultMetaObjectHandler();
+	public static final GlobalConfiguration DEFAULT = new GlobalConfiguration();
+	// 逻辑删除全局值
+	private String logicDeleteValue = null;
+	// 逻辑未删除全局值
+	private String logicNotDeleteValue = null;
+	/**
+	 * 缓存全局信息
+	 */
+	private static final Map<String, GlobalConfiguration> GLOBAL_CONFIG = new ConcurrentHashMap<>();
+	// 数据库类型（默认 MySql）
+	private DBType dbType = DBType.MYSQL;
+	// 主键类型（默认 ID_WORKER）
+	private IdType idType = IdType.ID_WORKER;
+	// 表名、字段名、是否使用下划线命名（默认 false）
+	private boolean dbColumnUnderline = false;
+	// SQL注入器
+	private ISqlInjector sqlInjector;
+	// 元对象字段填充控制器
+	private MetaObjectHandler metaObjectHandler = new DefaultMetaObjectHandler();
 	// 字段验证策略
 	private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
 	// 是否刷新mapper
@@ -200,9 +200,9 @@ public class GlobalConfiguration implements Cloneable {
 		return sqlInjector;
 	}
 
-    public static MetaObjectHandler getMetaObjectHandler(Configuration configuration) {
-        return getGlobalConfig(configuration).getMetaObjectHandler();
-    }
+	public static MetaObjectHandler getMetaObjectHandler(Configuration configuration) {
+		return getGlobalConfig(configuration).getMetaObjectHandler();
+	}
 
 	public static FieldStrategy getFieldStrategy(Configuration configuration) {
 		return getGlobalConfig(configuration).getFieldStrategy();
@@ -289,13 +289,13 @@ public class GlobalConfiguration implements Cloneable {
 		this.sqlInjector = sqlInjector;
 	}
 
-    public MetaObjectHandler getMetaObjectHandler() {
-        return metaObjectHandler;
-    }
+	public MetaObjectHandler getMetaObjectHandler() {
+		return metaObjectHandler;
+	}
 
-    public void setMetaObjectHandler(MetaObjectHandler metaObjectHandler) {
-        this.metaObjectHandler = metaObjectHandler;
-    }
+	public void setMetaObjectHandler(MetaObjectHandler metaObjectHandler) {
+		this.metaObjectHandler = metaObjectHandler;
+	}
 
 	public FieldStrategy getFieldStrategy() {
 		return fieldStrategy;
@@ -347,7 +347,7 @@ public class GlobalConfiguration implements Cloneable {
 	}
 
 	public String getIdentifierQuote() {
-		if (StringUtils.isEmpty(identifierQuote)) {
+		if (null == identifierQuote) {
 			return dbType.getQuote();
 		}
 		return identifierQuote;

@@ -109,11 +109,15 @@ public class LogicSqlInjector extends AutoSqlInjector {
 				ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
 				ids.append("#{item}");
 				ids.append("\n</foreach>");
-				sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
-								table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)), modelClass);
+				sqlSource = languageDriver.createSqlSource(
+						configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
+								table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)),
+						modelClass);
 			} else {
-				sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(),
-								table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)), Object.class);
+				sqlSource = new RawSqlSource(configuration,
+						String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(),
+								table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)),
+						Object.class);
 			}
 			this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
 		} else {

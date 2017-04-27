@@ -21,27 +21,28 @@ public abstract class MetaObjectHandler {
 	 *            元对象
 	 * @return
 	 */
-    public abstract void insertFill(MetaObject metaObject);
+	public abstract void insertFill(MetaObject metaObject);
 
-    /**
-     * 更新元对象字段填充（用于更新时对公共字段的填充）
-     * 
-     * @param metaObject 元对象
-     */
-    public abstract void updateFill(MetaObject metaObject);
+	/**
+	 * 更新元对象字段填充（用于更新时对公共字段的填充）
+	 * 
+	 * @param metaObject
+	 *            元对象
+	 */
+	public abstract void updateFill(MetaObject metaObject);
 
-    /**
-     * 开启插入填充
-     */
-    public boolean openInsertFill() {
-        return true;
-    }
+	/**
+	 * 开启插入填充
+	 */
+	public boolean openInsertFill() {
+		return true;
+	}
 
-    /**
-     * 开启更新填充
-     */
-    public boolean openUpdateFill() {
-        return true;
-    }
+	/**
+	 * 开启更新填充
+	 */
+	public boolean openUpdateFill() {
+		return true;
+	}
 
 }

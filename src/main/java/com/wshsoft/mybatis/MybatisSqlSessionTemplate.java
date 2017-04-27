@@ -1,10 +1,6 @@
 package com.wshsoft.mybatis;
 
 import static java.lang.reflect.Proxy.newProxyInstance;
-import static org.apache.ibatis.reflection.ExceptionUtil.unwrapThrowable;
-import static org.mybatis.spring.SqlSessionUtils.closeSqlSession;
-import static org.mybatis.spring.SqlSessionUtils.getSqlSession;
-import static org.mybatis.spring.SqlSessionUtils.isSqlSessionTransactional;
 import static org.springframework.util.Assert.notNull;
 
 import java.lang.reflect.InvocationHandler;
@@ -14,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.cursor.Cursor;
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
@@ -25,6 +20,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.MyBatisExceptionTranslator;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
+
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 
 /**
  * <p>
@@ -85,17 +82,15 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
 	public MybatisSqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType,
 			PersistenceExceptionTranslator exceptionTranslator) {
 
-        notNull(sqlSessionFactory, "Property 'sqlSessionFactory' is required");
-        notNull(executorType, "Property 'executorType' is required");
+		notNull(sqlSessionFactory, "Property 'sqlSessionFactory' is required");
+		notNull(executorType, "Property 'executorType' is required");
 
-        this.sqlSessionFactory = sqlSessionFactory;
-        this.executorType = executorType;
-        this.exceptionTranslator = exceptionTranslator;
-        this.sqlSessionProxy = (SqlSession) newProxyInstance(
-                SqlSessionFactory.class.getClassLoader(),
-                new Class[] { SqlSession.class },
-                new SqlSessionInterceptor());
-    }
+		this.sqlSessionFactory = sqlSessionFactory;
+		this.executorType = executorType;
+		this.exceptionTranslator = exceptionTranslator;
+		this.sqlSessionProxy = (SqlSession) newProxyInstance(SqlSessionFactory.class.getClassLoader(),
+				new Class[] { SqlSession.class }, new SqlSessionInterceptor());
+	}
 
 	public SqlSessionFactory getSqlSessionFactory() {
 		return this.sqlSessionFactory;
@@ -412,45 +407,31 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
 		// SqlSessionTemplate.close() which gives UnsupportedOperationException
 	}
 
-    /**
-     * Proxy needed to route MyBatis method calls to the proper SqlSession got
-     * from Spring's Transaction Manager
-     * It also unwraps exceptions thrown by {@code Method#invoke(Object, Object...)} to
-     * pass a {@code PersistenceException} to the {@code PersistenceExceptionTranslator}.
-     */
-    private class SqlSessionInterceptor implements InvocationHandler {
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            SqlSession sqlSession = getSqlSession(
-                    MybatisSqlSessionTemplate.this.sqlSessionFactory,
-                    MybatisSqlSessionTemplate.this.executorType,
-                    MybatisSqlSessionTemplate.this.exceptionTranslator);
-            try {
-                Object result = method.invoke(sqlSession, args);
-                if (!isSqlSessionTransactional(sqlSession, MybatisSqlSessionTemplate.this.sqlSessionFactory)) {
-                    // force commit even on non-dirty sessions because some databases require
-                    // a commit/rollback before calling close()
-                    sqlSession.commit(true);
-                }
-                return result;
-            } catch (Throwable t) {
-                Throwable unwrapped = unwrapThrowable(t);
-                if (MybatisSqlSessionTemplate.this.exceptionTranslator != null && unwrapped instanceof PersistenceException) {
-                    // release the connection to avoid a deadlock if the translator is no loaded. See issue #22
-                    closeSqlSession(sqlSession, MybatisSqlSessionTemplate.this.sqlSessionFactory);
-                    sqlSession = null;
-                    Throwable translated = MybatisSqlSessionTemplate.this.exceptionTranslator.translateExceptionIfPossible((PersistenceException) unwrapped);
-                    if (translated != null) {
-                        unwrapped = translated;
-                    }
-                }
-                throw unwrapped;
-            } finally {
-                if (sqlSession != null) {
-                    closeSqlSession(sqlSession, MybatisSqlSessionTemplate.this.sqlSessionFactory);
-                }
-            }
-        }
-    }
+	/**
+	 * Proxy needed to route MyBatis method calls to the proper SqlSession got
+	 * from Spring's Transaction Manager It also unwraps exceptions thrown by
+	 * {@code Method#invoke(Object, Object...)} to pass a
+	 * {@code PersistenceException} to the
+	 * {@code PersistenceExceptionTranslator}.
+	 */
+	private class SqlSessionInterceptor implements InvocationHandler {
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			SqlSession sqlSession = MybatisSqlSessionTemplate.this.sqlSessionFactory
+					.openSession(MybatisSqlSessionTemplate.this.executorType);
+			try {
+				Object result = method.invoke(sqlSession, args);
+				sqlSession.commit(true);
+				return result;
+			} catch (Throwable t) {
+				throw new MybatisExtendsException(t);
+			} finally {
+				if (sqlSession != null) {
+					sqlSession.close();
+				}
+			}
+		}
+	}
 
 }

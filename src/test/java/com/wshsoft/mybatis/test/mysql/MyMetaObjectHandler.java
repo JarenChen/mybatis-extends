@@ -17,6 +17,7 @@ public class MyMetaObjectHandler extends MetaObjectHandler {
 	/**
 	 * 测试 user 表 name 字段为空自动填充
 	 */
+	@Override
 	public void insertFill(MetaObject metaObject) {
 		// Object name = metaObject.getValue("name");
 		// if (null == name) {
@@ -30,9 +31,9 @@ public class MyMetaObjectHandler extends MetaObjectHandler {
 			metaObject.setValue("testType", 3);
 		}
 	}
-	
-    @Override
-    public void updateFill(MetaObject metaObject) {
 
-    }
+	@Override
+	public void updateFill(MetaObject metaObject) {
+
+	}
 }

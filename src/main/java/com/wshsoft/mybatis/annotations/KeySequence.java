@@ -8,8 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * <p>
- * 序列主键策略
- * oracle
+ * 序列主键策略 oracle
  * </p>
  *
  * @author Carry xie
@@ -20,18 +19,14 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface KeySequence {
 
-    /*
-     * <p>
-     * 序列名
-     * </p>
-     */
-    String value();
-    
-    /*
-     * <p>
-     * id的类型
-     * </p>
-     */
-    Class idClazz() default Long.class;
+	/*
+	 * <p> 序列名 </p>
+	 */
+	String value();
+
+	/*
+	 * <p> id的类型 </p>
+	 */
+	Class idClazz() default Long.class;
 
 }

@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.wshsoft.mybatis.entity.Column;
 import com.wshsoft.mybatis.enums.SqlLike;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.toolkit.ArrayUtils;
@@ -39,15 +40,17 @@ public abstract class Wrapper<T> implements Serializable {
 	private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
 
 	private static final String DEFAULT_PARAM_ALIAS = "ew";
+	/**
+	 * 实现了TSQL语法的SQL实体
+	 */
+	protected final SqlPlus sql = new SqlPlus();
+	private final Map<String, Object> paramNameValuePairs = new HashMap<>(4);
+	private final AtomicInteger paramNameSeq = new AtomicInteger(0);
 	protected String paramAlias = null;
 	/**
 	 * SQL 查询字段内容，例如：id,name,age
 	 */
 	protected String sqlSelect = null;
-	/**
-	 * 实现了TSQL语法的SQL实体
-	 */
-	protected SqlPlus sql = new SqlPlus();
 	/**
 	 * 自定义是否输出sql为 WHERE OR AND OR OR
 	 */
@@ -56,8 +59,6 @@ public abstract class Wrapper<T> implements Serializable {
 	 * 拼接WHERE后应该是AND还是OR
 	 */
 	protected String AND_OR = "AND";
-	private Map<String, Object> paramNameValuePairs = new HashMap<String, Object>(4);
-	private AtomicInteger paramNameSeq = new AtomicInteger(0);
 
 	/**
 	 * 兼容EntityWrapper
@@ -83,17 +84,46 @@ public abstract class Wrapper<T> implements Serializable {
 	}
 
 	/**
+	 * 使用对象封装的setsqlselect
+	 *
+	 * @param column
+	 * @return
+	 */
+	public Wrapper<T> setSqlSelect(Column... column) {
+		if (ArrayUtils.isNotEmpty(column)) {
+			StringBuilder builder = new StringBuilder();
+			for (int i = 0; i < column.length; i++) {
+				if (column[i] != null) {
+					String col = column[i].getColumn();
+					String as = column[i].getAs();
+					if (StringUtils.isEmpty(col)) {
+						continue;
+					}
+					builder.append(col).append(as);
+					if (i < column.length - 1) {
+						builder.append(",");
+					}
+				}
+			}
+			this.sqlSelect = builder.toString();
+		}
+		return this;
+	}
+
+	/**
 	 * SQL 片段 (子类实现)
 	 */
 	public abstract String getSqlSegment();
 
-    public String toString() {
-        String sqlSegment = getSqlSegment();
-        if (StringUtils.isNotEmpty(sqlSegment)) {
-            sqlSegment = sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}", "\\?");
-        }
-        return sqlSegment;
-    }
+	@Override
+	public String toString() {
+		String sqlSegment = getSqlSegment();
+		if (StringUtils.isNotEmpty(sqlSegment)) {
+			sqlSegment = sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}",
+					"\\?");
+		}
+		return sqlSegment;
+	}
 
 	/**
 	 * <p>
@@ -794,29 +824,31 @@ public abstract class Wrapper<T> implements Serializable {
 		return this;
 	}
 
-    /**
-     * <p>
-     * SQL LIMIT
-     * </p>
-     *
-     * @param begin 起始
-     * @param end   结束
-     * @return this
-     */
-    public Wrapper<T> limit(int begin, int end) {
-        sql.LIMIT(begin, end);
-        return this;
-    }
+	/**
+	 * <p>
+	 * SQL LIMIT
+	 * </p>
+	 *
+	 * @param begin
+	 *            起始
+	 * @param end
+	 *            结束
+	 * @return this
+	 */
+	public Wrapper<T> limit(int begin, int end) {
+		sql.LIMIT(begin, end);
+		return this;
+	}
 
-    /**
-     * Fix issue 200.
-     *
-     * @return
-     * @since 2.0.3
-     */
-    public Map<String, Object> getParamNameValuePairs() {
-        return paramNameValuePairs;
-    }
+	/**
+	 * Fix issue 200.
+	 *
+	 * @return
+	 * @since 2.0.3
+	 */
+	public Map<String, Object> getParamNameValuePairs() {
+		return paramNameValuePairs;
+	}
 
 	public String getParamAlias() {
 		return StringUtils.isEmpty(paramAlias) ? DEFAULT_PARAM_ALIAS : paramAlias;
