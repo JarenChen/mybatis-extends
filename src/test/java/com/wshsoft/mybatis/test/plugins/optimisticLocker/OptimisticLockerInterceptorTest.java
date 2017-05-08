@@ -23,13 +23,11 @@ import com.wshsoft.mybatis.mapper.EntityWrapper;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.entity.DateVersionUser;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.entity.IntVersionUser;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.entity.LongVersionUser;
-import com.wshsoft.mybatis.test.plugins.optimisticLocker.entity.ShortVersionUser;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.entity.StringVersionUser;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.entity.TimestampVersionUser;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.DateVersionUserMapper;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.IntVersionUserMapper;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.LongVersionUserMapper;
-import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.ShortVersionUserMapper;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.StringVersionUserMapper;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.TimestampVersionUserMapper;
 
@@ -37,8 +35,7 @@ import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.TimestampVersion
 @ContextConfiguration(locations = { "/plugins/optimisticLockerInterceptor.xml" })
 public class OptimisticLockerInterceptorTest {
 
-	@Autowired
-	private ShortVersionUserMapper shortVersionUserMapper;
+
 	@Autowired
 	private IntVersionUserMapper intVersionUserMapper;
 	@Autowired
@@ -62,17 +59,6 @@ public class OptimisticLockerInterceptorTest {
 		runner.runScript(reader);
 		reader.close();
 		session.close();
-	}
-
-	@Test
-	public void shortVersionTest() {
-		// 查询数据
-		ShortVersionUser versionUser = shortVersionUserMapper.selectById(1);
-		Short originVersion = versionUser.getVersion();
-		// 更新数据
-		versionUser.setName("苗神");
-		shortVersionUserMapper.updateById(versionUser);
-		Assert.assertTrue(shortVersionUserMapper.selectById(1).getVersion() == originVersion + 1);
 	}
 
 	@Test

@@ -532,17 +532,16 @@ public class MybatisSqlSessionFactoryBean
 					continue;
 				}
 
-				try {
-					// TODO
-					MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(
-							mapperLocation.getInputStream(), configuration, mapperLocation.toString(),
-							configuration.getSqlFragments());
-					xmlMapperBuilder.parse();
-				} catch (Exception e) {
-					throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
-				} finally {
-					ErrorContext.instance().reset();
-				}
+                try {
+                    // TODO
+                    MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(mapperLocation.getInputStream(),
+                            configuration, mapperLocation.toString(), configuration.getSqlFragments());
+                    xmlMapperBuilder.parse();
+                } catch (Exception e) {
+                    throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
+                } finally {
+                    ErrorContext.instance().reset();
+                }
 
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Parsed mapper file: '" + mapperLocation + "'");

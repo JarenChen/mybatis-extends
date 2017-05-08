@@ -77,10 +77,10 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
 		return getSelf();
 	}
 
-	public T LIMIT(int begin, int end) {
-		sql().limit = new int[] { begin, end };
-		return getSelf();
-	}
+    public T LAST(String last) {
+        sql().last = last;
+        return getSelf();
+    }
 
 	private SQLCondition sql() {
 		return sql;
@@ -123,17 +123,18 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
 
 	}
 
-	/**
-	 * SQL条件类
-	 */
-	private static class SQLCondition implements Serializable {
-		final List<String> where = new ArrayList<>();
-		final List<String> having = new ArrayList<>();
-		final List<String> groupBy = new ArrayList<>();
-		final List<String> orderBy = new ArrayList<>();
-		final List<String> andOr = new ArrayList<>();
-		int[] limit = null;
-		List<String> lastList = new ArrayList<>();
+    /**
+     * SQL条件类
+     */
+    private static class SQLCondition implements Serializable {
+
+        final List<String> where = new ArrayList<>();
+        final List<String> having = new ArrayList<>();
+        final List<String> groupBy = new ArrayList<>();
+        final List<String> orderBy = new ArrayList<>();
+        final List<String> andOr = new ArrayList<>();
+        String last = null;
+        List<String> lastList = new ArrayList<>();
 
 		public SQLCondition() {
 			andOr.add(AND);
@@ -142,52 +143,44 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
 			andOr.add(OR_NEW);
 		}
 
-		/**
-		 * 构建SQL的条件
-		 *
-		 * @param builder
-		 *            连接器
-		 * @param keyword
-		 *            TSQL中的关键字
-		 * @param parts
-		 *            SQL条件语句集合
-		 * @param open
-		 *            起始符号
-		 * @param close
-		 *            结束符号
-		 * @param conjunction
-		 *            连接条件
-		 */
-		private void sqlClause(SafeAppendable builder, String keyword, List<String> parts, String open, String close,
-				String conjunction) {
-			parts = clearNull(parts);
-			if (!parts.isEmpty()) {
-				if (!builder.isEmpty()) {
-					builder.append("\n");
-				}
-				builder.append(keyword).append(" ");
-				if (null != open) {
-					builder.append(open);
-				}
-				String last = "__";
-				for (int i = 0, n = parts.size(); i < n; i++) {
-					String part = parts.get(i);
-					if (i > 0) {
-						if (andOr.contains(part) || andOr.contains(last)) {
-							builder.append(part);
-							last = part;
-							continue;
-						} else {
-							builder.append(conjunction);
-						}
-					}
-					builder.append(part);
-				}
-				if (null != close) {
-					builder.append(close);
-				}
-			}
-		}
+        /**
+         * 构建SQL的条件
+         *
+         * @param builder     连接器
+         * @param keyword     TSQL中的关键字
+         * @param parts       SQL条件语句集合
+         * @param open        起始符号
+         * @param close       结束符号
+         * @param conjunction 连接条件
+         */
+        private void sqlClause(SafeAppendable builder, String keyword, List<String> parts, String open, String close,
+                               String conjunction) {
+            parts = clearNull(parts);
+            if (!parts.isEmpty()) {
+                if (!builder.isEmpty()) {
+                    builder.append("\n");
+                }
+
+                builder.append(keyword);
+                builder.append(" ");
+                builder.append(open);
+                String last = "__";
+                for (int i = 0, n = parts.size(); i < n; i++) {
+                    String part = parts.get(i);
+                    if (i > 0) {
+                        if (andOr.contains(part) || andOr.contains(last)) {
+                            builder.append(part);
+                            last = part;
+                            continue;
+                        } else {
+                            builder.append(conjunction);
+                        }
+                    }
+                    builder.append(part);
+                }
+                builder.append(close);
+            }
+        }
 
 		/**
 		 * 清除LIST中的NULL和空字符串
@@ -207,23 +200,23 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
 			return temps;
 		}
 
-		/**
-		 * 按标准顺序连接并构建SQL
-		 *
-		 * @param builder
-		 *            连接器
-		 * @return
-		 */
-		private String buildSQL(SafeAppendable builder) {
-			sqlClause(builder, "WHERE", where, "(", ")", AND);
-			sqlClause(builder, "GROUP BY", groupBy, null, null, ", ");
-			sqlClause(builder, "HAVING", having, "(", ")", AND);
-			sqlClause(builder, "ORDER BY", orderBy, null, null, AND);
-			if (null != limit) {
-				builder.append(String.format(" LIMIT %s, %s ", limit[0], limit[1]));
-			}
-			return builder.toString();
-		}
+        /**
+         * 按标准顺序连接并构建SQL
+         *
+         * @param builder 连接器
+         * @return
+         */
+        private String buildSQL(SafeAppendable builder) {
+            sqlClause(builder, "WHERE", where, "(", ")", AND);
+            sqlClause(builder, "GROUP BY", groupBy, "", "", ", ");
+            sqlClause(builder, "HAVING", having, "(", ")", AND);
+            sqlClause(builder, "ORDER BY", orderBy, "", "", ", ");
+            if (StringUtils.isNotEmpty(last)) {
+                builder.append(" ");
+                builder.append(last);
+            }
+            return builder.toString();
+        }
 
 		public String sql(Appendable appendable) {
 			return buildSQL(new SafeAppendable(appendable));

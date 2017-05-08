@@ -87,29 +87,28 @@ public class Sequence {
 		return (mpid.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
 	}
 
-	/**
-	 * <p>
-	 * 数据标识id部分
-	 * </p>
-	 */
-	protected static long getDatacenterId(long maxDatacenterId) {
-		long id = 0L;
-		try {
-			InetAddress ip = InetAddress.getLocalHost();
-			NetworkInterface network = NetworkInterface.getByInetAddress(ip);
-			if (network == null) {
-				id = 1L;
-			} else {
-				byte[] mac = network.getHardwareAddress();
-				id = ((0x000000FF & (long) mac[mac.length - 1])
-						| (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
-				id = id % (maxDatacenterId + 1);
-			}
-		} catch (Exception e) {
-			logger.warn(" getDatacenterId: " + e.getMessage());
-		}
-		return id;
-	}
+    /**
+     * <p>
+     * 数据标识id部分
+     * </p>
+     */
+    protected static long getDatacenterId(long maxDatacenterId) {
+        long id = 0L;
+        try {
+            InetAddress ip = InetAddress.getLocalHost();
+            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+            if (network == null) {
+                id = 1L;
+            } else {
+                byte[] mac = network.getHardwareAddress();
+                id = ((0x000000FF & (long) mac[mac.length - 1]) | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
+                id = id % (maxDatacenterId + 1);
+            }
+        } catch (Exception e) {
+            logger.warn(" getDatacenterId: " + e.getMessage());
+        }
+        return id;
+    }
 
 	/**
 	 * 获取下一个ID
@@ -133,9 +132,9 @@ public class Sequence {
 
 		lastTimestamp = timestamp;
 
-		return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift)
-				| (workerId << workerIdShift) | sequence;
-	}
+        return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift) | (workerId << workerIdShift)
+                | sequence;
+    }
 
 	protected long tilNextMillis(long lastTimestamp) {
 		long timestamp = timeGen();

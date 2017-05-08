@@ -26,7 +26,6 @@
 	</environments>
 
 	<mappers>
-		<mapper class="com.wshsoft.mybatis.test.plugin.OptimisticLocker.mapper.ShortVersionUserMapper" />
 		<mapper class="com.wshsoft.mybatis.test.plugin.OptimisticLocker.mapper.IntVersionUserMapper" />
 		<mapper class="com.wshsoft.mybatis.test.plugin.OptimisticLocker.mapper.LongVersionUserMapper" />
 		<mapper class="com.wshsoft.mybatis.test.plugin.OptimisticLocker.mapper.DateVersionUserMapper" />

@@ -117,7 +117,7 @@ public class MysqlGenerator {
 		 * FileOutConfig("/templates/mapper.xml.vm") {
 		 * 
 		 * @Override public String outputFile(TableInfo tableInfo) { return
-		 * "/develop/code/xml/" + tableInfo.getEntityName() + ".xml"; } });
+		 * "D://mybatis-extends/xml/" + tableInfo.getEntityName() + ".xml"; } });
 		 * cfg.setFileOutConfigList(focList);
 		 */
 		mpg.setCfg(cfg);

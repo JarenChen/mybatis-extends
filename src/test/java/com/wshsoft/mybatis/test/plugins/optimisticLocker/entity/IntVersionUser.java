@@ -4,10 +4,9 @@ import java.io.Serializable;
 
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableName;
-import com.wshsoft.mybatis.annotations.Version;
 
 @TableName("version_user")
-public class IntVersionUser implements Serializable {
+public class IntVersionUser extends IntVersionFather implements Serializable {
 
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
@@ -17,9 +16,6 @@ public class IntVersionUser implements Serializable {
 	private String name;
 
 	private Integer age;
-
-	@Version
-	private Integer version;
 
 	public Long getId() {
 		return id;
@@ -43,14 +39,6 @@ public class IntVersionUser implements Serializable {
 
 	public void setAge(Integer age) {
 		this.age = age;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
 	}
 
 }
