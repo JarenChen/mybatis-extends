@@ -21,8 +21,9 @@ import com.wshsoft.mybatis.enums.FieldStrategy;
 import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.mapper.AutoSqlInjector;
-import com.wshsoft.mybatis.mapper.MetaObjectHandler;
+import com.wshsoft.mybatis.mapper.IKeyGenerator;
 import com.wshsoft.mybatis.mapper.ISqlInjector;
+import com.wshsoft.mybatis.mapper.MetaObjectHandler;
 import com.wshsoft.mybatis.toolkit.IOUtils;
 import com.wshsoft.mybatis.toolkit.JdbcUtils;
 import com.wshsoft.mybatis.toolkit.SqlReservedWords;
@@ -38,20 +39,21 @@ import com.wshsoft.mybatis.toolkit.TableInfoHelper;
  * @Date 2016-12-06
  */
 public class GlobalConfiguration implements Cloneable {
-	// 日志
-	private static final Log logger = LogFactory.getLog(GlobalConfiguration.class);
+
 	/**
 	 * 默认参数
 	 */
 	public static final GlobalConfiguration DEFAULT = new GlobalConfiguration();
-	// 逻辑删除全局值
-	private String logicDeleteValue = null;
-	// 逻辑未删除全局值
-	private String logicNotDeleteValue = null;
+	// 日志
+	private static final Log logger = LogFactory.getLog(GlobalConfiguration.class);
 	/**
 	 * 缓存全局信息
 	 */
 	private static final Map<String, GlobalConfiguration> GLOBAL_CONFIG = new ConcurrentHashMap<>();
+	// 逻辑删除全局值
+	private String logicDeleteValue = null;
+	// 逻辑未删除全局值
+	private String logicNotDeleteValue = null;
 	// 数据库类型（默认 MySql）
 	private DBType dbType = DBType.MYSQL;
 	// 主键类型（默认 ID_WORKER）
@@ -60,6 +62,8 @@ public class GlobalConfiguration implements Cloneable {
 	private boolean dbColumnUnderline = false;
 	// SQL注入器
 	private ISqlInjector sqlInjector;
+	// 表关键词 key 生成器
+	private IKeyGenerator keyGenerator;
 	// 元对象字段填充控制器
 	private MetaObjectHandler metaObjectHandler = new DefaultMetaObjectHandler();
 	// 字段验证策略
@@ -161,24 +165,12 @@ public class GlobalConfiguration implements Cloneable {
 		return cache;
 	}
 
-	public String getLogicDeleteValue() {
-		return logicDeleteValue;
-	}
-
-	public void setLogicDeleteValue(String logicDeleteValue) {
-		this.logicDeleteValue = logicDeleteValue;
-	}
-
-	public String getLogicNotDeleteValue() {
-		return logicNotDeleteValue;
-	}
-
-	public void setLogicNotDeleteValue(String logicNotDeleteValue) {
-		this.logicNotDeleteValue = logicNotDeleteValue;
-	}
-
 	public static DBType getDbType(Configuration configuration) {
 		return getGlobalConfig(configuration).getDbType();
+	}
+
+	public static IKeyGenerator getKeyGenerator(Configuration configuration) {
+		return getGlobalConfig(configuration).getKeyGenerator();
 	}
 
 	public static IdType getIdType(Configuration configuration) {
@@ -198,6 +190,14 @@ public class GlobalConfiguration implements Cloneable {
 			globalConfiguration.setSqlInjector(sqlInjector);
 		}
 		return sqlInjector;
+	}
+
+	public IKeyGenerator getKeyGenerator() {
+		return keyGenerator;
+	}
+
+	public void setKeyGenerator(IKeyGenerator keyGenerator) {
+		this.keyGenerator = keyGenerator;
 	}
 
 	public static MetaObjectHandler getMetaObjectHandler(Configuration configuration) {
@@ -250,6 +250,22 @@ public class GlobalConfiguration implements Cloneable {
 		} finally {
 			IOUtils.closeQuietly(connection);
 		}
+	}
+
+	public String getLogicDeleteValue() {
+		return logicDeleteValue;
+	}
+
+	public void setLogicDeleteValue(String logicDeleteValue) {
+		this.logicDeleteValue = logicDeleteValue;
+	}
+
+	public String getLogicNotDeleteValue() {
+		return logicNotDeleteValue;
+	}
+
+	public void setLogicNotDeleteValue(String logicNotDeleteValue) {
+		this.logicNotDeleteValue = logicNotDeleteValue;
 	}
 
 	public DBType getDbType() {

@@ -1,7 +1,14 @@
 package com.wshsoft.mybatis.test;
 
+import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import org.junit.Test;
 
 import com.wshsoft.mybatis.toolkit.IdWorker;
 
@@ -15,35 +22,49 @@ import com.wshsoft.mybatis.toolkit.IdWorker;
  */
 public class IdWorkerTest {
 
-	/**
-	 * 测试
-	 */
-	public static void main(String[] args) {
+	@Test
+	public void test() throws Exception {
 		int count = 1000;
-		ExecutorService executorService = Executors.newFixedThreadPool(count);
+		ExecutorService executorService = Executors.newFixedThreadPool(20);
+		final List<Long> results = new ArrayList<>();
+		CompletionService<Long> cs = new ExecutorCompletionService<Long>(executorService);
+
+		for (int i = 1; i < count; i++) {
+			cs.submit(new Callable<Long>() {
+				public Long call() throws Exception {
+					return IdWorker.getId();
+				}
+			});
+		}
 		for (int i = 0; i < count; i++) {
-			executorService.execute(new IdWorkerTest().new Task());
+			Future<Long> future = executorService.submit(new Callable<Long>() {
+				@Override
+				public Long call() throws Exception {
+					return IdWorker.getId();
+				}
+			});
+			results.add(future.get());
 		}
 		executorService.shutdown();
-		while (!executorService.isTerminated()) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		int odd = 0;
+		int even = 0;
+		List<Long> ttt = new ArrayList<>();
+		for (Long id : results) {
+
+			if (ttt.contains(id)) {
+				System.err.println("ssss");
+			}
+			ttt.add(id);
+			if (id % 2 != 0) {
+				odd++;
+			} else {
+				even++;
 			}
 		}
+		System.err.println("奇数:" + odd);
+		System.err.println("偶数:" + even);
+		Assert.assertTrue(odd >= 450 && odd <= 550);
+		Assert.assertTrue(even >= 450 && even <= 550);
 	}
 
-	public class Task implements Runnable {
-
-		@Override
-		public void run() {
-			try {
-				long id = IdWorker.getId();
-				System.err.println(id);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
 }

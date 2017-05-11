@@ -132,7 +132,7 @@ public abstract class Model<T extends Model> implements Serializable {
 
 	/**
 	 * <p>
-	 * 更新
+	 * 更新（字段选择更新）
 	 * </p>
 	 * 
 	 * @return

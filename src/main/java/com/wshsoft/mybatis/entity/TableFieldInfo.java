@@ -1,6 +1,7 @@
 package com.wshsoft.mybatis.entity;
 
 import java.lang.reflect.Field;
+
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableLogic;
 import com.wshsoft.mybatis.enums.FieldStrategy;
@@ -59,35 +60,32 @@ public class TableFieldInfo {
 	 */
 	private String logicNotDeleteValue;
 
-
-    /**
-     * <p>
-     * 存在 TableField 注解构造函数
-     * </p>
-     */
-    public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, String column,
-                          String el, Field field, TableField tableField) {
-        this.property = field.getName();
-        this.propertyType = field.getType().getName();
-        /*
-         * 1、开启字段下划线申明<br>
-         * 2、没有开启下划线申明，但是column与property不等的情况<br>
-         * 设置 related 为 true
-         */
-        if (globalConfig.isDbColumnUnderline()) {
-             /* 开启字段下划线申明 */
-            this.related = true;
-            this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
-        } else {
-            this.setColumn(globalConfig, column);
-            if (!column.equals(this.property)) {
-                this.related = true;
-            }
-        }
-        this.el = el;
-        /*
-         * 优先使用单个字段注解，否则使用全局配置<br>
-         * 自定义字段验证策略 fixed-239
+	/**
+	 * <p>
+	 * 存在 TableField 注解构造函数
+	 * </p>
+	 */
+	public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, String column, String el, Field field,
+			TableField tableField) {
+		this.property = field.getName();
+		this.propertyType = field.getType().getName();
+		/*
+		 * 1、开启字段下划线申明<br> 2、没有开启下划线申明，但是column与property不等的情况<br> 设置 related 为
+		 * true
+		 */
+		if (globalConfig.isDbColumnUnderline()) {
+			/* 开启字段下划线申明 */
+			this.related = true;
+			this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
+		} else {
+			this.setColumn(globalConfig, column);
+			if (!column.equals(this.property)) {
+				this.related = true;
+			}
+		}
+		this.el = el;
+		/*
+		 * 优先使用单个字段注解，否则使用全局配置<br> 自定义字段验证策略 fixed-239
 		 */
 		if (FieldStrategy.NOT_NULL != tableField.validate()) {
 			this.fieldStrategy = tableField.validate();
@@ -112,36 +110,38 @@ public class TableFieldInfo {
 		tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
 	}
 
-    /**
-     * <p>
-     * 逻辑删除初始化
-     * </p>
-     *
-     * @param globalConfig 全局配置
-     * @param field        字段属性对象
-     */
-    private boolean initLogicDelete(GlobalConfiguration globalConfig, Field field) {
-        if (null == globalConfig.getLogicDeleteValue()) {
-            // 未设置逻辑删除值不进行
-            return false;
-        }
-        /* 获取注解属性，逻辑处理字段 */
-        TableLogic tableLogic = field.getAnnotation(TableLogic.class);
-        if (null != tableLogic) {
-            if (StringUtils.isNotEmpty(tableLogic.value())) {
-                this.logicNotDeleteValue = tableLogic.value();
-            } else {
-                this.logicNotDeleteValue = globalConfig.getLogicNotDeleteValue();
-            }
-            if (StringUtils.isNotEmpty(tableLogic.delval())) {
-                this.logicDeleteValue = tableLogic.delval();
-            } else {
-                this.logicDeleteValue = globalConfig.getLogicDeleteValue();
-            }
-            return true;
-        }
-        return false;
-    }
+	/**
+	 * <p>
+	 * 逻辑删除初始化
+	 * </p>
+	 *
+	 * @param globalConfig
+	 *            全局配置
+	 * @param field
+	 *            字段属性对象
+	 */
+	private boolean initLogicDelete(GlobalConfiguration globalConfig, Field field) {
+		if (null == globalConfig.getLogicDeleteValue()) {
+			// 未设置逻辑删除值不进行
+			return false;
+		}
+		/* 获取注解属性，逻辑处理字段 */
+		TableLogic tableLogic = field.getAnnotation(TableLogic.class);
+		if (null != tableLogic) {
+			if (StringUtils.isNotEmpty(tableLogic.value())) {
+				this.logicNotDeleteValue = tableLogic.value();
+			} else {
+				this.logicNotDeleteValue = globalConfig.getLogicNotDeleteValue();
+			}
+			if (StringUtils.isNotEmpty(tableLogic.delval())) {
+				this.logicDeleteValue = tableLogic.delval();
+			} else {
+				this.logicDeleteValue = globalConfig.getLogicDeleteValue();
+			}
+			return true;
+		}
+		return false;
+	}
 
 	public boolean isRelated() {
 		return related;

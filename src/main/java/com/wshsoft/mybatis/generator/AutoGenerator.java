@@ -16,8 +16,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
 
 import com.wshsoft.mybatis.generator.config.ConstVal;
 import com.wshsoft.mybatis.generator.config.FileOutConfig;
@@ -78,16 +78,29 @@ public class AutoGenerator extends AbstractGenerator {
 	}
 
 	/**
+	 * <p>
+	 * 开放表信息、预留子类重写
+	 * </p>
+	 *
+	 * @param config
+	 *            配置信息
+	 * @return
+	 */
+	protected List<TableInfo> getAllTableInfoList(ConfigBuilder config) {
+		return config.getTableInfoList();
+	}
+
+	/**
 	 * 分析数据
-	 * 
+	 *
 	 * @param config
 	 *            总配置信息
 	 * @return 解析数据结果集
 	 */
 	private Map<String, VelocityContext> analyzeData(ConfigBuilder config) {
-		List<TableInfo> tableList = config.getTableInfoList();
+		List<TableInfo> tableList = this.getAllTableInfoList(config);
 		Map<String, String> packageInfo = config.getPackageInfo();
-		Map<String, VelocityContext> ctxData = new HashMap<String, VelocityContext>();
+		Map<String, VelocityContext> ctxData = new HashMap<>();
 		String superEntityClass = getSuperClassName(config.getSuperEntityClass());
 		String superMapperClass = getSuperClassName(config.getSuperMapperClass());
 		String superServiceClass = getSuperClassName(config.getSuperServiceClass());
@@ -175,21 +188,28 @@ public class AutoGenerator extends AbstractGenerator {
 		}
 	}
 
-    /**
-     * 合成上下文与模板
-     *
-     * @param context vm上下文
-     */
-    private void batchOutput(String entityName, VelocityContext context) {
-        try {
-            TableInfo tableInfo = (TableInfo) context.get("table");
-            Map<String, String> pathInfo = config.getPathInfo();
-            String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + ConstVal.ENTITY_NAME), entityName);
-            String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator + tableInfo.getMapperName() + ConstVal.JAVA_SUFFIX), entityName);
-            String xmlFile = String.format((pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX), entityName);
-            String serviceFile = String.format((pathInfo.get(ConstVal.SERIVCE_PATH) + File.separator + tableInfo.getServiceName() + ConstVal.JAVA_SUFFIX), entityName);
-            String implFile = String.format((pathInfo.get(ConstVal.SERVICEIMPL_PATH) + File.separator + tableInfo.getServiceImplName() + ConstVal.JAVA_SUFFIX), entityName);
-            String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + ConstVal.JAVA_SUFFIX), entityName);
+	/**
+	 * 合成上下文与模板
+	 *
+	 * @param context
+	 *            vm上下文
+	 */
+	private void batchOutput(String entityName, VelocityContext context) {
+		try {
+			TableInfo tableInfo = (TableInfo) context.get("table");
+			Map<String, String> pathInfo = config.getPathInfo();
+			String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + ConstVal.ENTITY_NAME), entityName);
+			String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator
+					+ tableInfo.getMapperName() + ConstVal.JAVA_SUFFIX), entityName);
+			String xmlFile = String.format(
+					(pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX),
+					entityName);
+			String serviceFile = String.format((pathInfo.get(ConstVal.SERIVCE_PATH) + File.separator
+					+ tableInfo.getServiceName() + ConstVal.JAVA_SUFFIX), entityName);
+			String implFile = String.format((pathInfo.get(ConstVal.SERVICEIMPL_PATH) + File.separator
+					+ tableInfo.getServiceImplName() + ConstVal.JAVA_SUFFIX), entityName);
+			String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator
+					+ tableInfo.getControllerName() + ConstVal.JAVA_SUFFIX), entityName);
 
 			TemplateConfig template = config.getTemplate();
 
@@ -260,22 +280,22 @@ public class AutoGenerator extends AbstractGenerator {
 		logger.debug("模板:" + templatePath + ";  文件:" + outputFile);
 	}
 
-    /**
-     * 设置模版引擎，主要指向获取模版路径
-     */
-    private VelocityEngine getVelocityEngine() {
-        if (engine == null) {
-            Properties p = new Properties();
-            p.setProperty(ConstVal.VM_LOADPATH_KEY, ConstVal.VM_LOADPATH_VALUE);
-            p.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "");
-            p.setProperty(Velocity.ENCODING_DEFAULT, ConstVal.UTF8);
-            p.setProperty(Velocity.INPUT_ENCODING, ConstVal.UTF8);
-            p.setProperty(Velocity.OUTPUT_ENCODING, ConstVal.UTF8);
-            p.setProperty("file.resource.loader.unicode", "true");
-            engine = new VelocityEngine(p);
-        }
-        return engine;
-    }
+	/**
+	 * 设置模版引擎，主要指向获取模版路径
+	 */
+	private VelocityEngine getVelocityEngine() {
+		if (engine == null) {
+			Properties p = new Properties();
+			p.setProperty(ConstVal.VM_LOADPATH_KEY, ConstVal.VM_LOADPATH_VALUE);
+			p.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, "");
+			p.setProperty(RuntimeConstants.ENCODING_DEFAULT, ConstVal.UTF8);
+			p.setProperty(RuntimeConstants.INPUT_ENCODING, ConstVal.UTF8);
+			p.setProperty(RuntimeConstants.OUTPUT_ENCODING, ConstVal.UTF8);
+			p.setProperty("file.resource.loader.unicode", "true");
+			engine = new VelocityEngine(p);
+		}
+		return engine;
+	}
 
 	/**
 	 * 检测文件是否存在

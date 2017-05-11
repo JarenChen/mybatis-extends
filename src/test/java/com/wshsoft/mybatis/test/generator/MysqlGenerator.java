@@ -5,7 +5,10 @@ import java.util.Map;
 
 import com.wshsoft.mybatis.generator.AutoGenerator;
 import com.wshsoft.mybatis.generator.InjectionConfig;
-import com.wshsoft.mybatis.generator.config.*;
+import com.wshsoft.mybatis.generator.config.DataSourceConfig;
+import com.wshsoft.mybatis.generator.config.GlobalConfig;
+import com.wshsoft.mybatis.generator.config.PackageConfig;
+import com.wshsoft.mybatis.generator.config.StrategyConfig;
 import com.wshsoft.mybatis.generator.config.converts.MySqlTypeConvert;
 import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
@@ -117,8 +120,8 @@ public class MysqlGenerator {
 		 * FileOutConfig("/templates/mapper.xml.vm") {
 		 * 
 		 * @Override public String outputFile(TableInfo tableInfo) { return
-		 * "D://mybatis-extends/xml/" + tableInfo.getEntityName() + ".xml"; } });
-		 * cfg.setFileOutConfigList(focList);
+		 * "D://mybatis-extends/xml/" + tableInfo.getEntityName() + ".xml"; }
+		 * }); cfg.setFileOutConfigList(focList);
 		 */
 		mpg.setCfg(cfg);
 

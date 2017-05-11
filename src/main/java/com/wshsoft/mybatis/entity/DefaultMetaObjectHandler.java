@@ -1,7 +1,8 @@
 package com.wshsoft.mybatis.entity;
 
-import com.wshsoft.mybatis.mapper.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
+
+import com.wshsoft.mybatis.mapper.MetaObjectHandler;
 
 /**
  * <p>

@@ -14,7 +14,6 @@ import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ResultSetType;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
@@ -29,9 +28,9 @@ import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.entity.TableFieldInfo;
 import com.wshsoft.mybatis.entity.TableInfo;
-import com.wshsoft.mybatis.enums.DBType;
 import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.mapper.IKeyGenerator;
 import com.wshsoft.mybatis.mapper.SqlRunner;
 
 /**
@@ -69,9 +68,24 @@ public class TableInfoHelper {
 
 	/**
 	 * <p>
-	 * 实体类反射获取表信息【初始化】
+	 * 获取所有实体映射表信息
 	 * <p>
 	 * 
+	 * @return
+	 */
+	public static List<TableInfo> getTableInfos() {
+		List<TableInfo> tableInfos = new ArrayList<TableInfo>();
+		for (Map.Entry<String, TableInfo> entry : tableInfoCache.entrySet()) {
+			tableInfos.add(entry.getValue());
+		}
+		return tableInfos;
+	}
+
+	/**
+	 * <p>
+	 * 实体类反射获取表信息【初始化】
+	 * <p>
+	 *
 	 * @param clazz
 	 *            反射实体类
 	 * @return
@@ -110,10 +124,10 @@ public class TableInfoHelper {
 			}
 		}
 		tableInfo.setTableName(tableName);
-		/* Oracle 主键支持 */
-		KeySequence keySequence = clazz.getAnnotation(KeySequence.class);
-		if (keySequence != null) {
-			tableInfo.setKeySequence(keySequence);
+
+		// 开启了自定义 KEY 生成器
+		if (null != globalConfig.getKeyGenerator()) {
+			tableInfo.setKeySequence(clazz.getAnnotation(KeySequence.class));
 		}
 
 		/* 表结果集映射 */
@@ -217,6 +231,7 @@ public class TableInfoHelper {
 					// 开启字段下划线申明
 					if (globalConfig.isDbColumnUnderline()) {
 						column = StringUtils.camelToUnderline(column);
+						tableInfo.setKeyRelated(true);
 					}
 					// 全局大写命名
 					if (globalConfig.isCapitalMode()) {
@@ -274,28 +289,32 @@ public class TableInfoHelper {
 		throw new MybatisExtendsException(errorMsg.toString());
 	}
 
-    /**
-     * <p>
-     * 字段属性初始化
-     * </p>
-     *
-     * @param globalConfig 全局配置
-     * @param tableInfo    表信息
-     * @param fieldList    字段列表
-     * @param clazz        当前表对象类
-     * @return true 继续下一个属性判断，返回 continue;
-     */
-    private static boolean initTableField(GlobalConfiguration globalConfig, TableInfo tableInfo, List<TableFieldInfo> fieldList,
-                                          Field field, Class<?> clazz) {
-        /* 获取注解属性，自定义字段 */
-        TableField tableField = field.getAnnotation(TableField.class);
-        if (tableField != null) {
-            String columnName = field.getName();
-            if (StringUtils.isNotEmpty(tableField.value())) {
-                columnName = tableField.value();
-            }
-            /*
-             * el 语法支持，可以传入多个参数以逗号分开
+	/**
+	 * <p>
+	 * 字段属性初始化
+	 * </p>
+	 *
+	 * @param globalConfig
+	 *            全局配置
+	 * @param tableInfo
+	 *            表信息
+	 * @param fieldList
+	 *            字段列表
+	 * @param clazz
+	 *            当前表对象类
+	 * @return true 继续下一个属性判断，返回 continue;
+	 */
+	private static boolean initTableField(GlobalConfiguration globalConfig, TableInfo tableInfo,
+			List<TableFieldInfo> fieldList, Field field, Class<?> clazz) {
+		/* 获取注解属性，自定义字段 */
+		TableField tableField = field.getAnnotation(TableField.class);
+		if (tableField != null) {
+			String columnName = field.getName();
+			if (StringUtils.isNotEmpty(tableField.value())) {
+				columnName = tableField.value();
+			}
+			/*
+			 * el 语法支持，可以传入多个参数以逗号分开
 			 */
 			String el = field.getName();
 			if (StringUtils.isNotEmpty(tableField.el())) {
@@ -361,37 +380,32 @@ public class TableInfoHelper {
 		}
 	}
 
-    public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant, String baseStatementId, LanguageDriver languageDriver) {
-        DBType dbType = GlobalConfiguration.getDbType(builderAssistant.getConfiguration());
-        if (dbType != DBType.ORACLE)
-            throw new IllegalArgumentException("目前仅支持Oracle序列");
-        String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-        Class<?> resultTypeClass = tableInfo.getKeySequence().idClazz();
-        Class<?> parameterTypeClass = null;
-        StatementType statementType = StatementType.PREPARED;
-        String keyProperty = tableInfo.getKeyProperty();
-        String keyColumn = tableInfo.getKeyColumn();
-        boolean executeBefore = true;
-        boolean useCache = false;
-        KeyGenerator keyGenerator = new NoKeyGenerator();
-        Integer fetchSize = null;
-        Integer timeout = null;
-        boolean flushCache = false;
-        String parameterMap = null;
-        String resultMap = null;
-        ResultSetType resultSetTypeEnum = null;
-        //上面已经判断是ORACLE这里直接获取即可无需再判断
-        String sql = "select " + tableInfo.getKeySequence().value() + ".nextval from dual";
-        SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(), sql.trim(), null);
-        SqlCommandType sqlCommandType = SqlCommandType.SELECT;
-        builderAssistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType, fetchSize, timeout, parameterMap,
-                parameterTypeClass, resultMap, resultTypeClass, resultSetTypeEnum, flushCache, useCache, false, keyGenerator,
-                keyProperty, keyColumn, null, languageDriver, null);
-        id = builderAssistant.applyCurrentNamespace(id, false);
-        MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
-        SelectKeyGenerator answer = new SelectKeyGenerator(keyStatement, executeBefore);
-        builderAssistant.getConfiguration().addKeyGenerator(id, answer);
-        return answer;
-    }
+	/**
+	 * <p>
+	 * 自定义 KEY 生成器
+	 * </p>
+	 */
+	public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
+			String baseStatementId, LanguageDriver languageDriver) {
+		IKeyGenerator keyGenerator = GlobalConfiguration.getKeyGenerator(builderAssistant.getConfiguration());
+		if (null == keyGenerator) {
+			throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
+		}
+		String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
+		Class<?> resultTypeClass = tableInfo.getKeySequence().idClazz();
+		StatementType statementType = StatementType.PREPARED;
+		String keyProperty = tableInfo.getKeyProperty();
+		String keyColumn = tableInfo.getKeyColumn();
+		SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(),
+				keyGenerator.executeSql(tableInfo), null);
+		builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null, null,
+				null, resultTypeClass, null, false, false, false, new NoKeyGenerator(), keyProperty, keyColumn, null,
+				languageDriver, null);
+		id = builderAssistant.applyCurrentNamespace(id, false);
+		MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
+		SelectKeyGenerator answer = new SelectKeyGenerator(keyStatement, true);
+		builderAssistant.getConfiguration().addKeyGenerator(id, answer);
+		return answer;
+	}
 
 }

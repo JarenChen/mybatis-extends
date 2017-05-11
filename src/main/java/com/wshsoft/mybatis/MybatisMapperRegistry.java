@@ -23,8 +23,8 @@ import com.wshsoft.mybatis.entity.GlobalConfiguration;
  */
 public class MybatisMapperRegistry extends MapperRegistry {
 
+	private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
 	private final Configuration config;
-	private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
 
 	public MybatisMapperRegistry(Configuration config) {
 		super(config);

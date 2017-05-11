@@ -38,7 +38,8 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
  * @author Carry xie
  * @Date 2016-01-23
  */
-@Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
+@Intercepts({
+		@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
 public class PaginationInterceptor implements Interceptor {
 
 	private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
@@ -106,27 +107,29 @@ public class PaginationInterceptor implements Interceptor {
 		return invocation.proceed();
 	}
 
-    /**
-     * 查询总记录条数
-     *
-     * @param sql
-     * @param mappedStatement
-     * @param boundSql
-     * @param page
-     */
-    protected void queryTotal(String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page, Connection connection) {
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
-            parameterHandler.setParameters(statement);
-            int total = 0;
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    total = resultSet.getInt(1);
-                }
-            }
-            page.setTotal(total);
-            /*
-             * 溢出总页数，设置第一页
+	/**
+	 * 查询总记录条数
+	 *
+	 * @param sql
+	 * @param mappedStatement
+	 * @param boundSql
+	 * @param page
+	 */
+	protected void queryTotal(String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page,
+			Connection connection) {
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement,
+					boundSql.getParameterObject(), boundSql);
+			parameterHandler.setParameters(statement);
+			int total = 0;
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (resultSet.next()) {
+					total = resultSet.getInt(1);
+				}
+			}
+			page.setTotal(total);
+			/*
+			 * 溢出总页数，设置第一页
 			 */
 			int pages = page.getPages();
 			if (overflowCurrent && (page.getCurrent() > pages)) {

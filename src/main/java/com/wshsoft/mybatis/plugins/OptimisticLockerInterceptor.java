@@ -92,6 +92,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		typeHandlers.put(Timestamp.class, new TimestampTypeHandler());
 	}
 
+	@Override
 	public Object intercept(Invocation invocation) throws Exception {
 		StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
 		MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
@@ -190,9 +191,9 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 			boundSql.setAdditionalParameter("originVersionValue", versionValue);
 		}
 	}
-	
+
 	private volatile ParameterMapping parameterMapping;
-	
+
 	private ParameterMapping getVersionMappingInstance(Configuration configuration) {
 		if (parameterMapping == null) {
 			synchronized (OptimisticLockerInterceptor.class) {
@@ -250,6 +251,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	// *****************************基本类型处理器*****************************
 	private static class IntegerTypeHandler implements VersionHandler<Integer> {
 
+		@Override
 		public void plusVersion(Object paramObj, Field field, Integer versionValue) throws Exception {
 			field.set(paramObj, versionValue + 1);
 		}
@@ -257,6 +259,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 
 	private static class LongTypeHandler implements VersionHandler<Long> {
 
+		@Override
 		public void plusVersion(Object paramObj, Field field, Long versionValue) throws Exception {
 			field.set(paramObj, versionValue + 1);
 		}
@@ -265,6 +268,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	// ***************************** 时间类型处理器*****************************
 	private static class DateTypeHandler implements VersionHandler<Date> {
 
+		@Override
 		public void plusVersion(Object paramObj, Field field, Date versionValue) throws Exception {
 			field.set(paramObj, new Date());
 		}
@@ -272,6 +276,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 
 	private static class TimestampTypeHandler implements VersionHandler<Timestamp> {
 
+		@Override
 		public void plusVersion(Object paramObj, Field field, Timestamp versionValue) throws Exception {
 			field.set(paramObj, new Timestamp(new Date().getTime()));
 		}

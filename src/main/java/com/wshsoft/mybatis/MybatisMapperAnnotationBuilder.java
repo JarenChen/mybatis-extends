@@ -89,8 +89,8 @@ import com.wshsoft.mybatis.mapper.BaseMapper;
  */
 public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
-	private final Set<Class<? extends Annotation>> sqlAnnotationTypes = new HashSet<Class<? extends Annotation>>();
-	private final Set<Class<? extends Annotation>> sqlProviderAnnotationTypes = new HashSet<Class<? extends Annotation>>();
+	private final Set<Class<? extends Annotation>> sqlAnnotationTypes = new HashSet<>();
+	private final Set<Class<? extends Annotation>> sqlProviderAnnotationTypes = new HashSet<>();
 
 	private Configuration configuration;
 	private MapperBuilderAssistant assistant;
@@ -262,7 +262,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
 	private void applyResultMap(String resultMapId, Class<?> returnType, Arg[] args, Result[] results,
 			TypeDiscriminator discriminator) {
-		List<ResultMapping> resultMappings = new ArrayList<ResultMapping>();
+		List<ResultMapping> resultMappings = new ArrayList<>();
 		applyConstructorArgs(args, returnType, resultMappings);
 		applyResults(results, returnType, resultMappings);
 		Discriminator disc = applyDiscriminator(resultMapId, returnType, discriminator);
@@ -276,7 +276,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 		if (discriminator != null) {
 			for (Case c : discriminator.cases()) {
 				String caseResultMapId = resultMapId + "-" + c.value();
-				List<ResultMapping> resultMappings = new ArrayList<ResultMapping>();
+				List<ResultMapping> resultMappings = new ArrayList<>();
 				// issue #136
 				applyConstructorArgs(c.constructArgs(), resultType, resultMappings);
 				applyResults(c.results(), resultType, resultMappings);
@@ -295,7 +295,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 			Class<? extends TypeHandler<?>> typeHandler = (Class<? extends TypeHandler<?>>) (discriminator
 					.typeHandler() == UnknownTypeHandler.class ? null : discriminator.typeHandler());
 			Case[] cases = discriminator.cases();
-			Map<String, String> discriminatorMap = new HashMap<String, String>();
+			Map<String, String> discriminatorMap = new HashMap<>();
 			for (Case c : cases) {
 				String value = c.value();
 				String caseResultMapId = resultMapId + "-" + value;
@@ -353,8 +353,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 				}
 				useCache = options.useCache();
 				fetchSize = options.fetchSize() > -1 || options.fetchSize() == Integer.MIN_VALUE ? options.fetchSize()
-						: null; // issue
-								// #348
+						: null; // issue #348
 				timeout = options.timeout() > -1 ? options.timeout() : null;
 				statementType = options.statementType();
 				resultSetType = options.resultSetType();
@@ -376,33 +375,18 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 				resultMapId = parseResultMap(method);
 			}
 
-            assistant.addMappedStatement(
-                    mappedStatementId,
-                    sqlSource,
-                    statementType,
-                    sqlCommandType,
-                    fetchSize,
-                    timeout,
-                    // ParameterMapID
-                    null,
-                    parameterTypeClass,
-                    resultMapId,
-                    getReturnType(method),
-                    resultSetType,
-                    flushCache,
-                    useCache,
-                    // TODO gcode issue #577
-                    false,
-                    keyGenerator,
-                    keyProperty,
-                    keyColumn,
-                    // DatabaseID
-                    null,
-                    languageDriver,
-                    // ResultSets
-                    options != null ? nullOrEmpty(options.resultSets()) : null);
-        }
-    }
+			assistant.addMappedStatement(mappedStatementId, sqlSource, statementType, sqlCommandType, fetchSize,
+					timeout,
+					// ParameterMapID
+					null, parameterTypeClass, resultMapId, getReturnType(method), resultSetType, flushCache, useCache,
+					// TODO gcode issue #577
+					false, keyGenerator, keyProperty, keyColumn,
+					// DatabaseID
+					null, languageDriver,
+					// ResultSets
+					options != null ? nullOrEmpty(options.resultSets()) : null);
+		}
+	}
 
 	private LanguageDriver getLanguageDriver(Method method) {
 		Lang lang = method.getAnnotation(Lang.class);
@@ -560,33 +544,23 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 		return null;
 	}
 
-    private void applyResults(Result[] results, Class<?> resultType, List<ResultMapping> resultMappings) {
-        for (Result result : results) {
-            List<ResultFlag> flags = new ArrayList<>();
-            if (result.id()) {
-                flags.add(ResultFlag.ID);
-            }
-            @SuppressWarnings("unchecked")
-            Class<? extends TypeHandler<?>> typeHandler = (Class<? extends TypeHandler<?>>)
-                    ((result.typeHandler() == UnknownTypeHandler.class) ? null : result.typeHandler());
-            ResultMapping resultMapping = assistant.buildResultMapping(
-                    resultType,
-                    nullOrEmpty(result.property()),
-                    nullOrEmpty(result.column()),
-                    result.javaType() == void.class ? null : result.javaType(),
-                    result.jdbcType() == JdbcType.UNDEFINED ? null : result.jdbcType(),
-                    hasNestedSelect(result) ? nestedSelectId(result) : null,
-                    null,
-                    null,
-                    null,
-                    typeHandler,
-                    flags,
-                    null,
-                    null,
-                    isLazy(result));
-            resultMappings.add(resultMapping);
-        }
-    }
+	private void applyResults(Result[] results, Class<?> resultType, List<ResultMapping> resultMappings) {
+		for (Result result : results) {
+			List<ResultFlag> flags = new ArrayList<>();
+			if (result.id()) {
+				flags.add(ResultFlag.ID);
+			}
+			@SuppressWarnings("unchecked")
+			Class<? extends TypeHandler<?>> typeHandler = (Class<? extends TypeHandler<?>>) ((result
+					.typeHandler() == UnknownTypeHandler.class) ? null : result.typeHandler());
+			ResultMapping resultMapping = assistant.buildResultMapping(resultType, nullOrEmpty(result.property()),
+					nullOrEmpty(result.column()), result.javaType() == void.class ? null : result.javaType(),
+					result.jdbcType() == JdbcType.UNDEFINED ? null : result.jdbcType(),
+					hasNestedSelect(result) ? nestedSelectId(result) : null, null, null, null, typeHandler, flags, null,
+					null, isLazy(result));
+			resultMappings.add(resultMapping);
+		}
+	}
 
 	private String nestedSelectId(Result result) {
 		String nestedSelect = result.one().select();
@@ -616,34 +590,23 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 		return result.one().select().length() > 0 || result.many().select().length() > 0;
 	}
 
-    private void applyConstructorArgs(Arg[] args, Class<?> resultType, List<ResultMapping> resultMappings) {
-        for (Arg arg : args) {
-            List<ResultFlag> flags = new ArrayList<>();
-            flags.add(ResultFlag.CONSTRUCTOR);
-            if (arg.id()) {
-                flags.add(ResultFlag.ID);
-            }
-            @SuppressWarnings("unchecked")
-            Class<? extends TypeHandler<?>> typeHandler = (Class<? extends TypeHandler<?>>)
-                    (arg.typeHandler() == UnknownTypeHandler.class ? null : arg.typeHandler());
-            ResultMapping resultMapping = assistant.buildResultMapping(
-                    resultType,
-                    nullOrEmpty(arg.name()),
-                    nullOrEmpty(arg.column()),
-                    arg.javaType() == void.class ? null : arg.javaType(),
-                    arg.jdbcType() == JdbcType.UNDEFINED ? null : arg.jdbcType(),
-                    nullOrEmpty(arg.select()),
-                    nullOrEmpty(arg.resultMap()),
-                    null,
-                    null,
-                    typeHandler,
-                    flags,
-                    null,
-                    null,
-                    false);
-            resultMappings.add(resultMapping);
-        }
-    }
+	private void applyConstructorArgs(Arg[] args, Class<?> resultType, List<ResultMapping> resultMappings) {
+		for (Arg arg : args) {
+			List<ResultFlag> flags = new ArrayList<>();
+			flags.add(ResultFlag.CONSTRUCTOR);
+			if (arg.id()) {
+				flags.add(ResultFlag.ID);
+			}
+			@SuppressWarnings("unchecked")
+			Class<? extends TypeHandler<?>> typeHandler = (Class<? extends TypeHandler<?>>) (arg
+					.typeHandler() == UnknownTypeHandler.class ? null : arg.typeHandler());
+			ResultMapping resultMapping = assistant.buildResultMapping(resultType, nullOrEmpty(arg.name()),
+					nullOrEmpty(arg.column()), arg.javaType() == void.class ? null : arg.javaType(),
+					arg.jdbcType() == JdbcType.UNDEFINED ? null : arg.jdbcType(), nullOrEmpty(arg.select()),
+					nullOrEmpty(arg.resultMap()), null, null, typeHandler, flags, null, null, false);
+			resultMappings.add(resultMapping);
+		}
+	}
 
 	private String nullOrEmpty(String value) {
 		return value == null || value.trim().length() == 0 ? null : value;
@@ -657,13 +620,14 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 		return args == null ? new Arg[0] : args.value();
 	}
 
-    private KeyGenerator handleSelectKeyAnnotation(SelectKey selectKeyAnnotation, String baseStatementId, Class<?> parameterTypeClass, LanguageDriver languageDriver) {
-        String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-        Class<?> resultTypeClass = selectKeyAnnotation.resultType();
-        StatementType statementType = selectKeyAnnotation.statementType();
-        String keyProperty = selectKeyAnnotation.keyProperty();
-        String keyColumn = selectKeyAnnotation.keyColumn();
-        boolean executeBefore = selectKeyAnnotation.before();
+	private KeyGenerator handleSelectKeyAnnotation(SelectKey selectKeyAnnotation, String baseStatementId,
+			Class<?> parameterTypeClass, LanguageDriver languageDriver) {
+		String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
+		Class<?> resultTypeClass = selectKeyAnnotation.resultType();
+		StatementType statementType = selectKeyAnnotation.statementType();
+		String keyProperty = selectKeyAnnotation.keyProperty();
+		String keyColumn = selectKeyAnnotation.keyColumn();
+		boolean executeBefore = selectKeyAnnotation.before();
 
 		// defaults
 		boolean useCache = false;
@@ -675,12 +639,13 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 		String resultMap = null;
 		ResultSetType resultSetTypeEnum = null;
 
-        SqlSource sqlSource = buildSqlSourceFromStrings(selectKeyAnnotation.statement(), parameterTypeClass, languageDriver);
-        SqlCommandType sqlCommandType = SqlCommandType.SELECT;
+		SqlSource sqlSource = buildSqlSourceFromStrings(selectKeyAnnotation.statement(), parameterTypeClass,
+				languageDriver);
+		SqlCommandType sqlCommandType = SqlCommandType.SELECT;
 
-        assistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType, fetchSize, timeout, parameterMap, parameterTypeClass, resultMap, resultTypeClass, resultSetTypeEnum,
-                flushCache, useCache, false,
-                keyGenerator, keyProperty, keyColumn, null, languageDriver, null);
+		assistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType, fetchSize, timeout, parameterMap,
+				parameterTypeClass, resultMap, resultTypeClass, resultSetTypeEnum, flushCache, useCache, false,
+				keyGenerator, keyProperty, keyColumn, null, languageDriver, null);
 
 		id = assistant.applyCurrentNamespace(id, false);
 

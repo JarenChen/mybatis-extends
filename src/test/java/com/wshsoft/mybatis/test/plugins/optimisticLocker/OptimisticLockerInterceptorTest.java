@@ -35,7 +35,6 @@ import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.TimestampVersion
 @ContextConfiguration(locations = { "/plugins/optimisticLockerInterceptor.xml" })
 public class OptimisticLockerInterceptorTest {
 
-
 	@Autowired
 	private IntVersionUserMapper intVersionUserMapper;
 	@Autowired

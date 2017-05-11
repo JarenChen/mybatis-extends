@@ -527,21 +527,26 @@ public class MybatisSqlSessionFactoryBean
 		globalConfig.signGlobalConfig(sqlSessionFactory);
 
 		if (!isEmpty(this.mapperLocations)) {
+			if (globalConfig.isRefresh()) {
+				// TODO 设置自动刷新配置 减少配置
+				new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2, 2, true);
+			}
 			for (Resource mapperLocation : this.mapperLocations) {
 				if (mapperLocation == null) {
 					continue;
 				}
 
-                try {
-                    // TODO
-                    MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(mapperLocation.getInputStream(),
-                            configuration, mapperLocation.toString(), configuration.getSqlFragments());
-                    xmlMapperBuilder.parse();
-                } catch (Exception e) {
-                    throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
-                } finally {
-                    ErrorContext.instance().reset();
-                }
+				try {
+					// TODO
+					MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(
+							mapperLocation.getInputStream(), configuration, mapperLocation.toString(),
+							configuration.getSqlFragments());
+					xmlMapperBuilder.parse();
+				} catch (Exception e) {
+					throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
+				} finally {
+					ErrorContext.instance().reset();
+				}
 
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Parsed mapper file: '" + mapperLocation + "'");

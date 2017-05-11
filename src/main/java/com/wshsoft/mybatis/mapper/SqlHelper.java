@@ -71,19 +71,22 @@ public class SqlHelper {
 		return session;
 	}
 
-    /**
-     * <p>
-     * 获取Session
-     * </p>
-     *
-     * @param clazz      实体类
-     * @param autoCommit true自动提交false则相反
-     * @return SqlSession
-     */
-    public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
-        SqlSession sqlSession = getSqlSession(clazz);
-        return (sqlSession != null) ? sqlSession : GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
-    }
+	/**
+	 * <p>
+	 * 获取Session
+	 * </p>
+	 *
+	 * @param clazz
+	 *            实体类
+	 * @param autoCommit
+	 *            true自动提交false则相反
+	 * @return SqlSession
+	 */
+	public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
+		SqlSession sqlSession = getSqlSession(clazz);
+		return (sqlSession != null) ? sqlSession
+				: GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
+	}
 
 	/**
 	 * 获取TableInfo

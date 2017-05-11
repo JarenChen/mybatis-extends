@@ -34,6 +34,14 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
 public class ConfigBuilder {
 
 	/**
+	 * 模板路径配置信息
+	 */
+	private final TemplateConfig template;
+	/**
+	 * 数据库配置
+	 */
+	private final DataSourceConfig dataSourceConfig;
+	/**
 	 * SQL连接
 	 */
 	private Connection connection;
@@ -53,7 +61,6 @@ public class ConfigBuilder {
 	 * 数据库表信息
 	 */
 	private List<TableInfo> tableInfoList;
-
 	/**
 	 * 包配置详情
 	 */
@@ -62,17 +69,6 @@ public class ConfigBuilder {
 	 * 路径配置信息
 	 */
 	private Map<String, String> pathInfo;
-
-	/**
-	 * 模板路径配置信息
-	 */
-	private TemplateConfig template;
-
-	/**
-	 * 数据库配置
-	 */
-	private DataSourceConfig dataSourceConfig;
-
 	/**
 	 * 策略配置
 	 */

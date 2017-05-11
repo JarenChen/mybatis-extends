@@ -9,9 +9,9 @@ CREATE TABLE version_user (
 	PRIMARY KEY (`id`)
 ) ENGINE = INNODB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
 
-insert into version_user (id,name,version) values(1,"zhangsan",15);
-insert into version_user (id,name,version) values(2,"lisi",109);
-insert into version_user (id,name,version) values(3,"wangwu",null);
+insert into version_user (id,name,version) values(1,'zhangsan',15);
+insert into version_user (id,name,version) values(2,'lisi',109);
+insert into version_user (id,name,version) values(3,'wangwu',null);
 
 DROP TABLE
 IF EXISTS time_version_user;
@@ -19,7 +19,7 @@ IF EXISTS time_version_user;
 CREATE TABLE time_version_user (
 	id bigint (11) NOT NULL ,
 	NAME VARCHAR (20),
-	version timestamp,
+	version datetime,
 	PRIMARY KEY (`id`)
 ) ENGINE = INNODB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
 

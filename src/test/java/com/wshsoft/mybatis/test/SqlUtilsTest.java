@@ -183,60 +183,57 @@ public class SqlUtilsTest {
 
 	}
 
-    /**
-     * 测试aliDruid方式
-     */
-    @Test
-    public void sqlCountOptimize11() {
-        CountOptimize countOptimize = SqlUtils
-                .getCountOptimize(
-                        "select distinct * from user a left join (select uuid from user2) b on b.id = a.aid where a=1 order by (select 1 from dual)",
-                        "aliDruid", "mysql", true);
-        String countsql = countOptimize.getCountSQL();
-        boolean orderBy = countOptimize.isOrderBy();
-        System.out.println(countsql);
-        System.out.println(orderBy);
-        Assert.assertFalse(orderBy);
-        Assert.assertEquals("SELECT COUNT(DISTINCT *)\n" + "FROM user a\n" + "\tLEFT JOIN (SELECT uuid\n" + "\t\tFROM user2\n"
-                + "\t\t) b ON b.id = a.aid\n" + "WHERE a = 1", countsql);
-    }
+	/**
+	 * 测试aliDruid方式
+	 */
+	@Test
+	public void sqlCountOptimize11() {
+		CountOptimize countOptimize = SqlUtils.getCountOptimize(
+				"select distinct * from user a left join (select uuid from user2) b on b.id = a.aid where a=1 order by (select 1 from dual)",
+				"aliDruid", "mysql", true);
+		String countsql = countOptimize.getCountSQL();
+		boolean orderBy = countOptimize.isOrderBy();
+		System.out.println(countsql);
+		System.out.println(orderBy);
+		Assert.assertFalse(orderBy);
+		Assert.assertEquals("SELECT COUNT(DISTINCT *)\n" + "FROM user a\n" + "\tLEFT JOIN (SELECT uuid\n"
+				+ "\t\tFROM user2\n" + "\t\t) b ON b.id = a.aid\n" + "WHERE a = 1", countsql);
+	}
 
-    /**
-     * 测试aliDruid方式
-     */
-    @Test
-    public void sqlCountOptimize12() {
-        CountOptimize countOptimize = SqlUtils
-                .getCountOptimize(
-                        "select * from user a left join (select uuid from user2) b on b.id = a.aid where a=1 group by a.id order by (select 1 from dual)",
-                        "aliDruid", "mysql", true);
-        String countsql = countOptimize.getCountSQL();
-        boolean orderBy = countOptimize.isOrderBy();
-        System.out.println(countsql);
-        System.out.println(orderBy);
-        Assert.assertFalse(orderBy);
-        Assert.assertEquals("SELECT COUNT(*)\n" + "FROM (SELECT *\n" + "\tFROM user a\n" + "\t\tLEFT JOIN (SELECT uuid\n"
-                + "\t\t\tFROM user2\n" + "\t\t\t) b ON b.id = a.aid\n" + "\tWHERE a = 1\n" + "\tGROUP BY a.id\n"
-                + "\t) ALIAS_COUNT", countsql);
-    }
+	/**
+	 * 测试aliDruid方式
+	 */
+	@Test
+	public void sqlCountOptimize12() {
+		CountOptimize countOptimize = SqlUtils.getCountOptimize(
+				"select * from user a left join (select uuid from user2) b on b.id = a.aid where a=1 group by a.id order by (select 1 from dual)",
+				"aliDruid", "mysql", true);
+		String countsql = countOptimize.getCountSQL();
+		boolean orderBy = countOptimize.isOrderBy();
+		System.out.println(countsql);
+		System.out.println(orderBy);
+		Assert.assertFalse(orderBy);
+		Assert.assertEquals("SELECT COUNT(*)\n" + "FROM (SELECT *\n" + "\tFROM user a\n"
+				+ "\t\tLEFT JOIN (SELECT uuid\n" + "\t\t\tFROM user2\n" + "\t\t\t) b ON b.id = a.aid\n"
+				+ "\tWHERE a = 1\n" + "\tGROUP BY a.id\n" + "\t) ALIAS_COUNT", countsql);
+	}
 
-    /**
-     * 测试aliDruid方式
-     */
-    @Test
-    public void sqlCountOptimize13() {
-        CountOptimize countOptimize = SqlUtils
-                .getCountOptimize(
-                        "select * from user a left join (select uuid from user2) b on b.id = a.aid where a=1 group by a.id order by (select 1 from dual)",
-                        "aliDruid", "mysql", false);
-        String countsql = countOptimize.getCountSQL();
-        boolean orderBy = countOptimize.isOrderBy();
-        System.out.println(countsql);
-        System.out.println(orderBy);
-        Assert.assertFalse(orderBy);
-        Assert.assertEquals("SELECT COUNT(*)\n" + "FROM (SELECT *\n" + "\tFROM user a\n" + "\t\tLEFT JOIN (SELECT uuid\n"
-                + "\t\t\tFROM user2\n" + "\t\t\t) b ON b.id = a.aid\n" + "\tWHERE a = 1\n" + "\tGROUP BY a.id\n"
-                + "\t) ALIAS_COUNT", countsql);
-    }
+	/**
+	 * 测试aliDruid方式
+	 */
+	@Test
+	public void sqlCountOptimize13() {
+		CountOptimize countOptimize = SqlUtils.getCountOptimize(
+				"select * from user a left join (select uuid from user2) b on b.id = a.aid where a=1 group by a.id order by (select 1 from dual)",
+				"aliDruid", "mysql", false);
+		String countsql = countOptimize.getCountSQL();
+		boolean orderBy = countOptimize.isOrderBy();
+		System.out.println(countsql);
+		System.out.println(orderBy);
+		Assert.assertFalse(orderBy);
+		Assert.assertEquals("SELECT COUNT(*)\n" + "FROM (SELECT *\n" + "\tFROM user a\n"
+				+ "\t\tLEFT JOIN (SELECT uuid\n" + "\t\t\tFROM user2\n" + "\t\t\t) b ON b.id = a.aid\n"
+				+ "\tWHERE a = 1\n" + "\tGROUP BY a.id\n" + "\t) ALIAS_COUNT", countsql);
+	}
 
 }

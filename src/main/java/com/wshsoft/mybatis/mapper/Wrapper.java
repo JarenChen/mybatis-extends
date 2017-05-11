@@ -15,7 +15,6 @@ import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.toolkit.ArrayUtils;
 import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.MapUtils;
-
 import com.wshsoft.mybatis.toolkit.SqlUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 
@@ -824,18 +823,18 @@ public abstract class Wrapper<T> implements Serializable {
 		return this;
 	}
 
-    /**
-     * <p>
-     * 手动把sql拼接到最后(有sql注入的风险,请谨慎使用)
-     * </p>
-     *
-     * @param limit
-     * @return this
-     */
-    public Wrapper<T> last(String limit) {
-        sql.LAST(limit);
-        return this;
-    }
+	/**
+	 * <p>
+	 * 手动把sql拼接到最后(有sql注入的风险,请谨慎使用)
+	 * </p>
+	 *
+	 * @param limit
+	 * @return this
+	 */
+	public Wrapper<T> last(String limit) {
+		sql.LAST(limit);
+		return this;
+	}
 
 	/**
 	 * Fix issue 200.

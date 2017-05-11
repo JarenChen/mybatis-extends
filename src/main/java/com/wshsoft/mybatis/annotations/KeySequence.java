@@ -22,7 +22,7 @@ public @interface KeySequence {
 	/*
 	 * <p> 序列名 </p>
 	 */
-	String value();
+	String value() default "";
 
 	/*
 	 * <p> id的类型 </p>

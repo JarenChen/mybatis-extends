@@ -1,8 +1,9 @@
 package com.wshsoft.mybatis.plugins.pagination;
 
+import static com.wshsoft.mybatis.enums.DBType.getDBType;
+
 import org.apache.ibatis.session.RowBounds;
 
-import static com.wshsoft.mybatis.enums.DBType.getDBType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.plugins.pagination.dialects.DB2Dialect;
 import com.wshsoft.mybatis.plugins.pagination.dialects.H2Dialect;
