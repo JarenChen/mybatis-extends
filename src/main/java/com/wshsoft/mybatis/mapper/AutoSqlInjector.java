@@ -51,22 +51,20 @@ public class AutoSqlInjector implements ISqlInjector {
 	protected LanguageDriver languageDriver;
 	protected MapperBuilderAssistant builderAssistant;
 
-	/**
-	 * CRUD注入后给予标识 注入过后不再注入
-	 *
-	 * @param builderAssistant
-	 * @param mapperClass
-	 */
-	@Override
-	public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-		String className = mapperClass.toString();
-		Set<String> mapperRegistryCache = GlobalConfiguration
-				.getMapperRegistryCache(builderAssistant.getConfiguration());
-		if (!mapperRegistryCache.contains(className)) {
-			inject(builderAssistant, mapperClass);
-			mapperRegistryCache.add(className);
-		}
-	}
+    /**
+     * CRUD注入后给予标识 注入过后不再注入
+     *
+     * @param builderAssistant
+     * @param mapperClass
+     */
+    public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+        String className = mapperClass.toString();
+        Set<String> mapperRegistryCache = GlobalConfiguration.getMapperRegistryCache(builderAssistant.getConfiguration());
+        if (!mapperRegistryCache.contains(className)) {
+            inject(builderAssistant, mapperClass);
+            mapperRegistryCache.add(className);
+        }
+    }
 
 	/**
 	 * 注入单点 crudSql
@@ -342,36 +340,33 @@ public class AutoSqlInjector implements ISqlInjector {
 		this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
 	}
 
-	/**
-	 * <p>
-	 * 注入查询 SQL 语句
-	 * </p>
-	 *
-	 * @param batch
-	 *            是否为批量插入
-	 * @param mapperClass
-	 * @param modelClass
-	 * @param table
-	 */
-	protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		SqlMethod sqlMethod = SqlMethod.SELECT_BY_ID;
-		SqlSource sqlSource;
-		if (batch) {
-			sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
-			StringBuilder ids = new StringBuilder();
-			ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
-			ids.append("#{item}");
-			ids.append("\n</foreach>");
-			sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
-					sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), ids.toString()),
-					modelClass);
-		} else {
-			sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(),
-					sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), table.getKeyProperty()),
-					Object.class);
-		}
-		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
-	}
+    /**
+     * <p>
+     * 注入查询 SQL 语句
+     * </p>
+     *
+     * @param batch       是否为批量插入
+     * @param mapperClass
+     * @param modelClass
+     * @param table
+     */
+    protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+        SqlMethod sqlMethod = SqlMethod.SELECT_BY_ID;
+        SqlSource sqlSource;
+        if (batch) {
+            sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
+            StringBuilder ids = new StringBuilder();
+            ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
+            ids.append("#{item}");
+            ids.append("\n</foreach>");
+            sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
+                    sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);
+        } else {
+            sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
+                    table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), Object.class);
+        }
+        this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
+    }
 
 	/**
 	 * <p>

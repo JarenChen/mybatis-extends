@@ -56,8 +56,7 @@ import com.wshsoft.mybatis.toolkit.PackageHelper;
  * @author Carry xie
  * @Date 2016-01-23
  */
-public class MybatisSqlSessionFactoryBean
-		implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
+public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
 
 	private static final Log LOGGER = LogFactory.getLog(SqlSessionFactoryBean.class);
 
@@ -388,30 +387,28 @@ public class MybatisSqlSessionFactoryBean
 
 		Configuration configuration;
 
-		// TODO 加载自定义 MybatisXmlConfigBuilder
-		MybatisXMLConfigBuilder xmlConfigBuilder = null;
-		if (this.configuration != null) {
-			configuration = this.configuration;
-			if (configuration.getVariables() == null) {
-				configuration.setVariables(this.configurationProperties);
-			} else if (this.configurationProperties != null) {
-				configuration.getVariables().putAll(this.configurationProperties);
-			}
-		} else if (this.configLocation != null) {
-			xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null,
-					this.configurationProperties);
-			configuration = xmlConfigBuilder.getConfiguration();
-		} else {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(
-						"Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
-			}
-			// TODO 使用自定义配置
-			configuration = new MybatisConfiguration();
-			if (this.configurationProperties != null) {
-				configuration.setVariables(this.configurationProperties);
-			}
-		}
+        // TODO 加载自定义 MybatisXmlConfigBuilder
+        MybatisXMLConfigBuilder xmlConfigBuilder = null;
+        if (this.configuration != null) {
+            configuration = this.configuration;
+            if (configuration.getVariables() == null) {
+                configuration.setVariables(this.configurationProperties);
+            } else if (this.configurationProperties != null) {
+                configuration.getVariables().putAll(this.configurationProperties);
+            }
+        } else if (this.configLocation != null) {
+            xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
+            configuration = xmlConfigBuilder.getConfiguration();
+        } else {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
+            }
+            // TODO 使用自定义配置
+            configuration = new MybatisConfiguration();
+            if (this.configurationProperties != null) {
+                configuration.setVariables(this.configurationProperties);
+            }
+        }
 
 		if (this.objectFactory != null) {
 			configuration.setObjectFactory(this.objectFactory);
@@ -529,24 +526,24 @@ public class MybatisSqlSessionFactoryBean
 		if (!isEmpty(this.mapperLocations)) {
 			if (globalConfig.isRefresh()) {
 				// TODO 设置自动刷新配置 减少配置
-				new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2, 2, true);
+                new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2,
+                        2, true);
 			}
 			for (Resource mapperLocation : this.mapperLocations) {
 				if (mapperLocation == null) {
 					continue;
 				}
 
-				try {
-					// TODO
-					MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(
-							mapperLocation.getInputStream(), configuration, mapperLocation.toString(),
-							configuration.getSqlFragments());
-					xmlMapperBuilder.parse();
-				} catch (Exception e) {
-					throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
-				} finally {
-					ErrorContext.instance().reset();
-				}
+                try {
+                    // TODO
+                    MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(mapperLocation.getInputStream(),
+                            configuration, mapperLocation.toString(), configuration.getSqlFragments());
+                    xmlMapperBuilder.parse();
+                } catch (Exception e) {
+                    throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
+                } finally {
+                    ErrorContext.instance().reset();
+                }
 
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Parsed mapper file: '" + mapperLocation + "'");

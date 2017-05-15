@@ -380,32 +380,32 @@ public class TableInfoHelper {
 		}
 	}
 
-	/**
-	 * <p>
-	 * 自定义 KEY 生成器
-	 * </p>
-	 */
-	public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
-			String baseStatementId, LanguageDriver languageDriver) {
-		IKeyGenerator keyGenerator = GlobalConfiguration.getKeyGenerator(builderAssistant.getConfiguration());
-		if (null == keyGenerator) {
-			throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
-		}
-		String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-		Class<?> resultTypeClass = tableInfo.getKeySequence().idClazz();
-		StatementType statementType = StatementType.PREPARED;
-		String keyProperty = tableInfo.getKeyProperty();
-		String keyColumn = tableInfo.getKeyColumn();
-		SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(),
-				keyGenerator.executeSql(tableInfo), null);
-		builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null, null,
-				null, resultTypeClass, null, false, false, false, new NoKeyGenerator(), keyProperty, keyColumn, null,
-				languageDriver, null);
-		id = builderAssistant.applyCurrentNamespace(id, false);
-		MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
-		SelectKeyGenerator answer = new SelectKeyGenerator(keyStatement, true);
-		builderAssistant.getConfiguration().addKeyGenerator(id, answer);
-		return answer;
-	}
+    /**
+     * <p>
+     * 自定义 KEY 生成器
+     * </p>
+     */
+    public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
+                                               String baseStatementId, LanguageDriver languageDriver) {
+        IKeyGenerator keyGenerator = GlobalConfiguration.getKeyGenerator(builderAssistant.getConfiguration());
+        if (null == keyGenerator) {
+            throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
+        }
+        String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
+        Class<?> resultTypeClass = tableInfo.getKeySequence().idClazz();
+        StatementType statementType = StatementType.PREPARED;
+        String keyProperty = tableInfo.getKeyProperty();
+        String keyColumn = tableInfo.getKeyColumn();
+        SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(),
+                keyGenerator.executeSql(tableInfo), null);
+        builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null,
+                null, null, resultTypeClass, null, false, false, false,
+                new NoKeyGenerator(), keyProperty, keyColumn, null, languageDriver, null);
+        id = builderAssistant.applyCurrentNamespace(id, false);
+        MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
+        SelectKeyGenerator answer = new SelectKeyGenerator(keyStatement, true);
+        builderAssistant.getConfiguration().addKeyGenerator(id, answer);
+        return answer;
+    }
 
 }

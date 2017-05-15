@@ -30,9 +30,10 @@ public class TableInfo {
 	private String serviceImplName;
 	private String controllerName;
 
-	private List<TableField> fields;
-	private List<String> importPackages = new ArrayList<String>();
-	private String fieldNames;
+    private List<TableField> fields;
+    private List<TableField> commonFields;// 公共字段
+    private List<String> importPackages = new ArrayList<>();
+    private String fieldNames;
 
 	public boolean isConvert() {
 		return convert;
@@ -167,9 +168,17 @@ public class TableInfo {
 		}
 	}
 
-	public List<String> getImportPackages() {
-		return importPackages;
-	}
+    public List<TableField> getCommonFields() {
+        return commonFields;
+    }
+
+    public void setCommonFields(List<TableField> commonFields) {
+        this.commonFields = commonFields;
+    }
+
+    public List<String> getImportPackages() {
+        return importPackages;
+    }
 
 	public void setImportPackages(String pkg) {
 		importPackages.add(pkg);

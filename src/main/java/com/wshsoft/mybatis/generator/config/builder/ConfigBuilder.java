@@ -343,77 +343,75 @@ public class ConfigBuilder {
 		// 不存在的表名
 		Set<String> notExistTables = new HashSet<>();
 
-		NamingStrategy strategy = config.getNaming();
-		PreparedStatement pstate = null;
-		try {
-			pstate = connection.prepareStatement(querySQL.getTableCommentsSql());
-			ResultSet results = pstate.executeQuery();
-			TableInfo tableInfo;
-			while (results.next()) {
-				String tableName = results.getString(querySQL.getTableName());
-				if (StringUtils.isNotEmpty(tableName)) {
-					String tableComment = results.getString(querySQL.getTableComment());
-					tableInfo = new TableInfo();
-					tableInfo.setName(tableName);
-					tableInfo.setComment(tableComment);
-					if (isInclude) {
-						for (String includeTab : config.getInclude()) {
-							if (includeTab.equalsIgnoreCase(tableName)) {
-								includeTableList.add(tableInfo);
-							} else {
-								notExistTables.add(includeTab);
-							}
-						}
-					} else if (isExclude) {
-						for (String excludeTab : config.getExclude()) {
-							if (excludeTab.equalsIgnoreCase(tableName)) {
-								excludeTableList.add(tableInfo);
-							} else {
-								notExistTables.add(excludeTab);
-							}
-						}
-					}
-					List<TableField> fieldList = getListFields(tableName, strategy);
-					tableInfo.setFields(fieldList);
-					tableList.add(tableInfo);
-				} else {
-					System.err.println("当前数据库为空！！！");
-				}
-			}
-			// 将已经存在的表移除，获取配置中数据库不存在的表
-			for (TableInfo tabInfo : tableList) {
-				notExistTables.remove(tabInfo.getName());
-			}
+        NamingStrategy strategy = config.getNaming();
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement(querySQL.getTableCommentsSql());
+            ResultSet results = preparedStatement.executeQuery();
+            TableInfo tableInfo;
+            while (results.next()) {
+                String tableName = results.getString(querySQL.getTableName());
+                if (StringUtils.isNotEmpty(tableName)) {
+                    String tableComment = results.getString(querySQL.getTableComment());
+                    tableInfo = new TableInfo();
+                    tableInfo.setName(tableName);
+                    tableInfo.setComment(tableComment);
+                    if (isInclude) {
+                        for (String includeTab : config.getInclude()) {
+                            if (includeTab.equalsIgnoreCase(tableName)) {
+                                includeTableList.add(tableInfo);
+                            } else {
+                                notExistTables.add(includeTab);
+                            }
+                        }
+                    } else if (isExclude) {
+                        for (String excludeTab : config.getExclude()) {
+                            if (excludeTab.equalsIgnoreCase(tableName)) {
+                                excludeTableList.add(tableInfo);
+                            } else {
+                                notExistTables.add(excludeTab);
+                            }
+                        }
+                    }
+                    tableList.add(this.convertTableFields(tableInfo, strategy));
+                } else {
+                    System.err.println("当前数据库为空！！！");
+                }
+            }
+            // 将已经存在的表移除，获取配置中数据库不存在的表
+            for (TableInfo tabInfo : tableList) {
+                notExistTables.remove(tabInfo.getName());
+            }
 
 			if (notExistTables.size() > 0) {
 				System.err.println("表 " + notExistTables + " 在数据库中不存在！！！");
 			}
 
-			// 需要反向生成的表信息
-			if (isExclude) {
-				tableList.removeAll(excludeTableList);
-				includeTableList = tableList;
-			}
-			if (!isInclude && !isExclude) {
-				includeTableList = tableList;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			// 释放资源
-			try {
-				if (pstate != null) {
-					pstate.close();
-				}
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return processTable(includeTableList, strategy, config.getTablePrefix());
-	}
+            // 需要反向生成的表信息
+            if (isExclude) {
+                tableList.removeAll(excludeTableList);
+                includeTableList = tableList;
+            }
+            if (!isInclude && !isExclude) {
+                includeTableList = tableList;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // 释放资源
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return processTable(includeTableList, strategy, config.getTablePrefix());
+    }
 
 	/**
 	 * 判断主键是否为identity，目前仅对mysql进行检查
@@ -433,53 +431,57 @@ public class ConfigBuilder {
 		return false;
 	}
 
-	/**
-	 * 将字段信息与表信息关联
-	 * 
-	 * @param tableName
-	 *            表名称
-	 * @param strategy
-	 *            命名策略
-	 * @return 表信息
-	 */
-	private List<TableField> getListFields(String tableName, NamingStrategy strategy) {
-		boolean haveId = false;
-		List<TableField> fieldList = new ArrayList<>();
-		try (PreparedStatement pstate = connection
-				.prepareStatement(String.format(querySQL.getTableFieldsSql(), tableName));
-				ResultSet results = pstate.executeQuery()) {
-			while (results.next()) {
-				TableField field = new TableField();
-				String key = results.getString(querySQL.getFieldKey());
-				// 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
-				boolean isId = StringUtils.isNotEmpty(key) && key.toUpperCase().equals("PRI");
-				// 处理ID
-				if (isId && !haveId) {
-					field.setKeyFlag(true);
-					if (isKeyIdentity(results)) {
-						field.setKeyIdentityFlag(true);
-					}
-					haveId = true;
-				} else {
-					field.setKeyFlag(false);
-				}
-				// 处理其它信息
-				field.setName(results.getString(querySQL.getFieldName()));
-				if (strategyConfig.includeSuperEntityColumns(field.getName())) {
-					// 跳过公共字段
-					continue;
-				}
-				field.setType(results.getString(querySQL.getFieldType()));
-				field.setPropertyName(strategyConfig, processName(field.getName(), strategy));
-				field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(field.getType()));
-				field.setComment(results.getString(querySQL.getFieldComment()));
-				fieldList.add(field);
-			}
-		} catch (SQLException e) {
-			System.err.println("SQL Exception：" + e.getMessage());
-		}
-		return fieldList;
-	}
+    /**
+     * <p>
+     * 将字段信息与表信息关联
+     * </p>
+     *
+     * @param tableInfo 表信息
+     * @param strategy  命名策略
+     * @return
+     */
+    private TableInfo convertTableFields(TableInfo tableInfo, NamingStrategy strategy) {
+        boolean haveId = false;
+        List<TableField> fieldList = new ArrayList<>();
+        List<TableField> commonFieldList = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(String.format(querySQL.getTableFieldsSql(), tableInfo.getName()));
+            ResultSet results = preparedStatement.executeQuery();
+            while (results.next()) {
+                TableField field = new TableField();
+                String key = results.getString(querySQL.getFieldKey());
+                // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
+                boolean isId = StringUtils.isNotEmpty(key) && key.toUpperCase().equals("PRI");
+                // 处理ID
+                if (isId && !haveId) {
+                    field.setKeyFlag(true);
+                    if (isKeyIdentity(results)) {
+                        field.setKeyIdentityFlag(true);
+                    }
+                    haveId = true;
+                } else {
+                    field.setKeyFlag(false);
+                }
+                // 处理其它信息
+                field.setName(results.getString(querySQL.getFieldName()));
+                field.setType(results.getString(querySQL.getFieldType()));
+                field.setPropertyName(strategyConfig, processName(field.getName(), strategy));
+                field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(field.getType()));
+                field.setComment(results.getString(querySQL.getFieldComment()));
+                if (strategyConfig.includeSuperEntityColumns(field.getName())) {
+                    // 跳过公共字段
+                    commonFieldList.add(field);
+                    continue;
+                }
+                fieldList.add(field);
+            }
+        } catch (SQLException e) {
+            System.err.println("SQL Exception：" + e.getMessage());
+        }
+        tableInfo.setFields(fieldList);
+        tableInfo.setCommonFields(commonFieldList);
+        return tableInfo;
+    }
 
 	/**
 	 * 连接路径字符串

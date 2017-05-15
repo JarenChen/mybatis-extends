@@ -146,10 +146,9 @@ public class EntityWrapperTest {
 				.groupBy("x2,x3").having("x1=11").having("x3=433").orderBy("dd").orderBy("d1,d2");
 		System.out.println(ew.toString());
 		Assert.assertEquals("AND (name=? AND id=1) \n" + "OR (status=? OR status=1 AND nlike NOT LIKE ?) \n"
-				+ "AND (new=xx AND hhh LIKE ?) \n"
-				+ "AND (pwd=11 AND n1 IS NOT NULL AND n2 IS NOT NULL AND n3 IS NULL)\n" + "GROUP BY x1, x2,x3\n"
-				+ "HAVING (x1=11 AND x3=433)\n" + "ORDER BY dd, d1,d2", ew.toString());
-	}
+                + "AND (new=xx AND hhh LIKE ?) \n" + "AND (pwd=11 AND n1 IS NOT NULL AND n2 IS NOT NULL AND n3 IS NULL)\n"
+                + "GROUP BY x1, x2,x3\n" + "HAVING (x1=11 AND x3=433)\n" + "ORDER BY dd, d1,d2", ew.toString());
+    }
 
 	@Test
 	public void testNull() {
@@ -299,16 +298,16 @@ public class EntityWrapperTest {
 				sqlPart);
 	}
 
-	/**
-	 * 测试LIKE
-	 */
-	@Test
-	public void testlike() {
-		String sqlPart = Condition.create().like("default", "default", SqlLike.DEFAULT)
-				.like("left", "left", SqlLike.LEFT).like("right", "right", SqlLike.RIGHT).toString();
-		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (default LIKE ? AND left LIKE ? AND right LIKE ?)", sqlPart);
-	}
+    /**
+     * 测试LIKE
+     */
+    @Test
+    public void testlike() {
+        String sqlPart = Condition.create().like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT)
+                .like("right", "right", SqlLike.RIGHT).toString();
+        System.out.println("sql ==> " + sqlPart);
+        Assert.assertEquals("WHERE (default LIKE ? AND left LIKE ? AND right LIKE ?)", sqlPart);
+    }
 
 	/**
 	 * 测试isWhere
@@ -318,19 +317,16 @@ public class EntityWrapperTest {
 		/*
 		 * 实体带where ifneed
 		 */
-		ew.setEntity(new User(1));
-		ew.setParamAlias("ceshi");
-		ew.or("sql = {0}", "sql").like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT);
-		ew.in("aaabbbcc", "1,3,4");
-		String sqlPart = ew.in("bbb", Arrays.asList(new String[] { "a", "b", "c" }))
-				.like("right", "right", SqlLike.RIGHT).isWhere(true).eq("bool", true).between("ee", "1111", "222")
-				.toString();
-		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals(
-				"WHERE (sql = ? AND default LIKE ? AND left LIKE ? AND aaabbbcc IN (?,?,?) AND bbb IN (?,?,?) AND right LIKE ? AND bool = ? AND ee BETWEEN ? AND ?)",
-				sqlPart);
-		System.out.println(ew.getSqlSegment());
-	}
+        ew.setEntity(new User(1));
+        ew.setParamAlias("ceshi");
+        ew.or("sql = {0}", "sql").like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT);
+        ew.in("aaabbbcc", "1,3,4");
+        String sqlPart = ew.in("bbb", Arrays.asList(new String[]{"a", "b", "c"})).like("right", "right", SqlLike.RIGHT).isWhere(true)
+                .eq("bool", true).between("ee", "1111", "222").toString();
+        System.out.println("sql ==> " + sqlPart);
+        Assert.assertEquals("WHERE (sql = ? AND default LIKE ? AND left LIKE ? AND aaabbbcc IN (?,?,?) AND bbb IN (?,?,?) AND right LIKE ? AND bool = ? AND ee BETWEEN ? AND ?)", sqlPart);
+        System.out.println(ew.getSqlSegment());
+    }
 
 	/**
 	 * 测试 last
@@ -344,17 +340,16 @@ public class EntityWrapperTest {
 		Assert.assertEquals("WHERE (name=?)\nORDER BY id DESC limit 1,2", sqlSegment);
 	}
 
-	/**
-	 * 测试 sqlselect
-	 */
-	@Test
-	public void testSqlSelect() {
-		EntityWrapper entityWrapper = new EntityWrapper();
-		// entityWrapper.setSqlSelect(Column.create().column("col").as("name"),null,Column.create(),Column.create().as("11"),Column.create().column("col"));
-		entityWrapper.setSqlSelect(Column.create().column("col").as("name"), null, Column.create(),
-				Column.create().as("11"), Column.create().column("col"));
-		System.out.println(entityWrapper.getSqlSelect());
-		Assert.assertEquals("col AS name,col", entityWrapper.getSqlSelect());
+    /**
+     * 测试 sqlselect
+     */
+    @Test
+    public void testSqlSelect() {
+        EntityWrapper entityWrapper = new EntityWrapper();
+        // entityWrapper.setSqlSelect(Column.create().column("col").as("name"),null,Column.create(),Column.create().as("11"),Column.create().column("col"));
+        entityWrapper.setSqlSelect(Column.create().column("col").as("name"), null, Column.create(), Column.create().as("11"), Column.create().column("col"));
+        System.out.println(entityWrapper.getSqlSelect());
+        Assert.assertEquals("col AS name,col", entityWrapper.getSqlSelect());
 
 	}
 
