@@ -228,6 +228,10 @@ public class AutoSqlInjector implements ISqlInjector {
 		List<TableFieldInfo> fieldList = table.getFieldList();
 
 		for (TableFieldInfo fieldInfo : fieldList) {
+            /* 判断是否插入忽略，插入忽略就不生成这个SQL */
+            if (fieldInfo.isInsertIgnore()) {
+                continue;
+            }
 			if (selective) {
 				fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
 				fieldBuilder.append(fieldInfo.getColumn()).append(",");
@@ -521,6 +525,10 @@ public class AutoSqlInjector implements ISqlInjector {
 		set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
+            /* 判断是不是更新忽略，是的话不生成此SQL */
+            if (fieldInfo.isUpdateIgnore()) {
+                continue;
+            }
 			if (selective) {
 				set.append(convertIfTag(true, fieldInfo, prefix, false));
 				set.append(fieldInfo.getColumn()).append("=#{");

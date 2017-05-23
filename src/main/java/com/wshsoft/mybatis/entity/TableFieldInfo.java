@@ -60,6 +60,15 @@ public class TableFieldInfo {
 	 */
 	private String logicNotDeleteValue;
 
+    /**
+     * 插入忽略
+     */
+    private boolean insertIgnore = false;
+
+    /**
+     * 更新忽略
+     */
+    private boolean updateIgnore = false;
 
     /**
      * <p>
@@ -71,11 +80,12 @@ public class TableFieldInfo {
         this.property = field.getName();
         this.propertyType = field.getType().getName();
         /*
-         * 1、开启字段下划线申明<br>
+         * 1、注解 value 不存在，开启字段下划线申明<br>
          * 2、没有开启下划线申明，但是column与property不等的情况<br>
          * 设置 related 为 true
          */
-        if (globalConfig.isDbColumnUnderline()) {
+        if (StringUtils.isEmpty(tableField.value())
+                && globalConfig.isDbColumnUnderline()) {
              /* 开启字段下划线申明 */
             this.related = true;
             this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
@@ -96,6 +106,11 @@ public class TableFieldInfo {
 			this.fieldStrategy = globalConfig.getFieldStrategy();
 		}
 		tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
+		/*
+		 * 保存当前字段的插入忽略，更新忽略值
+		 */
+		this.insertIgnore = tableField.insertIgnore();
+        this.updateIgnore = tableField.updateIgnore();
 	}
 
 	public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field) {
@@ -222,4 +237,19 @@ public class TableFieldInfo {
 		this.logicNotDeleteValue = logicNotDeleteValue;
 	}
 
+    public boolean isInsertIgnore() {
+        return insertIgnore;
+    }
+
+    public void setInsertIgnore(boolean insertIgnore) {
+        this.insertIgnore = insertIgnore;
+    }
+
+    public boolean isUpdateIgnore() {
+        return updateIgnore;
+    }
+
+    public void setUpdateIgnore(boolean updateIgnore) {
+        this.updateIgnore = updateIgnore;
+    }
 }

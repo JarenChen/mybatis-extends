@@ -3,11 +3,12 @@ package com.wshsoft.mybatis.test.plugins.optimisticLocker.entity;
 import java.io.Serializable;
 
 import com.wshsoft.mybatis.annotations.TableField;
+import com.wshsoft.mybatis.annotations.TableLogic;
 import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.annotations.Version;
 
 @TableName("version_user")
-public class ShortVersionUser implements Serializable {
+public class LogicVersionUser implements Serializable {
 
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
@@ -18,6 +19,9 @@ public class ShortVersionUser implements Serializable {
 
 	@Version
 	private Short version;
+	
+	@TableLogic(value = "0", delval = "1")
+	private Integer isDelete;
 
 	public Long getId() {
 		return id;
@@ -41,6 +45,14 @@ public class ShortVersionUser implements Serializable {
 
 	public void setVersion(Short version) {
 		this.version = version;
+	}
+
+	public Integer getIsDelete() {
+		return isDelete;
+	}
+
+	public void setIsDelete(Integer isDelete) {
+		this.isDelete = isDelete;
 	}
 
 }

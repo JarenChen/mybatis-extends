@@ -40,4 +40,9 @@
 		<property name="basePackage"
 			value="com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper" />
 	</bean>
+	<bean id="globalConfig" class="com.wshsoft.mybatis.entity.GlobalConfiguration">
+		<property name="sqlInjector" ref="mySqlInjector" />
+	</bean>
+
+	<bean id="mySqlInjector" class="com.wshsoft.mybatis.mapper.LogicSqlInjector" />
 </beans>
