@@ -98,7 +98,7 @@ public class PerformanceInterceptor implements Interceptor {
         } else {
             System.err.println(formatSql.toString());
             if (this.getMaxTime() >= 1 && timing > this.getMaxTime()) {
-                throw new MybatisPlusException(" The SQL execution time is too large, please optimize ! ");
+                throw new MybatisExtendsException(" The SQL execution time is too large, please optimize ! ");
             }
         }
         return result;

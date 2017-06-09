@@ -1,42 +1,30 @@
 package com.wshsoft.mybatis.plugins;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.sql.Connection;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.ibatis.binding.MapperMethod.ParamMap;
-import org.apache.ibatis.exceptions.ExceptionFactory;
-import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.defaults.DefaultSqlSession;
-import org.apache.ibatis.type.TypeException;
-import org.apache.ibatis.type.UnknownTypeHandler;
 
-import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.Version;
-import com.wshsoft.mybatis.mapper.EntityWrapper;
-import com.wshsoft.mybatis.toolkit.PluginUtils;
-import com.wshsoft.mybatis.toolkit.StringUtils;
+import com.wshsoft.mybatis.entity.TableFieldInfo;
+import com.wshsoft.mybatis.entity.TableInfo;
+import com.wshsoft.mybatis.mapper.Wrapper;
+import com.wshsoft.mybatis.toolkit.ReflectionKit;
+import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
 /**
  * <p>

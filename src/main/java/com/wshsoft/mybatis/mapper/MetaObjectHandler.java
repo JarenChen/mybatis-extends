@@ -12,16 +12,16 @@ import org.apache.ibatis.reflection.MetaObject;
  */
 public abstract class MetaObjectHandler {
 
-	/**
-	 * <p>
-	 * 插入元对象字段填充
-	 * </p>
-	 * 
-	 * @param metaObject
-	 *            元对象
-	 * @return
-	 */
-	public abstract void insertFill(MetaObject metaObject);
+    protected static final String META_OBJ_PREFIX = "et";
+
+    /**
+     * <p>
+     * 插入元对象字段填充
+     * </p>
+     *
+     * @param metaObject 元对象
+     */
+    public abstract void insertFill(MetaObject metaObject);
 
 	/**
 	 * 更新元对象字段填充（用于更新时对公共字段的填充）

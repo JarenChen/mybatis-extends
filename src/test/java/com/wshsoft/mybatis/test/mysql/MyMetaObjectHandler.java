@@ -1,5 +1,7 @@
 package com.wshsoft.mybatis.test.mysql;
 
+import java.sql.Timestamp;
+
 import org.apache.ibatis.reflection.MetaObject;
 
 import com.wshsoft.mybatis.mapper.MetaObjectHandler;

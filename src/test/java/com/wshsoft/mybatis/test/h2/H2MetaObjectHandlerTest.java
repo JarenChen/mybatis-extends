@@ -31,7 +31,7 @@ import com.wshsoft.mybatis.test.h2.entity.persistent.H2UserMetaObj;
  * TODO class
  * </p>
  *
- * @author yuxiaobin
+ * @author Carry xie
  * @date 2017/5/31
  */
 @RunWith(SpringJUnit4ClassRunner.class)
