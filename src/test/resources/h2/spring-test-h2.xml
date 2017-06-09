@@ -9,4 +9,7 @@
 
 	<context:component-scan base-package="com.wshsoft.mybatis.test.h2" />
 
+    <bean name="/DBConfig" class="com.wshsoft.mybatis.test.h2.config.DBConfig" />
+    <bean name="/MybatisPlusConfig" class="com.wshsoft.mybatis.test.h2.config.MybatisPlusConfig" />
+
 </beans>

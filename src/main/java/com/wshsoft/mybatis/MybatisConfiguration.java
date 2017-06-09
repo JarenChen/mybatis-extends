@@ -33,7 +33,7 @@ public class MybatisConfiguration extends Configuration {
 	 * 初始化调用
 	 */
 	public MybatisConfiguration() {
-		System.err.println("mybatis-extends init success.");
+		 logger.debug("mybatis-extends init success.");
 	}
 
 	/**

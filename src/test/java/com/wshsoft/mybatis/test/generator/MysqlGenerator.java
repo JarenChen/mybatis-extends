@@ -127,7 +127,8 @@ public class MysqlGenerator {
 
 		// 关闭默认 xml 生成，调整生成 至 根目录 --start
 		/*
-		 * TemplateConfig tc = new TemplateConfig(); tc.setXml(null);
+		 * TemplateConfig tc = new TemplateConfig();
+		 * tc.setXml(null);
 		 * mpg.setTemplate(tc);
 		 */
 		// 自定义模板配置，模板可以参考源码 /mybatis-extends/src/main/resources/template 使用 copy

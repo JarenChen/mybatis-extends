@@ -2,12 +2,14 @@ package com.wshsoft.mybatis.test.h2.entity.persistent;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.annotations.Version;
 import com.wshsoft.mybatis.enums.FieldStrategy;
+import com.wshsoft.mybatis.enums.IdType;
 
 /**
  * <p>
@@ -17,15 +19,15 @@ import com.wshsoft.mybatis.enums.FieldStrategy;
  * @author Carry xie
  */
 /* 表名 value 注解【 驼峰命名可无 】, resultMap 注解测试【 映射 xml 的 resultMap 内容 】 */
-@TableName
-public class H2User implements Serializable {
+@TableName("h2user")
+public class H2UserMetaObj implements Serializable {
 
     /* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
     /* 主键ID 注解，value 字段名，type 用户输入ID */
-    @TableId(value = "test_id")
+    @TableId(value = "test_id", type = IdType.AUTO)
     private Long id;
 
     /* 测试忽略验证 */
@@ -44,43 +46,45 @@ public class H2User implements Serializable {
 
     @Version
     private Integer version;
+    @TableField(value = "last_updated_dt")
+    private Timestamp lastUpdatedDt;
 
 
-    public H2User() {
+    public H2UserMetaObj() {
 
     }
 
-    public H2User(String name) {
+    public H2UserMetaObj(String name) {
         this.name = name;
     }
 
-    public H2User(Integer testType) {
+    public H2UserMetaObj(Integer testType) {
         this.testType = testType;
     }
 
-    public H2User(String name, Integer age) {
+    public H2UserMetaObj(String name, Integer age) {
         this.name = name;
         this.age = age;
     }
 
-    public H2User(Long id, String name) {
+    public H2UserMetaObj(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public H2User(Long id, Integer age) {
+    public H2UserMetaObj(Long id, Integer age) {
         this.id = id;
         this.age = age;
     }
 
-    public H2User(Long id, String name, Integer age, Integer testType) {
+    public H2UserMetaObj(Long id, String name, Integer age, Integer testType) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.testType = testType;
     }
 
-    public H2User(String name, Integer age, Integer testType) {
+    public H2UserMetaObj(String name, Integer age, Integer testType) {
         this.name = name;
         this.age = age;
         this.testType = testType;
@@ -142,9 +146,17 @@ public class H2User implements Serializable {
         this.version = version;
     }
 
+    public Timestamp getLastUpdatedDt() {
+        return lastUpdatedDt;
+    }
+
+    public void setLastUpdatedDt(Timestamp lastUpdatedDt) {
+        this.lastUpdatedDt = lastUpdatedDt;
+    }
+
     @Override
     public String toString() {
-        return "H2User{" +
+        return "H2UserMetaObj{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", age=" + age +
@@ -152,6 +164,7 @@ public class H2User implements Serializable {
                 ", testType=" + testType +
                 ", desc='" + desc + '\'' +
                 ", version=" + version +
+                ", lastUpdatedDt=" + lastUpdatedDt +
                 '}';
     }
 }

@@ -7,9 +7,9 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd  
            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-	<context:component-scan base-package="com.wshsoft.mybatis.test.mysql.plugins" />
+	<context:component-scan base-package="com.wshsoft.mybatis.test.mysql.plugins.optimisticLocker" />
 
-	<import resource="classpath:spring/spring-jdbc.xml" />
+	<import resource="classpath:h2/spring-jdbc.xml" />
 
 	<!-- MyBatis SqlSessionFactoryBean 配置 -->
 	<bean id="sqlSessionFactory"
@@ -21,12 +21,6 @@
 			<array>
 				
 				<bean class="com.wshsoft.mybatis.plugins.OptimisticLockerInterceptor">
-					<property name="properties">
-						<value>
-							versionHandlers=com.wshsoft.mybatis.test.plugins.optimisticLocker.StringTypeHandler
-						</value>
-					</property>
-				</bean>
 				<bean class="com.wshsoft.mybatis.plugins.PerformanceInterceptor" />
 			</array>
 		</property>

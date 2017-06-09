@@ -135,7 +135,14 @@ public class LogicSqlInjector extends AutoSqlInjector {
 		if (table.isLogicDelete()) {
 			SqlMethod sqlMethod = selective ? SqlMethod.LOGIC_UPDATE_BY_ID : SqlMethod.LOGIC_UPDATE_ALL_COLUMN_BY_ID;
 			String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, null),
-					table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table));
+					table.getKeyColumn(), table.getKeyProperty(),
+					"<if test=\"et instanceof java.util.Map\">"+
+						"<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
+							+"and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
+						+ "</if>"
+					+"</if>"+
+					getLogicDeleteSql(table)
+			);
 			SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 			this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
 		} else {

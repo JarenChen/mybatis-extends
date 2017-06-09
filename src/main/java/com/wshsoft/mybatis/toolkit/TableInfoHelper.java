@@ -81,49 +81,51 @@ public class TableInfoHelper {
 		return tableInfos;
 	}
 
-	/**
-	 * <p>
-	 * 实体类反射获取表信息【初始化】
-	 * <p>
-	 *
-	 * @param clazz
-	 *            反射实体类
-	 * @return
-	 */
-	public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
-		TableInfo ti = tableInfoCache.get(clazz.getName());
-		if (ti != null) {
-			return ti;
-		}
-		TableInfo tableInfo = new TableInfo();
-		GlobalConfiguration globalConfig;
-		if (null != builderAssistant) {
-			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
-			tableInfo.setConfigMark(builderAssistant.getConfiguration());
-			globalConfig = GlobalConfiguration.getGlobalConfig(builderAssistant.getConfiguration());
-		} else {
-			// 兼容测试场景
-			globalConfig = GlobalConfiguration.DEFAULT;
-		}
-		/* 表名 */
-		TableName table = clazz.getAnnotation(TableName.class);
-		String tableName = clazz.getSimpleName();
-		if (table != null && StringUtils.isNotEmpty(table.value())) {
-			tableName = table.value();
-		} else {
-			// 开启字段下划线申明
-			if (globalConfig.isDbColumnUnderline()) {
-				tableName = StringUtils.camelToUnderline(tableName);
-			}
-			// 大写命名判断
-			if (globalConfig.isCapitalMode()) {
-				tableName = tableName.toUpperCase();
-			} else {
-				// 首字母小写
-				tableName = StringUtils.firstToLowerCase(tableName);
-			}
-		}
-		tableInfo.setTableName(tableName);
+    /**
+     * <p>
+     * 实体类反射获取表信息【初始化】
+     * <p>
+     *
+     * @param clazz 反射实体类
+     * @return
+     */
+    public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
+        TableInfo tableInfo = tableInfoCache.get(clazz.getName());
+        if (StringUtils.checkValNotNull(tableInfo)) {
+            if (StringUtils.checkValNotNull(builderAssistant)) {
+                tableInfo.setConfigMark(builderAssistant.getConfiguration());
+            }
+            return tableInfo;
+        }
+        tableInfo = new TableInfo();
+        GlobalConfiguration globalConfig;
+        if (null != builderAssistant) {
+            tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
+            tableInfo.setConfigMark(builderAssistant.getConfiguration());
+            globalConfig = GlobalConfiguration.getGlobalConfig(builderAssistant.getConfiguration());
+        } else {
+            // 兼容测试场景
+            globalConfig = GlobalConfiguration.DEFAULT;
+        }
+        /* 表名 */
+        TableName table = clazz.getAnnotation(TableName.class);
+        String tableName = clazz.getSimpleName();
+        if (table != null && StringUtils.isNotEmpty(table.value())) {
+            tableName = table.value();
+        } else {
+            // 开启字段下划线申明
+            if (globalConfig.isDbColumnUnderline()) {
+                tableName = StringUtils.camelToUnderline(tableName);
+            }
+            // 大写命名判断
+            if (globalConfig.isCapitalMode()) {
+                tableName = tableName.toUpperCase();
+            } else {
+                // 首字母小写
+                tableName = StringUtils.firstToLowerCase(tableName);
+            }
+        }
+        tableInfo.setTableName(tableName);
 
 		// 开启了自定义 KEY 生成器
 		if (null != globalConfig.getKeyGenerator()) {
@@ -344,7 +346,7 @@ public class TableInfoHelper {
 	 *            反射类
 	 * @return
 	 */
-	private static List<Field> getAllFields(Class<?> clazz) {
+    public static List<Field> getAllFields(Class<?> clazz) {
 		List<Field> fieldList = ReflectionKit.getFieldList(clazz);
 		if (CollectionUtils.isNotEmpty(fieldList)) {
 			Iterator<Field> iterator = fieldList.iterator();

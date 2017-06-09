@@ -95,39 +95,34 @@ public class ReflectionKit {
 		return getMethodValue(entity.getClass(), entity, str);
 	}
 
-	/**
-	 * 调用对象的get方法检查对象所有属性是否为null
-	 * 
-	 * @param bean
-	 *            检查对象
-	 * @return boolean true对象所有属性不为null,false对象所有属性为null
-	 */
-	public static boolean checkFieldValueNotNull(Object bean) {
-		if (null == bean) {
-			return false;
-		}
-		Class<?> cls = bean.getClass();
-		TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
-		if (null == tableInfo) {
-			throw new MybatisExtendsException(
-					String.format("Error: Could Not find %s in TableInfo Cache. ", cls.getSimpleName()));
-		}
-		boolean result = false;
-		List<TableFieldInfo> fieldList = tableInfo.getFieldList();
-		for (TableFieldInfo tableFieldInfo : fieldList) {
-			FieldStrategy fieldStrategy = tableFieldInfo.getFieldStrategy();
-			Object val = getMethodValue(cls, bean, tableFieldInfo.getProperty());
-			if (FieldStrategy.NOT_EMPTY.equals(fieldStrategy)) {
-				if (StringUtils.checkValNotNull(val)) {
-					result = true;
-					break;
-				}
-			} else {
-				if (null != val) {
-					result = true;
-					break;
-				}
-			}
+    /**
+     * 调用对象的get方法检查对象所有属性是否为null
+     *
+     * @param bean 检查对象
+     * @return boolean true对象所有属性不为null,false对象所有属性为null
+     */
+    public static boolean checkFieldValueNotNull(Object bean) {
+        if (null == bean) {
+            return false;
+        }
+        Class<?> cls = bean.getClass();
+        TableInfo tableInfo = getTableInfoAsSuperClass(cls);
+        boolean result = false;
+        List<TableFieldInfo> fieldList = tableInfo.getFieldList();
+        for (TableFieldInfo tableFieldInfo : fieldList) {
+            FieldStrategy fieldStrategy = tableFieldInfo.getFieldStrategy();
+            Object val = getMethodValue(cls, bean, tableFieldInfo.getProperty());
+            if (FieldStrategy.NOT_EMPTY.equals(fieldStrategy)) {
+                if (StringUtils.checkValNotNull(val)) {
+                    result = true;
+                    break;
+                }
+            } else {
+                if (null != val) {
+                    result = true;
+                    break;
+                }
+            }
 
 		}
 		return result;
@@ -240,6 +235,25 @@ public class ReflectionKit {
             }
         }
         return fieldList;
+    }
+
+    /**
+     * 递归自身的class,获取TableInfo
+     *
+     * @param cls
+     * @return TableInfo
+     * @throws MybatisPlusException
+     */
+    private static TableInfo getTableInfoAsSuperClass(Class<?> cls) {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
+        if (tableInfo == null) {
+            if (Object.class.equals(cls)) {
+                throw new MybatisExtendsException(String.format("Error: Could Not find %s in TableInfo Cache. ", cls.getSimpleName()));
+            } else {
+                tableInfo = getTableInfoAsSuperClass(cls.getSuperclass());
+            }
+        }
+        return tableInfo;
     }
 
 }

@@ -38,14 +38,6 @@ import com.wshsoft.mybatis.mapper.EntityWrapper;
 import com.wshsoft.mybatis.toolkit.PluginUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 
-import net.sf.jsqlparser.expression.BinaryExpression;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.update.Update;
-
 /**
  * <p>
  * MyBatis乐观锁插件
@@ -65,248 +57,214 @@ import net.sf.jsqlparser.statement.update.Update;
  * @since 2017-04-08
  */
 @Intercepts({
-		@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
-public final class OptimisticLockerInterceptor implements Interceptor {
+        @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
+public class OptimisticLockerInterceptor implements Interceptor {
 
-	/**
-	 * 根据对象类型缓存version基本信息
-	 */
-	private static final Map<Class<?>, LockerCache> versionCache = new ConcurrentHashMap<>();
+    private final Map<Class<?>, EntityField> versionFieldCache = new HashMap<>();
+    private final Map<Class<?>, List<EntityField>> entityFieldsCache = new HashMap<>();
 
-	/**
-	 * 根据version字段类型缓存的处理器
-	 */
-	private static final Map<Type, VersionHandler<?>> typeHandlers = new HashMap<>();
+    private static final String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
+    private static final String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
+    private static final String NAME_ENTITY = "et";
+    private static final String NAME_ENTITY_WRAPPER = "ew";
+    private static final String PARAM_UPDATE_METHOD_NAME = "update";
 
-	private static final Expression RIGHT_EXPRESSION = new Column("?");
+    @Override
+    @SuppressWarnings("unchecked")
+    public Object intercept(Invocation invocation) throws Throwable {
+        Object[] args = invocation.getArgs();
+        MappedStatement ms = (MappedStatement) args[0];
+        if(SqlCommandType.UPDATE.compareTo(ms.getSqlCommandType())!=0){
+            return invocation.proceed();
+        }
+        Object param = args[1];
+        if(param instanceof MapperMethod.ParamMap){
+            MapperMethod.ParamMap map = (MapperMethod.ParamMap) param;
+            Wrapper ew = null;
+            if(map.containsKey(NAME_ENTITY_WRAPPER)){//mapper.update(updEntity, EntityWrapper<>(whereEntity);
+                ew = (Wrapper) map.get(NAME_ENTITY_WRAPPER);
+            }//else updateById(entity) -->> change updateById(entity) to updateById(@Param("et") entity)
+            Object et = map.get(NAME_ENTITY);
+            if(ew!=null){
+                Object entity = ew.getEntity();
+                if(entity!=null){
+                    EntityField ef = getVersionField(entity.getClass());
+                    Field versionField = ef==null?null:ef.getField();
+                    if (versionField != null) {
+                        Object originalVersionVal = versionField.get(entity);
+                        if(originalVersionVal!=null){
+                            versionField.set(et, getUpdatedVersionVal(originalVersionVal));
+                        }
+                    }
+                }
+            }else{
+                String methodId = ms.getId();
+                String updateMethodName = methodId.substring(ms.getId().lastIndexOf(".")+1);
+                if(PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)){//update(entity, null) -->> update all. ignore version
+                    return invocation.proceed();
+                }
+                EntityField entityField = getVersionField(et.getClass());
+                Field versionField = entityField==null?null:entityField.getField();
+                Object originalVersionVal;
+                if(versionField!=null && (originalVersionVal=versionField.get(et))!=null) {
+                    TableInfo tableInfo = TableInfoHelper.getTableInfo(et.getClass());
+                    Map<String,Object> entityMap = new HashMap<>();
+                    List<EntityField> fields = getEntityFields(et.getClass());
+                    for(EntityField ef : fields){
+                        Field fd = ef.getField();
+                        if(fd.isAccessible()) {
+                            entityMap.put(fd.getName(), fd.get(et));
+                            if (ef.isVersion()) {
+                                versionField = fd;
+                            }
+                        }
+                    }
+                    String versionPropertyName = versionField.getName();
+                    List<TableFieldInfo> fieldList = tableInfo.getFieldList();
+                    String versionColumnName = entityField.getColumnName();
+                    if(versionColumnName==null) {
+                        for (TableFieldInfo tf : fieldList) {
+                            if (versionPropertyName.equals(tf.getProperty())) {
+                                versionColumnName = tf.getColumn();
+                            }
+                        }
+                    }
+                    if (versionColumnName != null) {
+                        entityField.setColumnName(versionColumnName);
+                        entityMap.put(versionField.getName(), getUpdatedVersionVal(originalVersionVal));
+                        entityMap.put(MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
+                        entityMap.put(MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
+                        map.put(NAME_ENTITY, entityMap);
+                    }
+                }
+            }
+        }
+        return invocation.proceed();
+    }
 
-	static {
-		IntegerTypeHandler integerTypeHandler = new IntegerTypeHandler();
-		typeHandlers.put(int.class, integerTypeHandler);
-		typeHandlers.put(Integer.class, integerTypeHandler);
+    /**
+     * This method provides the control for version value.<BR>
+     * Returned value type must be the same as original one.
+     *
+     * @param originalVersionVal
+     * @return updated version val
+     */
+    protected Object getUpdatedVersionVal(Object originalVersionVal){
+        Class<?> versionValClass = originalVersionVal.getClass();
+        if(long.class.equals(versionValClass)){
+            return ((long)originalVersionVal)+1;
+        }else if(Long.class.equals(versionValClass)){
+            return ((Long)originalVersionVal)+1;
+        }else if(int.class.equals(versionValClass)){
+            return ((int)originalVersionVal)+1;
+        }else if(Integer.class.equals(versionValClass)){
+            return ((Integer)originalVersionVal)+1;
+        }else if(Date.class.equals(versionValClass)){
+            return new Date();
+        }else if(Timestamp.class.equals(versionValClass)){
+            return new Timestamp(System.currentTimeMillis());
+        }else{
+            return originalVersionVal;//not supported type, return original val.
+        }
+    }
 
-		LongTypeHandler longTypeHandler = new LongTypeHandler();
-		typeHandlers.put(long.class, longTypeHandler);
-		typeHandlers.put(Long.class, longTypeHandler);
+    @Override
+    public Object plugin(Object target) {
+        if (target instanceof Executor) {
+            return Plugin.wrap(target, this);
+        }
+        return target;
+    }
 
-		typeHandlers.put(Date.class, new DateTypeHandler());
-		typeHandlers.put(Timestamp.class, new TimestampTypeHandler());
-	}
+    @Override
+    public void setProperties(Properties properties) {
 
-	@Override
-	public Object intercept(Invocation invocation) throws Exception {
-		StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
-		MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
-		// 先判断是不是真正的UPDATE操作
-		MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
-		if (!ms.getSqlCommandType().equals(SqlCommandType.UPDATE)) {
-			return invocation.proceed();
-		}
-		BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
-		// 获得参数类型,去缓存中快速判断是否有version注解才继续执行
-		Class<?> parameterClass = ms.getParameterMap().getType();
-		LockerCache lockerCache = versionCache.get(parameterClass);
-		if (lockerCache != null) {
-			if (lockerCache.lock) {
-				processChangeSql(ms, boundSql, lockerCache);
-			}
-		} else {
-			Field versionField = getVersionField(parameterClass);
-			if (versionField != null) {
-				Class<?> fieldType = versionField.getType();
-				if (!typeHandlers.containsKey(fieldType)) {
-					throw new TypeException("乐观锁不支持" + fieldType.getName() + "类型,请自定义实现");
-				}
-				final TableField tableField = versionField.getAnnotation(TableField.class);
-				String versionColumn = versionField.getName();
-				if (tableField != null) {
-					versionColumn = tableField.value();
-				}
-				LockerCache lc = new LockerCache(true, versionColumn, versionField, typeHandlers.get(fieldType));
-				versionCache.put(parameterClass, lc);
-				processChangeSql(ms, boundSql, lc);
-			} else {
-				versionCache.put(parameterClass, LockerCache.INSTANCE);
-			}
-		}
-		return invocation.proceed();
+    }
 
-	}
+    private EntityField getVersionField(Class<?> parameterClass) {
+        synchronized (parameterClass.getName()) {
+            if (versionFieldCache.containsKey(parameterClass)) {
+                return versionFieldCache.get(parameterClass);
+            }else{
+                EntityField field = getVersionFieldRegular(parameterClass);
+                versionFieldCache.put(parameterClass, field);
+                return field;
+            }
+        }
+    }
 
-	private Field getVersionField(Class<?> parameterClass) {
-		if (parameterClass != Object.class) {
-			for (Field field : parameterClass.getDeclaredFields()) {
-				if (field.isAnnotationPresent(Version.class)) {
-					field.setAccessible(true);
-					return field;
-				}
-			}
-			return getVersionField(parameterClass.getSuperclass());
-		}
-		return null;
+    private EntityField getVersionFieldRegular(Class<?> parameterClass){
+        if (parameterClass != Object.class) {
+            for (Field field : parameterClass.getDeclaredFields()) {
+                if (field.isAnnotationPresent(Version.class)) {
+                    field.setAccessible(true);
+                    return new EntityField(field, true);
+                }
+            }
+            return getVersionFieldRegular(parameterClass.getSuperclass());
+        }
+        return null;
+    }
 
-	}
+    private List<EntityField> getEntityFields(Class<?> parameterClass){
+        if(entityFieldsCache.containsKey(parameterClass)){
+            return entityFieldsCache.get(parameterClass);
+        }else{
+            List<EntityField> fields = getFieldsFromClazz(parameterClass, null);
+            entityFieldsCache.put(parameterClass, fields);
+            return fields;
+        }
+    }
 
-	private void processChangeSql(MappedStatement ms, BoundSql boundSql, LockerCache lockerCache) throws Exception {
-		Object parameterObject = boundSql.getParameterObject();
-		if (parameterObject instanceof ParamMap) {
-			ParamMap<?> paramMap = (ParamMap<?>) parameterObject;
-			parameterObject = paramMap.get("et");
-			EntityWrapper<?> entityWrapper = (EntityWrapper<?>) paramMap.get("ew");
-			if (entityWrapper != null) {
-				Object entity = entityWrapper.getEntity();
-				if (entity != null && lockerCache.field.get(entity) == null) {
-					changSql(ms, boundSql, parameterObject, lockerCache);
-				}
-			}
-		} else if(!(parameterObject instanceof DefaultSqlSession.StrictMap)) {
-			//如果是有逻辑删，且DELETE传入字段为ID或IDS的话，MYBATIS就会使用StrictMap
-			//这里是判断如量不为ParamMap县城不为StrictMap类型就进行乐观锁
-			changSql(ms, boundSql, parameterObject, lockerCache);
-		}
-	}
+    private List<EntityField> getFieldsFromClazz(Class<?> parameterClass, List<EntityField> fieldList){
+        if(fieldList==null){
+            fieldList = new ArrayList<>();
+        }
+        List<Field> fields = ReflectionKit.getFieldList(parameterClass);
+        for(Field field:fields){
+            field.setAccessible(true);
+            if (field.isAnnotationPresent(Version.class)) {
+                fieldList.add(new EntityField(field, true));
+            }else{
+                fieldList.add(new EntityField(field, false));
+            }
+        }
+        return fieldList;
+    }
 
-	@SuppressWarnings("unchecked")
-	private void changSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, LockerCache lockerCache)
-			throws Exception {
-		Field versionField = lockerCache.field;
-		String versionColumn = lockerCache.column;
-		final Object versionValue = versionField.get(parameterObject);
-		if (versionValue != null) {// 先判断传参是否携带version,没带跳过插件
-			Configuration configuration = ms.getConfiguration();
-			// 给字段赋新值
-			lockerCache.versionHandler.plusVersion(parameterObject, versionField, versionValue);
-			// 处理where条件,添加?
-			Update jsqlSql = (Update) CCJSqlParserUtil.parse(boundSql.getSql());
-			BinaryExpression expression = (BinaryExpression) jsqlSql.getWhere();
-			if (expression != null && !expression.toString().contains(versionColumn)) {
-				EqualsTo equalsTo = new EqualsTo();
-				equalsTo.setLeftExpression(new Column(versionColumn));
-				equalsTo.setRightExpression(RIGHT_EXPRESSION);
-				jsqlSql.setWhere(new AndExpression(equalsTo, expression));
-				List<ParameterMapping> parameterMappings = new LinkedList<>(boundSql.getParameterMappings());
-				parameterMappings.add(jsqlSql.getExpressions().size(), getVersionMappingInstance(configuration));
-				MetaObject boundSqlMeta = configuration.newMetaObject(boundSql);
-				boundSqlMeta.setValue("sql", jsqlSql.toString());
-				boundSqlMeta.setValue("parameterMappings", parameterMappings);
-			}
-			// 设置参数
-			boundSql.setAdditionalParameter("originVersionValue", versionValue);
-		}
-	}
+}
+class EntityField{
 
-	private volatile ParameterMapping parameterMapping;
+    private Field field;
+    private boolean version;
+    private String columnName;
 
-	private ParameterMapping getVersionMappingInstance(Configuration configuration) {
-		if (parameterMapping == null) {
-			synchronized (OptimisticLockerInterceptor.class) {
-				if (parameterMapping == null) {
-					parameterMapping = new ParameterMapping.Builder(configuration, "originVersionValue",
-							new UnknownTypeHandler(configuration.getTypeHandlerRegistry())).build();
-				}
-			}
-		}
-		return parameterMapping;
-	}
+    public EntityField(Field field, boolean version) {
+        this.field = field;
+        this.version = version;
+    }
 
-	@Override
-	public Object plugin(Object target) {
-		if (target instanceof StatementHandler) {
-			return Plugin.wrap(target, this);
-		}
-		return target;
-	}
+    public Field getField() {
+        return field;
+    }
 
-	@Override
-	public void setProperties(Properties properties) {
-		String versionHandlers = properties.getProperty("versionHandlers");
-		if (StringUtils.isNotEmpty(versionHandlers)) {
-			for (String handlerClazz : versionHandlers.split(",")) {
-				try {
-					registerHandler(Class.forName(handlerClazz));
-				} catch (Exception e) {
-					throw ExceptionFactory.wrapException("乐观锁插件自定义处理器注册失败", e);
-				}
-			}
-		}
-	}
+    public void setField(Field field) {
+        this.field = field;
+    }
 
-	/**
-	 * 注册处理器
-	 */
-	private static void registerHandler(Class<?> versionHandlerClazz) throws Exception {
-		ParameterizedType parameterizedType = (ParameterizedType) versionHandlerClazz.getGenericInterfaces()[0];
-		Object versionInstance = versionHandlerClazz.newInstance();
-		if (!(versionInstance instanceof VersionHandler)) {
-			throw new TypeException("参数未实现VersionHandler,不能注入");
-		} else {
-			Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-			if (actualTypeArguments.length == 0) {
-				throw new IllegalArgumentException("处理器泛型未定义");
-			} else if (Object.class.equals(actualTypeArguments[0])) {
-				throw new IllegalArgumentException("处理器泛型不能为Object");
-			} else {
-				typeHandlers.put(actualTypeArguments[0], (VersionHandler<?>) versionInstance);
-			}
-		}
-	}
+    public boolean isVersion() {
+        return version;
+    }
 
-	// *****************************基本类型处理器*****************************
-	private static class IntegerTypeHandler implements VersionHandler<Integer> {
+    public void setVersion(boolean version) {
+        this.version = version;
+    }
 
-		@Override
-		public void plusVersion(Object paramObj, Field field, Integer versionValue) throws Exception {
-			field.set(paramObj, versionValue + 1);
-		}
-	}
+    public String getColumnName() {
+        return columnName;
+    }
 
-	private static class LongTypeHandler implements VersionHandler<Long> {
-
-		@Override
-		public void plusVersion(Object paramObj, Field field, Long versionValue) throws Exception {
-			field.set(paramObj, versionValue + 1);
-		}
-	}
-
-	// ***************************** 时间类型处理器*****************************
-	private static class DateTypeHandler implements VersionHandler<Date> {
-
-		@Override
-		public void plusVersion(Object paramObj, Field field, Date versionValue) throws Exception {
-			field.set(paramObj, new Date());
-		}
-	}
-
-	private static class TimestampTypeHandler implements VersionHandler<Timestamp> {
-
-		@Override
-		public void plusVersion(Object paramObj, Field field, Timestamp versionValue) throws Exception {
-			field.set(paramObj, new Timestamp(new Date().getTime()));
-		}
-	}
-
-	/**
-	 * 缓存对象
-	 */
-	@SuppressWarnings("rawtypes")
-	private static class LockerCache {
-
-		public static final LockerCache INSTANCE = new LockerCache();
-
-		private boolean lock;
-		private String column;
-		private Field field;
-		private VersionHandler versionHandler;
-
-		public LockerCache() {
-		}
-
-		LockerCache(Boolean lock, String column, Field field, VersionHandler versionHandler) {
-			this.lock = lock;
-			this.column = column;
-			this.field = field;
-			this.versionHandler = versionHandler;
-		}
-	}
-
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
 }

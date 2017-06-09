@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
-import com.wshsoft.mybatis.annotations.Version;
 import com.wshsoft.mybatis.enums.FieldStrategy;
 
 /**
@@ -17,8 +16,8 @@ import com.wshsoft.mybatis.enums.FieldStrategy;
  * @author Carry xie
  */
 /* 表名 value 注解【 驼峰命名可无 】, resultMap 注解测试【 映射 xml 的 resultMap 内容 】 */
-@TableName
-public class H2User implements Serializable {
+@TableName("h2user")
+public class H2UserNoVersion implements Serializable {
 
     /* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */
     @TableField(exist = false)
@@ -42,45 +41,44 @@ public class H2User implements Serializable {
 
     private String desc;
 
-    @Version
     private Integer version;
 
 
-    public H2User() {
+    public H2UserNoVersion() {
 
     }
 
-    public H2User(String name) {
+    public H2UserNoVersion(String name) {
         this.name = name;
     }
 
-    public H2User(Integer testType) {
+    public H2UserNoVersion(Integer testType) {
         this.testType = testType;
     }
 
-    public H2User(String name, Integer age) {
+    public H2UserNoVersion(String name, Integer age) {
         this.name = name;
         this.age = age;
     }
 
-    public H2User(Long id, String name) {
+    public H2UserNoVersion(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public H2User(Long id, Integer age) {
+    public H2UserNoVersion(Long id, Integer age) {
         this.id = id;
         this.age = age;
     }
 
-    public H2User(Long id, String name, Integer age, Integer testType) {
+    public H2UserNoVersion(Long id, String name, Integer age, Integer testType) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.testType = testType;
     }
 
-    public H2User(String name, Integer age, Integer testType) {
+    public H2UserNoVersion(String name, Integer age, Integer testType) {
         this.name = name;
         this.age = age;
         this.testType = testType;

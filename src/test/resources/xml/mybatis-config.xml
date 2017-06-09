@@ -28,7 +28,7 @@
 	<!-- 查询对象别名配置 -->
 	<typeAliases>
 		<!-- 
-		<typeAlias alias="taskVo" type="xxx.vo.TaskVo" />
+		<typeAlias alias="userVo" type="xxx.vo.UserVo" />
 		 -->
 	</typeAliases>
 </configuration>

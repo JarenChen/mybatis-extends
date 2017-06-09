@@ -13,7 +13,10 @@ import org.springframework.core.io.ResourceLoader;
 import com.wshsoft.mybatis.MybatisConfiguration;
 import com.wshsoft.mybatis.MybatisXMLLanguageDriver;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.mapper.LogicSqlInjector;
+import com.wshsoft.mybatis.plugins.OptimisticLockerInterceptor;
 import com.wshsoft.mybatis.plugins.PaginationInterceptor;
+import com.wshsoft.mybatis.plugins.PerformanceInterceptor;
 import com.wshsoft.mybatis.spring.MybatisSqlSessionFactoryBean;
 
 /**
@@ -41,13 +44,22 @@ public class MybatisExiendsConfig {
 		sqlSessionFactory.setConfiguration(configuration);
 		PaginationInterceptor pagination = new PaginationInterceptor();
 		pagination.setDialectType("h2");
-		sqlSessionFactory.setPlugins(new Interceptor[] { pagination });
+        OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
+        sqlSessionFactory.setPlugins(new Interceptor[]{
+                pagination,
+                optLock,
+                new PerformanceInterceptor()
+        });
 		sqlSessionFactory.setGlobalConfig(globalConfiguration);
 		return sqlSessionFactory.getObject();
 	}
 
-	@Bean
-	public GlobalConfiguration globalConfiguration() {
-		return new GlobalConfiguration();
-	}
+    @Bean
+    public GlobalConfiguration globalConfiguration() {
+        GlobalConfiguration conf = new GlobalConfiguration(new LogicSqlInjector());
+        conf.setLogicDeleteValue("D");
+        conf.setLogicNotDeleteValue("A");
+        conf.setIdType(2);
+        return conf;
+    }
 }
