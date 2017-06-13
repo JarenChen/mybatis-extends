@@ -383,7 +383,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	 * @throws IOException
 	 *             if loading the config file failed
 	 */
-	protected SqlSessionFactory buildSqlSessionFactory() throws IOException {
+    protected SqlSessionFactory buildSqlSessionFactory() throws Exception {
 
 		Configuration configuration;
 
@@ -423,7 +423,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		}
 
 		if (hasLength(this.typeAliasesPackage)) {
-			// TODO
+            // TODO 支持自定义通配符
 			String[] typeAliasPackageArray;
 			if (typeAliasesPackage.contains("*")) {
 				typeAliasPackageArray = PackageHelper.convertTypeAliasesPackage(typeAliasesPackage);
@@ -526,7 +526,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		if (!isEmpty(this.mapperLocations)) {
 			if (globalConfig.isRefresh()) {
 				// TODO 设置自动刷新配置 减少配置
-                new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2,
+                new MybatisMapperRefresh(sqlSessionFactory, 2,
                         2, true);
 			}
 			for (Resource mapperLocation : this.mapperLocations) {

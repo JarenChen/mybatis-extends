@@ -57,29 +57,29 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return SqlHelper.retBool(result);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Class<T> currentModleClass() {
-		return ReflectionKit.getSuperClassGenricType(getClass(), 1);
-	}
+    @SuppressWarnings("unchecked")
+    protected Class<T> currentModelClass() {
+        return ReflectionKit.getSuperClassGenricType(getClass(), 1);
+    }
 
-	/**
-	 * <p>
-	 * 批量操作 SqlSession
-	 * </p>
-	 */
-	protected SqlSession sqlSessionBatch() {
-		return SqlHelper.sqlSessionBatch(currentModleClass());
-	}
+    /**
+     * <p>
+     * 批量操作 SqlSession
+     * </p>
+     */
+    protected SqlSession sqlSessionBatch() {
+        return SqlHelper.sqlSessionBatch(currentModelClass());
+    }
 
-	/**
-	 * 获取SqlStatement
-	 * 
-	 * @param sqlMethod
-	 * @return
-	 */
-	protected String sqlStatement(SqlMethod sqlMethod) {
-		return SqlHelper.table(currentModleClass()).getSqlStatement(sqlMethod.getMethod());
-	}
+    /**
+     * 获取SqlStatement
+     *
+     * @param sqlMethod
+     * @return
+     */
+    protected String sqlStatement(SqlMethod sqlMethod) {
+        return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
+    }
 
 	@Override
 	@Transactional

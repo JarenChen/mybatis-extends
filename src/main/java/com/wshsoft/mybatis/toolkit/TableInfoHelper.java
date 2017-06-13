@@ -138,26 +138,32 @@ public class TableInfoHelper {
 		}
 		List<TableFieldInfo> fieldList = new ArrayList<TableFieldInfo>();
 		List<Field> list = getAllFields(clazz);
+        // 标记是否读取到主键 0、否  1、是
+        boolean idNotRead = true;
 		boolean existTableId = existTableId(list);
 		for (Field field : list) {
 
 			/**
 			 * 主键ID 初始化
 			 */
+            if (idNotRead) {
 			if (existTableId) {
 				if (initTableId(globalConfig, tableInfo, field, clazz)) {
+                        idNotRead = false;
 					continue;
 				}
 			} else if (initFieldId(globalConfig, tableInfo, field, clazz)) {
+                    idNotRead = false;
 				continue;
 			}
+            }
 
-			/**
-			 * 字段初始化
-			 */
-			if (initTableField(globalConfig, tableInfo, fieldList, field, clazz)) {
-				continue;
-			}
+            /*
+             * 字段初始化
+             */
+            if (initTableField(globalConfig, tableInfo, fieldList, field, clazz)) {
+                continue;
+            }
 
 			/**
 			 * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里

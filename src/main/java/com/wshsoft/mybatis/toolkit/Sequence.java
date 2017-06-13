@@ -3,6 +3,7 @@ package com.wshsoft.mybatis.toolkit;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -112,7 +113,6 @@ public class Sequence {
 
 	/**
 	 * 获取下一个ID
-	 * 
 	 * @return
 	 */
 	public synchronized long nextId() {
@@ -124,31 +124,35 @@ public class Sequence {
 					wait(offset << 1);
 					timestamp = timeGen();
 					if (timestamp < lastTimestamp) {
-						throw new RuntimeException(String
-								.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
-					}
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-			} else {
-				throw new RuntimeException(
-						String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
-			}
-		}
-		if (lastTimestamp == timestamp) {
-			sequence = (sequence + 1) & sequenceMask;
-			if (sequence == 0) {
-				timestamp = tilNextMillis(lastTimestamp);
-			}
-		} else {
-			sequence = 0L;
-		}
+                        throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+            }
+        }
 
-		lastTimestamp = timestamp;
+        if (lastTimestamp == timestamp) {
+            // 相同毫秒内，序列号自增
+            sequence = (sequence + 1) & sequenceMask;
+            if (sequence == 0) {
+                // 同一毫秒的序列数已经达到最大
+                timestamp = tilNextMillis(lastTimestamp);
+            }
+        } else {
+            // 不同毫秒内，序列号置为 0 - 9 随机数
+            sequence = ThreadLocalRandom.current().nextLong(0,9);
+        }
 
-		return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift)
-				| (workerId << workerIdShift) | sequence;
-	}
+        lastTimestamp = timestamp;
+
+        return ((timestamp - twepoch) << timestampLeftShift)    // 时间戳部分
+                | (datacenterId << datacenterIdShift)           // 数据中心部分
+                | (workerId << workerIdShift)                   // 机器标识部分
+                | sequence;                                     // 序列号部分
+    }
 
 	protected long tilNextMillis(long lastTimestamp) {
 		long timestamp = timeGen();
