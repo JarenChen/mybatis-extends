@@ -20,9 +20,9 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.enums.DBType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 import com.wshsoft.mybatis.toolkit.VersionUtils;
 
@@ -47,31 +47,30 @@ public class SqlExplainInterceptor implements Interceptor {
 	 */
 	private boolean stopProceed = false;
 
-	@Override
-	public Object intercept(Invocation invocation) throws Throwable {
-		/**
-		 * 处理 DELETE UPDATE 语句
-		 */
-		MappedStatement ms = (MappedStatement) invocation.getArgs()[0];
-		if (ms.getSqlCommandType() == SqlCommandType.DELETE || ms.getSqlCommandType() == SqlCommandType.UPDATE) {
-			Executor executor = (Executor) invocation.getTarget();
-			Configuration configuration = ms.getConfiguration();
-			Object parameter = invocation.getArgs()[1];
-			BoundSql boundSql = ms.getBoundSql(parameter);
-			Connection connection = executor.getTransaction().getConnection();
-			String databaseVersion = connection.getMetaData().getDatabaseProductVersion();
-			if (GlobalConfiguration.getDbType(configuration).equals(DBType.MYSQL)
-					&& VersionUtils.compare(minMySQLVersion, databaseVersion)) {
-				logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!");
-				return invocation.proceed();
-			}
-			/**
-			 * 执行 SQL 分析
-			 */
-			sqlExplain(configuration, ms, boundSql, connection, parameter);
-		}
-		return invocation.proceed();
-	}
+    public Object intercept(Invocation invocation) throws Throwable {
+        /**
+         * 处理 DELETE UPDATE 语句
+         */
+        MappedStatement ms = (MappedStatement) invocation.getArgs()[0];
+        if (ms.getSqlCommandType() == SqlCommandType.DELETE || ms.getSqlCommandType() == SqlCommandType.UPDATE) {
+            Executor executor = (Executor) invocation.getTarget();
+            Configuration configuration = ms.getConfiguration();
+            Object parameter = invocation.getArgs()[1];
+            BoundSql boundSql = ms.getBoundSql(parameter);
+            Connection connection = executor.getTransaction().getConnection();
+            String databaseVersion = connection.getMetaData().getDatabaseProductVersion();
+            if (GlobalConfigUtils.getDbType(configuration).equals(DBType.MYSQL)
+                    && VersionUtils.compare(minMySQLVersion, databaseVersion)) {
+                logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!");
+                return invocation.proceed();
+            }
+            /**
+             * 执行 SQL 分析
+             */
+            sqlExplain(configuration, ms, boundSql, connection, parameter);
+        }
+        return invocation.proceed();
+    }
 
 	/**
 	 * <p>

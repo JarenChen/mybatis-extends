@@ -1,6 +1,5 @@
 package com.wshsoft.mybatis.test;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.ibatis.session.SqlSession;

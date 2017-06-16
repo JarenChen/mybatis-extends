@@ -7,7 +7,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
 
 /**
  * <p>
@@ -49,7 +49,7 @@ public class MybatisConfiguration extends Configuration {
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
 		logger.debug("addMappedStatement: " + ms.getId());
-		if (GlobalConfiguration.isRefresh(ms.getConfiguration())) {
+        if (GlobalConfigUtils.isRefresh(ms.getConfiguration())) {
 			/*
 			 * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
 			 */

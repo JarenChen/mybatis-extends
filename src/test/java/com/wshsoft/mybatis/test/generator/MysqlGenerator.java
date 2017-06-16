@@ -1,18 +1,18 @@
 package com.wshsoft.mybatis.test.generator;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.wshsoft.mybatis.generator.AutoGenerator;
 import com.wshsoft.mybatis.generator.InjectionConfig;
-import com.wshsoft.mybatis.generator.config.DataSourceConfig;
-import com.wshsoft.mybatis.generator.config.GlobalConfig;
-import com.wshsoft.mybatis.generator.config.PackageConfig;
-import com.wshsoft.mybatis.generator.config.StrategyConfig;
+import com.wshsoft.mybatis.generator.config.*;
 import com.wshsoft.mybatis.generator.config.converts.MySqlTypeConvert;
+import com.wshsoft.mybatis.generator.config.po.TableInfo;
 import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>

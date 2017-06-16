@@ -8,8 +8,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.plugins.Page;
+import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
@@ -80,18 +80,18 @@ public class SqlRunner {
 		return SqlHelper.retBool(sqlSession().delete(DELETE, sqlMap(sql, args)));
 	}
 
-	/**
-	 * 获取sqlMap参数
-	 * 
-	 * @param sql
-	 * @param args
-	 * @return
-	 */
-	private Map<String, String> sqlMap(String sql, Object... args) {
-		Map<String, String> sqlMap = new HashMap<String, String>();
-		sqlMap.put(SQL, StringUtils.sqlArgsFill(sql, args));
-		return sqlMap;
-	}
+    /**
+     * 获取sqlMap参数
+     *
+     * @param sql
+     * @param args
+     * @return
+     */
+    private Map<String, String> sqlMap(String sql, Object... args) {
+        Map<String, String> sqlMap = new HashMap<>();
+        sqlMap.put(SQL, StringUtils.sqlArgsFill(sql, args));
+        return sqlMap;
+    }
 
 	@Transactional
 	public boolean update(String sql, Object... args) {
@@ -133,7 +133,7 @@ public class SqlRunner {
      * <p/>
      */
     private SqlSession sqlSession() {
-        return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfiguration.getSqlSession(FACTORY.getConfiguration());
+        return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfigUtils.getSqlSession(FACTORY.getConfiguration());
     }
 
 }

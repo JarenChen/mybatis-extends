@@ -1,5 +1,6 @@
 package com.wshsoft.mybatis.plugins;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Statement;
 import java.util.Properties;
@@ -54,6 +55,8 @@ public class PerformanceInterceptor implements Interceptor {
      */
     private boolean writeInLog = false;
 
+    private Method oracleGetOriginalSqlMethod;
+
     public Object intercept(Invocation invocation) throws Throwable {
         Statement statement;
         Object firstArg = invocation.getArgs()[0];
@@ -69,8 +72,32 @@ public class PerformanceInterceptor implements Interceptor {
             // do nothing
         }
 
-        // 获取执行 SQL
-        String originalSql = statement.toString();
+        String originalSql = null;
+        String stmtClassName = statement.getClass().getName();
+        if ("oracle.jdbc.driver.T4CPreparedStatement".equals(stmtClassName)) {
+            try {
+                if (oracleGetOriginalSqlMethod != null) {
+                    Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
+                    if (stmtSql != null && stmtSql instanceof String) {
+                        originalSql = (String) stmtSql;
+                    }
+                } else {
+                    Class<?> clazz = Class.forName("oracle.jdbc.driver.OracleStatement");
+                    oracleGetOriginalSqlMethod = clazz.getDeclaredMethod("getOriginalSql", (Class<?>) null);
+                    if (oracleGetOriginalSqlMethod != null) {
+                        Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
+                        if (stmtSql != null && stmtSql instanceof String) {
+                            originalSql = (String) stmtSql;
+                        }
+                    }
+                }
+            } catch (Exception e) {//ignore
+            }
+        }
+        if (originalSql == null) {
+            originalSql = statement.toString();
+        }
+
         int index = originalSql.indexOf(':');
         if (index > 0) {
             originalSql = originalSql.substring(index + 1, originalSql.length());

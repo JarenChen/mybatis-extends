@@ -51,6 +51,7 @@ import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
 import org.apache.ibatis.builder.annotation.MethodResolver;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
+import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -76,8 +77,8 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.mapper.BaseMapper;
+import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
 
 /**
  * <p>
@@ -117,14 +118,16 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 	public void parse() {
 		String resource = type.toString();
 		if (!configuration.isResourceLoaded(resource)) {
-			boolean existXml = loadXmlResource();
+            loadXmlResource();
 			configuration.addLoadedResource(resource);
 			assistant.setCurrentNamespace(type.getName());
 			parseCache();
 			parseCacheRef();
 			Method[] methods = type.getMethods();
-			// TODO 注入存在 xxMapper.xml CURD (应该在注解之前注入)
-			inspectInject(existXml);
+            // TODO 注入 CURD 动态 SQL (应该在注解之前注入)
+            if (BaseMapper.class.isAssignableFrom(type)) {
+                GlobalConfigUtils.getSqlInjector(configuration).inspectInject(assistant, type);
+            }
 			for (Method method : methods) {
 				try {
 					// issue #237
@@ -138,15 +141,6 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
 		}
 		parsePendingMethods();
-	}
-
-	/*
-	 * 注入 CURD 动态 SQL(XML不存在时注入)
-	 */
-	private void inspectInject(boolean flag) {
-		if (!flag && BaseMapper.class.isAssignableFrom(type)) {
-			GlobalConfiguration.getSqlInjector(configuration).inspectInject(assistant, type);
-		}
 	}
 
 	private void parsePendingMethods() {
@@ -164,15 +158,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 		}
 	}
 
-    /**
-     * <p>
-     * 是否存在XML(该方法并不能客观的判断resource的路径,只是Mybatis默认认为的xml路径)
-     * </p>
-     *
-     * @return true 存在, false 不存在
-     */
-    private boolean loadXmlResource() {
-        boolean flag = true;
+    private void loadXmlResource() {
         // Spring may not know the real resource name so we check a flag
         // to prevent loading again a resource twice
         // this flag is set at XMLMapperBuilder#bindMapperForNamespace
@@ -183,15 +169,12 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 inputStream = Resources.getResourceAsStream(type.getClassLoader(), xmlResource);
             } catch (IOException e) {
                 // ignore, resource is not required
-                flag = false;
             }
             if (inputStream != null) {
-                MybatisXMLMapperBuilder xmlParser = new MybatisXMLMapperBuilder(inputStream, assistant.getConfiguration(),
-                        xmlResource, configuration.getSqlFragments(), type.getName());
+                XMLMapperBuilder xmlParser = new XMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource, configuration.getSqlFragments(), type.getName());
                 xmlParser.parse();
             }
         }
-        return flag;
     }
 
 	private void parseCache() {

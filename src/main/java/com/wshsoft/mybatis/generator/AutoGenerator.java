@@ -23,6 +23,7 @@ import com.wshsoft.mybatis.generator.config.ConstVal;
 import com.wshsoft.mybatis.generator.config.FileOutConfig;
 import com.wshsoft.mybatis.generator.config.TemplateConfig;
 import com.wshsoft.mybatis.generator.config.builder.ConfigBuilder;
+import com.wshsoft.mybatis.generator.config.po.TableField;
 import com.wshsoft.mybatis.generator.config.po.TableInfo;
 import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
@@ -132,6 +133,26 @@ public class AutoGenerator extends AbstractGenerator {
 			} else {
 				tableInfo.setImportPackages("java.io.Serializable");
 			}
+            // Boolean类型is前缀处理
+            if ( config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix() ) {
+                for (TableField field : tableInfo.getFields()) {
+                    if (field.getPropertyType().equalsIgnoreCase("boolean")) {
+                        if (field.getPropertyName().indexOf("is") != -1) {
+                            String noIsPropertyName = field.getPropertyName().substring(2, field.getPropertyName().length());
+                            String firstChar = noIsPropertyName.substring(0, 1).toLowerCase();
+                            String afterChar = noIsPropertyName.substring(1, noIsPropertyName.length());
+                            field.setPropertyName(config.getStrategyConfig(), firstChar + afterChar);
+                        }
+                    }
+                }
+            }
+            // RequestMapping 连字符风格 user-info
+            if ( config.getStrategyConfig().isControllerMappingHyphenStyle() ) {
+                ctx.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
+                ctx.put("controllerMappingHyphen", StringUtils.camelToHyphen(tableInfo.getEntityPath()));
+            }
+            
+            ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
 			ctx.put("package", packageInfo);
 			ctx.put("author", config.getGlobalConfig().getAuthor());
 			ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
@@ -143,6 +164,8 @@ public class AutoGenerator extends AbstractGenerator {
 			ctx.put("entity", tableInfo.getEntityName());
 			ctx.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
 			ctx.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
+            ctx.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
+            ctx.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
 			ctx.put("superEntityClass", superEntityClass);
 			ctx.put("superMapperClassPackage", config.getSuperMapperClass());
 			ctx.put("superMapperClass", superMapperClass);
@@ -157,18 +180,17 @@ public class AutoGenerator extends AbstractGenerator {
 		return ctxData;
 	}
 
-	/**
-	 * 获取类名
-	 * 
-	 * @param classPath
-	 * @return
-	 */
-	private String getSuperClassName(String classPath) {
-		if (StringUtils.isEmpty(classPath)) {
-			return null;
-		}
-		return classPath.substring(classPath.lastIndexOf(".") + 1);
-	}
+    /**
+     * 获取类名
+     *
+     * @param classPath
+     * @return
+     */
+    private String getSuperClassName(String classPath) {
+        if (StringUtils.isEmpty(classPath))
+            return null;
+        return classPath.substring(classPath.lastIndexOf(".") + 1);
+    }
 
 	/**
 	 * 处理输出目录

@@ -1,6 +1,5 @@
 package com.wshsoft.mybatis.mapper;
 
-import com.wshsoft.mybatis.toolkit.ReflectionKit;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
@@ -32,10 +31,9 @@ public class EntityWrapper<T> extends Wrapper<T> {
 		this.sqlSelect = sqlSelect;
 	}
 
-	@Override
-	public T getEntity() {
-		return entity;
-	}
+    public T getEntity() {
+        return entity;
+    }
 
 	public void setEntity(T entity) {
 		this.entity = entity;
@@ -57,12 +55,7 @@ public class EntityWrapper<T> extends Wrapper<T> {
 		/*
 		 * 根据当前实体判断是否需要将WHERE替换成 AND 增加实体不为空但所有属性为空的情况
 		 */
-		if (isWhere != null) {
-			sqlWhere = isWhere ? sqlWhere : sqlWhere.replaceFirst("WHERE", AND_OR);
-		} else {
-			sqlWhere = ReflectionKit.checkFieldValueNotNull(entity) ? sqlWhere.replaceFirst("WHERE", AND_OR) : sqlWhere;
-		}
-		return sqlWhere;
-	}
+        return isWhere != null ? (isWhere ? sqlWhere : sqlWhere.replaceFirst("WHERE", AND_OR)) : sqlWhere.replaceFirst("WHERE", AND_OR);
+    }
 
 }

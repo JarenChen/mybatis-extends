@@ -23,7 +23,7 @@ import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
 import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.mapper.MetaObjectHandler;
@@ -91,24 +91,25 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	protected static Object processBatch(MappedStatement ms, Object parameterObject) {
 		boolean isFill = false;
 		// 全局配置是否配置填充器
-		MetaObjectHandler metaObjectHandler = GlobalConfiguration.getMetaObjectHandler(ms.getConfiguration());
-		/* 只处理插入或更新操作 */
-		if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
-			isFill = true;
-		} else if (ms.getSqlCommandType() == SqlCommandType.UPDATE && metaObjectHandler.openUpdateFill()) {
-			isFill = true;
-		}
-		if (isFill) {
-			Collection<Object> parameters = getParameters(parameterObject);
-			if (null != parameters) {
-				List<Object> objList = new ArrayList<>();
-				for (Object parameter : parameters) {
-					TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
-					if (null != tableInfo) {
-						objList.add(populateKeys(metaObjectHandler, tableInfo, ms, parameter));
-					} else {
-						/*
-						 * 非表映射类不处理
+        MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
+        /* 只处理插入或更新操作 */
+        if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
+            isFill = true;
+        } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE
+                && metaObjectHandler.openUpdateFill()) {
+            isFill = true;
+        }
+        if (isFill) {
+            Collection<Object> parameters = getParameters(parameterObject);
+            if (null != parameters) {
+                List<Object> objList = new ArrayList<>();
+                for (Object parameter : parameters) {
+                    TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
+                    if (null != tableInfo) {
+                        objList.add(populateKeys(metaObjectHandler, tableInfo, ms, parameter));
+                    } else {
+                        /*
+                         * 非表映射类不处理
 						 */
 						objList.add(parameter);
 					}

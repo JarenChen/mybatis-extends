@@ -21,21 +21,23 @@ public class TestSequser extends BaseTestEntity implements Serializable {
 	// @TableId(value = "ID")
 	// private Long id;
 
-	/**
-	 * 名称
-	 */
-	private String name;
+    /**
+     * 名称
+     */
+    @TableField(value = "NAME")
+    private String name;
 
-	/**
-	 * 年龄
-	 */
-	private Integer age;
+    /**
+     * 年龄
+     */
+    @TableField(value = "age")
+    private Integer age;
 
-	/**
-	 * 测试下划线字段命名类型
-	 */
-	// @TableField(value = "TEST_TYPE")
-	private Integer testType;
+    /**
+     * 测试下划线字段命名类型
+     */
+    @TableField(value = "TEST_TYPE")
+    private Integer testType;
 
 	public TestSequser() {
 
@@ -79,4 +81,12 @@ public class TestSequser extends BaseTestEntity implements Serializable {
 		this.testType = testType;
 	}
 
+    @Override
+    public String toString() {
+        return "TestSequser{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", testType=" + testType +
+                '}';
+    }
 }

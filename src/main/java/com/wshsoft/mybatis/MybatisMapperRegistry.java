@@ -11,7 +11,7 @@ import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
 
 /**
  * <p>
@@ -26,12 +26,12 @@ public class MybatisMapperRegistry extends MapperRegistry {
 	private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
 	private final Configuration config;
 
-	public MybatisMapperRegistry(Configuration config) {
-		super(config);
-		this.config = config;
-		// TODO注入SqlRunner
-		GlobalConfiguration.getSqlInjector(config).injectSqlRunner(config);
-	}
+    public MybatisMapperRegistry(Configuration config) {
+        super(config);
+        this.config = config;
+        // TODO注入SqlRunner
+        GlobalConfigUtils.getSqlInjector(config).injectSqlRunner(config);
+    }
 
 	@Override
 	@SuppressWarnings("unchecked")

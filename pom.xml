@@ -43,6 +43,7 @@
 		<contiperf.version>2.3.4</contiperf.version>
 		<velocity.version>1.7</velocity.version>
 		<h2.version>1.4.194</h2.version>
+                <lombok.version>1.16.16</lombok.version>
 	</properties>
 
 	<dependencies>
@@ -225,6 +226,12 @@
 	        <version>${contiperf.version}</version>
 	        <scope>test</scope>
 	    </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>test</scope>
+        </dependency>
 		<!-- test end -->
 	</dependencies>
 

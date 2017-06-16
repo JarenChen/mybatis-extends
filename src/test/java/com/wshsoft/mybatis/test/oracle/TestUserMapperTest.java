@@ -12,6 +12,7 @@ import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.mapper.EntityWrapper;
 import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.test.oracle.entity.TestUser;
+import com.wshsoft.mybatis.test.oracle.mapper.TestUserMapper;
 
 /**
  * <p>
@@ -43,8 +44,10 @@ public class TestUserMapperTest {
 		mf.setGlobalConfig(gc);
 
 		/*
-		 * 1、数据库字段驼峰命名不需要任何设置 2、当前演示是驼峰下划线混合命名 3、如下开启，表示数据库字段使用下划线命名，该设置是全局的。
-		 * 开启该设置实体可无 @TableId(value = "test_id") 字段映射
+         * 1、数据库字段驼峰命名不需要任何设置
+		 * 2、当前演示是驼峰下划线混合命名
+		 * 3、如下开启，表示数据库字段使用下划线命名，该设置是全局的。
+		 *	 开启该设置实体可无 @TableId(value = "test_id") 字段映射
 		 */
 		// mf.setDbColumnUnderline(true);
 

@@ -62,7 +62,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
     public Object intercept(Invocation invocation) throws Throwable {
         Object[] args = invocation.getArgs();
         MappedStatement ms = (MappedStatement) args[0];
-        if(SqlCommandType.UPDATE.compareTo(ms.getSqlCommandType())!=0){
+        if (SqlCommandType.UPDATE != ms.getSqlCommandType()) {
             return invocation.proceed();
         }
         Object param = args[1];
@@ -72,6 +72,13 @@ public class OptimisticLockerInterceptor implements Interceptor {
             if(map.containsKey(NAME_ENTITY_WRAPPER)){//mapper.update(updEntity, EntityWrapper<>(whereEntity);
                 ew = (Wrapper) map.get(NAME_ENTITY_WRAPPER);
             }//else updateById(entity) -->> change updateById(entity) to updateById(@Param("et") entity)
+
+            // TODO 待验证逻辑
+            // if mannual sql or updagteById(entity),unsupport OCC,proceed as usual unless use updateById(@Param("et") entity)
+            //if(!map.containsKey(NAME_ENTITY)) {
+            //    return invocation.proceed();
+            //}
+
             Object et = map.get(NAME_ENTITY);
             if(ew!=null){
                 Object entity = ew.getEntity();
@@ -91,8 +98,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 if(PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)){//update(entity, null) -->> update all. ignore version
                     return invocation.proceed();
                 }
-                EntityField entityField = getVersionField(et.getClass());
-                Field versionField = entityField==null?null:entityField.getField();
+                EntityField entityField = this.getVersionField(et.getClass());
+                Field versionField = entityField == null ? null : entityField.getField();
                 Object originalVersionVal;
                 if(versionField!=null && (originalVersionVal=versionField.get(et))!=null) {
                     TableInfo tableInfo = TableInfoHelper.getTableInfo(et.getClass());
@@ -151,9 +158,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
             return new Date();
         }else if(Timestamp.class.equals(versionValClass)){
             return new Timestamp(System.currentTimeMillis());
-        }else{
-            return originalVersionVal;//not supported type, return original val.
         }
+        return originalVersionVal;//not supported type, return original val.
     }
 
     @Override
@@ -173,15 +179,23 @@ public class OptimisticLockerInterceptor implements Interceptor {
         synchronized (parameterClass.getName()) {
             if (versionFieldCache.containsKey(parameterClass)) {
                 return versionFieldCache.get(parameterClass);
-            }else{
-                EntityField field = getVersionFieldRegular(parameterClass);
-                versionFieldCache.put(parameterClass, field);
-                return field;
             }
+            // 缓存类信息
+            EntityField field = this.getVersionFieldRegular(parameterClass);
+            versionFieldCache.put(parameterClass, field);
+            return field;
         }
     }
 
-    private EntityField getVersionFieldRegular(Class<?> parameterClass){
+    /**
+     * <p>
+     * 反射检查参数类是否启动乐观锁
+     * </p>
+     *
+     * @param parameterClass 参数类
+     * @return
+     */
+    private EntityField getVersionFieldRegular(Class<?> parameterClass) {
         if (parameterClass != Object.class) {
             for (Field field : parameterClass.getDeclaredFields()) {
                 if (field.isAnnotationPresent(Version.class)) {
@@ -189,7 +203,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     return new EntityField(field, true);
                 }
             }
-            return getVersionFieldRegular(parameterClass.getSuperclass());
+            // 递归父类
+            return this.getVersionFieldRegular(parameterClass.getSuperclass());
         }
         return null;
     }
@@ -197,11 +212,10 @@ public class OptimisticLockerInterceptor implements Interceptor {
     private List<EntityField> getEntityFields(Class<?> parameterClass){
         if(entityFieldsCache.containsKey(parameterClass)){
             return entityFieldsCache.get(parameterClass);
-        }else{
-            List<EntityField> fields = getFieldsFromClazz(parameterClass, null);
-            entityFieldsCache.put(parameterClass, fields);
-            return fields;
         }
+        List<EntityField> fields = this.getFieldsFromClazz(parameterClass, null);
+        entityFieldsCache.put(parameterClass, fields);
+        return fields;
     }
 
     private List<EntityField> getFieldsFromClazz(Class<?> parameterClass, List<EntityField> fieldList){

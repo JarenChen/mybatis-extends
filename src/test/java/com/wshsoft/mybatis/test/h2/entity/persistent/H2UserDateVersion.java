@@ -10,6 +10,9 @@ import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.annotations.Version;
 import com.wshsoft.mybatis.enums.FieldStrategy;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 /**
  * <p>
  * 测试用户类
@@ -18,6 +21,8 @@ import com.wshsoft.mybatis.enums.FieldStrategy;
  * @author Carry xie
  */
 /* 表名 value 注解【 驼峰命名可无 】, resultMap 注解测试【 映射 xml 的 resultMap 内容 】 */
+@Data
+@Accessors(chain = true)
 @TableName("h2user")
 public class H2UserDateVersion implements Serializable {
 
@@ -89,81 +94,68 @@ public class H2UserDateVersion implements Serializable {
         this.testType = testType;
     }
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public BigDecimal getPrice() {
-        return price;
-    }
+	public Integer getAge() {
+		return age;
+	}
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+	public void setAge(Integer age) {
+		this.age = age;
+	}
 
-    public Integer getAge() {
-        return age;
-    }
+	public BigDecimal getPrice() {
+		return price;
+	}
 
-    public void setAge(Integer age) {
-        this.age = age;
-    }
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
 
-    public Integer getTestType() {
-        return testType;
-    }
+	public Integer getTestType() {
+		return testType;
+	}
 
-    public void setTestType(Integer testType) {
-        this.testType = testType;
-    }
+	public void setTestType(Integer testType) {
+		this.testType = testType;
+	}
 
-    public String getDesc() {
-        return desc;
-    }
+	public String getDesc() {
+		return desc;
+	}
 
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
 
-    public Integer getVersion() {
-        return version;
-    }
+	public Integer getVersion() {
+		return version;
+	}
 
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
 
-    public Date getTestDate() {
-        return testDate;
-    }
+	public Date getTestDate() {
+		return testDate;
+	}
 
-    public void setTestDate(Date testDate) {
-        this.testDate = testDate;
-    }
+	public void setTestDate(Date testDate) {
+		this.testDate = testDate;
+	}
 
-    @Override
-    public String toString() {
-        return "H2UserDateVersion{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", age=" + age +
-                ", price=" + price +
-                ", testType=" + testType +
-                ", desc='" + desc + '\'' +
-                ", version=" + version +
-                ", testDate=" + testDate +
-                '}';
-    }
 }

@@ -17,6 +17,7 @@ import com.wshsoft.mybatis.test.mysql.entity.NotPK;
 import com.wshsoft.mybatis.test.mysql.entity.Test;
 import com.wshsoft.mybatis.test.mysql.mapper.NotPKMapper;
 import com.wshsoft.mybatis.test.mysql.mapper.TestMapper;
+import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
 
 /**
  * <p>
@@ -33,7 +34,7 @@ public class GlobalConfigurationTest {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
-		GlobalConfiguration global = GlobalConfiguration.defaults();
+        GlobalConfiguration global = GlobalConfigUtils.defaults();
 		global.setAutoSetDbType(true);
 		// 设置全局校验机制为FieldStrategy.Empty
 		global.setFieldStrategy(2);
@@ -43,7 +44,7 @@ public class GlobalConfigurationTest {
 		dataSource.setUsername("root");
 		dataSource.setPassword("root");
 		dataSource.setMaxTotal(1000);
-		GlobalConfiguration.setMetaData(dataSource, global);
+        GlobalConfigUtils.setMetaData(dataSource, global);
 		// 加载配置文件
 		InputStream inputStream = GlobalConfigurationTest.class.getClassLoader()
 				.getResourceAsStream("mysql-config.xml");

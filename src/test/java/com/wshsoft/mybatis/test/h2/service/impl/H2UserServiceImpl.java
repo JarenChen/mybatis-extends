@@ -1,11 +1,11 @@
-package com.wshsoft.mybatis.test.h2.entity.service.impl;
+package com.wshsoft.mybatis.test.h2.service.impl;
 
 import org.springframework.stereotype.Service;
 
 import com.wshsoft.mybatis.service.impl.ServiceImpl;
 import com.wshsoft.mybatis.test.h2.entity.mapper.H2UserMapper;
 import com.wshsoft.mybatis.test.h2.entity.persistent.H2User;
-import com.wshsoft.mybatis.test.h2.entity.service.IH2UserService;
+import com.wshsoft.mybatis.test.h2.service.IH2UserService;
 
 /**
  * <p>

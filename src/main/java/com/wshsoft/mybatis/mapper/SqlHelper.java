@@ -9,11 +9,11 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.entity.TableInfo;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.toolkit.CollectionUtils;
+import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
 /**
@@ -40,36 +40,35 @@ public class SqlHelper {
 		return sqlSession(clazz, true);
 	}
 
-	/**
-	 * <p>
-	 * 批量操作 SqlSession
-	 * </p>
-	 * 
-	 * @param clazz
-	 *            实体类
-	 * @return SqlSession
-	 */
-	public static SqlSession sqlSessionBatch(Class<?> clazz) {
-		return GlobalConfiguration.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
-	}
+    /**
+     * <p>
+     * 批量操作 SqlSession
+     * </p>
+     *
+     * @param clazz 实体类
+     * @return SqlSession
+     */
+    public static SqlSession sqlSessionBatch(Class<?> clazz) {
+        return GlobalConfigUtils.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
+    }
 
-	/**
-	 * 获取sqlSessionå
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-	private static SqlSession getSqlSession(Class<?> clazz) {
-		SqlSession session = null;
-		try {
-			SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
-			Configuration configuration = sqlSessionFactory.getConfiguration();
-			session = GlobalConfiguration.getGlobalConfig(configuration).getSqlSession();
-		} catch (Exception e) {
-			// ignored
-		}
-		return session;
-	}
+    /**
+     * 获取sqlSessionå
+     *
+     * @param clazz
+     * @return
+     */
+    private static SqlSession getSqlSession(Class<?> clazz) {
+        SqlSession session = null;
+        try {
+            SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
+            Configuration configuration = sqlSessionFactory.getConfiguration();
+            session = GlobalConfigUtils.getGlobalConfig(configuration).getSqlSession();
+        } catch (Exception e) {
+            // ignored
+        }
+        return session;
+    }
 
     /**
      * <p>
@@ -82,7 +81,7 @@ public class SqlHelper {
      */
     public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
         SqlSession sqlSession = getSqlSession(clazz);
-        return (sqlSession != null) ? sqlSession : GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
+        return (sqlSession != null) ? sqlSession : GlobalConfigUtils.currentSessionFactory(clazz).openSession(autoCommit);
     }
 
 	/**

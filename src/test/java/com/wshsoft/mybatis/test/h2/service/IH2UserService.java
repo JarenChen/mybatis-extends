@@ -1,4 +1,4 @@
-package com.wshsoft.mybatis.test.h2.entity.service;
+package com.wshsoft.mybatis.test.h2.service;
 
 import com.wshsoft.mybatis.service.IService;
 import com.wshsoft.mybatis.test.h2.entity.persistent.H2User;

@@ -3,6 +3,7 @@ package com.wshsoft.mybatis.entity;
 import java.io.Serializable;
 
 import com.wshsoft.mybatis.mapper.SqlRunner;
+import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
@@ -48,7 +49,7 @@ public class Column implements Serializable {
         }
         String quote = null;
         if (isEscape() && SqlRunner.FACTORY != null) {
-            GlobalConfiguration globalConfig = GlobalConfiguration.getGlobalConfig(SqlRunner.FACTORY.getConfiguration());
+            GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(SqlRunner.FACTORY.getConfiguration());
             quote = globalConfig.getIdentifierQuote() == null ? globalConfig.getDbType().getQuote() : globalConfig.getIdentifierQuote();
         }
         return AS + (StringUtils.isNotEmpty(quote) ? String.format(quote, as) : as);

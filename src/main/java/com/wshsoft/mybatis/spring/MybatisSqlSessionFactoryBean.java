@@ -12,6 +12,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -41,10 +42,10 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import com.wshsoft.mybatis.MybatisConfiguration;
 import com.wshsoft.mybatis.MybatisXMLConfigBuilder;
-import com.wshsoft.mybatis.MybatisXMLMapperBuilder;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.mapper.SqlRunner;
+import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
 import com.wshsoft.mybatis.toolkit.PackageHelper;
 
 /**
@@ -104,7 +105,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private ObjectWrapperFactory objectWrapperFactory;
 
-	private GlobalConfiguration globalConfig = GlobalConfiguration.defaults();
+    private GlobalConfiguration globalConfig = GlobalConfigUtils.defaults();
 
 	// TODO 注入全局配置
 	public void setGlobalConfig(GlobalConfiguration globalConfig) {
@@ -514,7 +515,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 		configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
 		// 设置元数据相关
-		GlobalConfiguration.setMetaData(dataSource, globalConfig);
+        GlobalConfigUtils.setMetaData(dataSource, globalConfig);
 		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
 		// TODO SqlRunner
 		SqlRunner.FACTORY = sqlSessionFactory;
@@ -536,7 +537,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
                 try {
                     // TODO
-                    MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(mapperLocation.getInputStream(),
+                    XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
                             configuration, mapperLocation.toString(), configuration.getSqlFragments());
                     xmlMapperBuilder.parse();
                 } catch (Exception e) {

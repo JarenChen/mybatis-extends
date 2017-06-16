@@ -10,6 +10,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.mapper.Condition;
 import com.wshsoft.mybatis.mapper.LogicSqlInjector;
 import com.wshsoft.mybatis.test.mysql.entity.User;
 import com.wshsoft.mybatis.test.mysql.mapper.UserMapper;
@@ -40,34 +41,29 @@ public class LogicDeleteTest {
 		int rlt = userMapper.insert(new User(id, "logic-delete-1", 18, 1));
 		System.err.println("插入成功记录数：" + rlt);
 		rlt = userMapper.deleteById(id);
-		System.err.println("根据 ID 逻辑删除成功记录数：" + rlt);
-		User user = userMapper.selectById(id);
-		System.out.println("逻辑删除展示下结果：" + user.getTestType());
+        System.err.println("根据 ID 逻辑删除成功记录数：" + rlt);
 
-		User uu = new User();
-		uu.setId(user.getId());
-		uu.setTestType(1);
-		rlt = userMapper.updateById(user);
-		System.err.println("第一次：逻辑删除testType 改为 1 成功记录数：" + rlt);
-		rlt = userMapper.insert(new User(IdWorker.getId(), "logic-delete-2", 28, 2));
-		System.err.println("再插入一条成功记录数：" + rlt);
-		rlt = userMapper.delete(null);
-		System.err.println("全表逻辑删除成功记录数：" + rlt);
-		List<User> userList = userMapper.selectList(null);
-		for (User u : userList) {
-			System.out.println("全表逻辑删除 ( id= " + u.getId() + " ) 展示结果" + u.getTestType());
-		}
+        User uu = new User();
+        uu.setId(333L);
+        uu.setTestType(1);
+        System.err.println("第一次：逻辑删除testType 改为 1 成功记录数：" + rlt);
+        rlt = userMapper.insert(new User(IdWorker.getId(), "logic-delete-2", 28, 2));
+        System.err.println("再插入一条成功记录数：" + rlt);
+        rlt = userMapper.delete(Condition.create().eq("test_id", 1111));
+        System.err.println("全表逻辑删除成功记录数：" + rlt);
+        List<User> userList = userMapper.selectList(null);
+        for (User u : userList) {
+            System.out.println("全表逻辑删除 ( id= " + u.getId() + " ) 展示结果" + u.getTestType());
+        }
 
-		rlt = userMapper.updateById(uu);
-		System.err.println("第二次：逻辑删除testType 改为 1 成功记录数：" + rlt);
-		Map<String, Object> map = new HashMap<>();
-		map.put("test_id", id);
-		rlt = userMapper.deleteByMap(map);
-		System.err.println("全表逻辑删除 ByMap 成功记录数：" + rlt);
-		userList = userMapper.selectList(null);
-		for (User u : userList) {
-			System.out.println("全表逻辑删除 ( id= " + u.getId() + " ) 展示结果" + u.getTestType());
-		}
-
-	}
+        System.err.println("第二次：逻辑删除testType 改为 1 成功记录数：" + rlt);
+        Map<String, Object> map = new HashMap<>();
+        map.put("test_id", id);
+        rlt = userMapper.deleteByMap(map);
+        System.err.println("全表逻辑删除 ByMap 成功记录数：" + rlt);
+        userList = userMapper.selectList(null);
+        for (User u : userList) {
+            System.out.println("全表逻辑删除 ( id= " + u.getId() + " ) 展示结果" + u.getTestType());
+        }
+    }
 }
