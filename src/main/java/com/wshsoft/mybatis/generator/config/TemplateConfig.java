@@ -26,48 +26,54 @@ public class TemplateConfig {
 		return entity;
 	}
 
-	public void setEntity(String entity) {
-		this.entity = entity;
-	}
+    public TemplateConfig setEntity(String entity) {
+        this.entity = entity;
+        return this;
+    }
 
 	public String getService() {
 		return service;
 	}
 
-	public void setService(String service) {
-		this.service = service;
-	}
+    public TemplateConfig setService(String service) {
+        this.service = service;
+        return this;
+    }
 
 	public String getServiceImpl() {
 		return serviceImpl;
 	}
 
-	public void setServiceImpl(String serviceImpl) {
-		this.serviceImpl = serviceImpl;
-	}
+    public TemplateConfig setServiceImpl(String serviceImpl) {
+        this.serviceImpl = serviceImpl;
+        return this;
+    }
 
 	public String getMapper() {
 		return mapper;
 	}
 
-	public void setMapper(String mapper) {
-		this.mapper = mapper;
-	}
+    public TemplateConfig setMapper(String mapper) {
+        this.mapper = mapper;
+        return this;
+    }
 
 	public String getXml() {
 		return xml;
 	}
 
-	public void setXml(String xml) {
-		this.xml = xml;
-	}
+    public TemplateConfig setXml(String xml) {
+        this.xml = xml;
+        return this;
+    }
 
 	public String getController() {
 		return controller;
 	}
 
-	public void setController(String controller) {
-		this.controller = controller;
-	}
+    public TemplateConfig setController(String controller) {
+        this.controller = controller;
+        return this;
+    }
 
 }

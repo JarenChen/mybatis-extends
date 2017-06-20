@@ -1,13 +1,10 @@
 package com.wshsoft.mybatis.test.mysql;
 
-import java.io.InputStream;
-
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.Test;
 
-import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.mapper.EntityWrapper;
+import com.wshsoft.mybatis.test.CrudTest;
 import com.wshsoft.mybatis.test.mysql.entity.PhoneNumber;
 import com.wshsoft.mybatis.test.mysql.entity.Role;
 import com.wshsoft.mybatis.test.mysql.entity.User;
@@ -23,15 +20,12 @@ import com.wshsoft.mybatis.toolkit.IdWorker;
  * @author Carry xie
  * @Date 2016-09-09
  */
-public class URPTest {
-	public static void main(String[] args) {
+public class URPTest extends CrudTest {
 
-		// 加载配置文件
-		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		mf.setGlobalConfig(new GlobalConfiguration(new MySqlInjector()));
-		SqlSessionFactory sessionFactory = mf.build(in);
-		SqlSession session = sessionFactory.openSession();
+    @Test
+    public void urpTest() {
+        // 加载配置文件
+        SqlSession session = this.sqlSessionFactory().openSession();
 
 		UserMapper userMapper = session.getMapper(UserMapper.class);
 		RoleMapper roleMapper = session.getMapper(RoleMapper.class);

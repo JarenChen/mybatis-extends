@@ -49,8 +49,6 @@ public class GlobalConfiguration implements Serializable {
     private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
     // 是否刷新mapper
     private boolean isRefresh = false;
-    // 是否自动获取DBType
-    private boolean isAutoSetDbType = true;
     // 是否大写命名
     private boolean isCapitalMode = false;
     // 标识符
@@ -100,14 +98,14 @@ public class GlobalConfiguration implements Serializable {
 		return dbType;
 	}
 
-	public void setDbType(String dbType) {
-		this.dbType = DBType.getDBType(dbType);
-		this.isAutoSetDbType = false;
-	}
-
-	public void setDbTypeByJdbcUrl(String jdbcUrl) {
-		this.dbType = JdbcUtils.getDbType(jdbcUrl);
-	}
+    /**
+     * 根据jdbcUrl设置数据库类型
+     *
+     * @param jdbcUrl
+     */
+    public void setDbType(String jdbcUrl) {
+        this.dbType = JdbcUtils.getDbType(jdbcUrl);
+    }
 
 	public IdType getIdType() {
 		return idType;
@@ -153,17 +151,9 @@ public class GlobalConfiguration implements Serializable {
 		return isRefresh;
 	}
 
-	public void setRefresh(boolean refresh) {
-		this.isRefresh = refresh;
-	}
-
-	public boolean isAutoSetDbType() {
-		return isAutoSetDbType;
-	}
-
-	public void setAutoSetDbType(boolean autoSetDbType) {
-		this.isAutoSetDbType = autoSetDbType;
-	}
+    public void setRefresh(boolean refresh) {
+        this.isRefresh = refresh;
+    }
 
 	public Set<String> getMapperRegistryCache() {
 		return mapperRegistryCache;

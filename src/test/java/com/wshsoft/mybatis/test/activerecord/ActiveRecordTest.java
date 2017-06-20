@@ -1,16 +1,13 @@
 package com.wshsoft.mybatis.test.activerecord;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.jdbc.SQL;
-import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
 import com.wshsoft.mybatis.plugins.Page;
+import com.wshsoft.mybatis.test.CrudTest;
 import com.wshsoft.mybatis.test.mysql.entity.Test;
-import com.wshsoft.mybatis.test.mysql.mapper.TestMapper;
 import com.wshsoft.mybatis.toolkit.IdWorker;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
@@ -22,20 +19,16 @@ import com.wshsoft.mybatis.toolkit.TableInfoHelper;
  * @author Carry xie
  * @date 2016-10-11
  */
-public class ActiveRecordTest {
+public class ActiveRecordTest extends CrudTest {
 
-	public static void main(String[] args) {
-		// 加载配置文件
-		InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		SqlSessionFactory sqlSessionFactory = mf.build(in);
-		TableInfoHelper.initSqlSessionFactory(sqlSessionFactory);
-		sqlSessionFactory.openSession(false);
-		// 保存一条记录
-		Test t1 = new Test();
-		t1.setType("test10");
-		boolean rlt = t1.insert();
-		print(" ar save=" + rlt + ", id=" + t1.getId());
+    @org.junit.Test
+    public void test() {
+        TableInfoHelper.initSqlSessionFactory(this.sqlSessionFactory());
+        // 保存一条记录
+        Test t1 = new Test();
+        t1.setType("test10");
+        boolean rlt = t1.insert();
+        print(" ar save=" + rlt + ", id=" + t1.getId());
 
 		// 根据ID更新
 		t1.setType("t1023");

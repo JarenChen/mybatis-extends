@@ -1,5 +1,7 @@
 package com.wshsoft.mybatis.enums;
 
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+
 /**
  * <p>
  * MybatisExtends 数据库类型
@@ -78,7 +80,7 @@ public enum DBType {
 				return dt;
 			}
 		}
-		return MYSQL;
+        throw new MybatisExtendsException("Error: Unknown database type, or do not support changing database!\n");
 	}
 
 	public String getDb() {

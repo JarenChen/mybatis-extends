@@ -8,12 +8,14 @@ import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.Test;
 
 import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.mapper.EntityWrapper;
 import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.plugins.pagination.Pagination;
+import com.wshsoft.mybatis.test.CrudTest;
 import com.wshsoft.mybatis.test.mysql.entity.Role;
 import com.wshsoft.mybatis.test.mysql.entity.User;
 import com.wshsoft.mybatis.test.mysql.mapper.UserMapper;
@@ -32,54 +34,38 @@ import com.wshsoft.mybatis.toolkit.IdWorker;
  * @author Carry xie
  * @Date 2016-01-23
  */
-public class UserMapperTest {
+public class UserMapperTest extends CrudTest {
 
-	/**
-	 * RUN 测试
-	 * <p>
-	 * <p>
-	 * Mybatis-Extends 加载 SQL 顺序：
-	 * </p>
-	 * 1、加载XML中的SQL<br>
-	 * 2、加载sqlProvider中的SQL<br>
-	 * 3、xmlSql 与 sqlProvider不能包含相同的SQL<br>
-	 * <br>
-	 * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql <br>
-	 */
-	public static void main(String[] args) {
+    @Override
+    public GlobalConfiguration globalConfiguration() {
+        GlobalConfiguration gc = super.globalConfiguration();
+        /**
+         * 设置，自定义 元对象填充器，实现公共字段自动写入
+         */
+        //gc.setMetaObjectHandler(new MyMetaObjectHandler());
+        // gc.setCapitalMode(true);
+        gc.setDbColumnUnderline(true);
+        return gc;
+    }
 
-		// 加载配置文件
-		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-
-		/*
-		 * 此处采用 MybatisSessionFactoryBuilder 构建
-		 * SqlSessionFactory，目的是引入BaseMapper功能
-		 */
-		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-
-		/*
-		 * 1、数据库字段驼峰命名不需要任何设置 2、当前演示是驼峰下划线混合命名 3、如下开启，表示数据库字段使用下划线命名，该设置是全局的。
-		 * 开启该设置实体可无 @TableId(value = "test_id") 字段映射
-		 */
-		// mf.setDbColumnUnderline(true);
-
-		/**
-		 * 设置，自定义 SQL 注入器
-		 */
-		GlobalConfiguration gc = new GlobalConfiguration(new MySqlInjector());
-		/**
-		 * 设置，自定义 元对象填充器，实现公共字段自动写入
-		 */
-		//gc.setMetaObjectHandler(new MyMetaObjectHandler());
-		// gc.setCapitalMode(true);
-		gc.setDbColumnUnderline(true);
-		mf.setGlobalConfig(gc);
-
-		SqlSessionFactory sessionFactory = mf.build(in);
-		SqlSession session = sessionFactory.openSession();
-		UserMapper userMapper = session.getMapper(UserMapper.class);
-		System.err.println(" debug run 查询执行 user 表数据变化！ ");
-		userMapper.deleteAll();
+    /**
+     * RUN 测试
+     * <p>
+     * <p>
+     * MybatisPlus 加载 SQL 顺序：
+     * </p>
+     * 1、加载XML中的SQL<br>
+     * 2、加载sqlProvider中的SQL<br>
+     * 3、xmlSql 与 sqlProvider不能包含相同的SQL<br>
+     * <br>
+     * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql <br>
+     */
+    @Test
+    public void crudTest() {
+        SqlSession session = this.sqlSessionFactory().openSession();
+        UserMapper userMapper = session.getMapper(UserMapper.class);
+        System.err.println(" debug run 查询执行 user 表数据变化！ ");
+        userMapper.deleteAll();
 
 		/**
 		 * sjy 测试@TableField的el属性

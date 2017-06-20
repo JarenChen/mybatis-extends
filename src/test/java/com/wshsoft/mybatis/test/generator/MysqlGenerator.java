@@ -34,8 +34,8 @@ public class MysqlGenerator {
 
 		// 全局配置
 		GlobalConfig gc = new GlobalConfig();
-		gc.setOutputDir("D://mybatis-extends");
-		gc.setFileOverride(true);
+		gc.setOutputDir("D://mybatis-extends");//输出目录
+		gc.setFileOverride(true);// 是否覆盖文件
 		gc.setActiveRecord(true);// 开启 activeRecord 模式
 		gc.setEnableCache(false);// XML 二级缓存
 		gc.setBaseResultMap(true);// XML ResultMap
@@ -52,7 +52,7 @@ public class MysqlGenerator {
 
 		// 数据源配置
 		DataSourceConfig dsc = new DataSourceConfig();
-		dsc.setDbType(DbType.MYSQL);
+		dsc.setDbType(DbType.MYSQL);// 数据库类型
 		// dsc.setTypeConvert(new MyFieldTypeConvert());
 		dsc.setTypeConvert(new MySqlTypeConvert() {
 			// 自定义数据库表字段类型转换【可选】
@@ -96,8 +96,14 @@ public class MysqlGenerator {
 		// 【实体】是否为构建者模型（默认 false）
 		// public User setName(String name) {this.name = name; return this;}
 		// strategy.setEntityBuliderModel(true);
-		mpg.setStrategy(strategy);
-
+	
+        // 【实体】是否为lombok模型（默认 false）<a href="https://projectlombok.org/">document</a>
+        // strategy.setEntityLombokModel(true)
+        // Boolean类型字段是否移除is前缀处理
+        // strategy.setEntityBooleanColumnRemoveIsPrefix(true)
+        // strategy.setRestControllerStyle(true)
+        // strategy.setControllerMappingHyphenStyle(true)
+	mpg.setStrategy(strategy);
 		// 包配置
 		PackageConfig pc = new PackageConfig();
 		pc.setModuleName("demo");
@@ -145,8 +151,8 @@ public class MysqlGenerator {
 		// 执行生成
 		mpg.execute();
 
-		// 打印注入设置
-		System.err.println(mpg.getCfg().getMap().get("abc"));
-	}
+        // 打印注入设置，这里演示模板里面怎么获取注入内容【可无】
+        System.err.println(mpg.getCfg().getMap().get("abc"));
+    }
 
 }

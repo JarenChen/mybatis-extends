@@ -5,7 +5,7 @@ package com.wshsoft.mybatis.incrementer;
  * Postgre Sequence
  * </p>
  *
- * @author Caratacus
+ * @author Carry xie
  * @Date 2017-06-12
  */
 public class PostgreKeyGenerator implements IKeyGenerator {

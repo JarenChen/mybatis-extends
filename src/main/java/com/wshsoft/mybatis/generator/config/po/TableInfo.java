@@ -184,26 +184,38 @@ public class TableInfo {
 		importPackages.add(pkg);
 	}
 
-	/**
-	 * 转换filed实体为xmlmapper中的basecolumn字符串信息
-	 * 
-	 * @return
-	 */
-	public String getFieldNames() {
-		if (StringUtils.isEmpty(fieldNames)) {
-			StringBuilder names = new StringBuilder();
-			for (int i = 0; i < fields.size(); i++) {
-				TableField fd = fields.get(i);
-				if (i == fields.size() - 1) {
-					names.append(cov2col(fd));
-				} else {
-					names.append(cov2col(fd)).append(", ");
-				}
-			}
-			fieldNames = names.toString();
-		}
-		return fieldNames;
-	}
+    /**
+     * 逻辑删除
+     */
+    public boolean isLogicDelete(String logicDeletePropertyName) {
+        for (TableField tableField : fields) {
+            if (tableField.getPropertyName().equals(logicDeletePropertyName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 转换filed实体为xmlmapper中的basecolumn字符串信息
+     *
+     * @return
+     */
+    public String getFieldNames() {
+        if (StringUtils.isEmpty(fieldNames)) {
+            StringBuilder names = new StringBuilder();
+            for (int i = 0; i < fields.size(); i++) {
+                TableField fd = fields.get(i);
+                if (i == fields.size() - 1) {
+                    names.append(cov2col(fd));
+                } else {
+                    names.append(cov2col(fd)).append(", ");
+                }
+            }
+            fieldNames = names.toString();
+        }
+        return fieldNames;
+    }
 
 	/**
 	 * mapper xml中的字字段添加as

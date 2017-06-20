@@ -27,6 +27,6 @@ public @interface KeySequence {
 	/*
 	 * <p> id的类型 </p>
 	 */
-	Class idClazz() default Long.class;
+    Class clazz() default Long.class;
 
 }

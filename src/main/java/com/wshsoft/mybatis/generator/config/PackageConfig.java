@@ -58,57 +58,64 @@ public class PackageConfig {
 		return parent;
 	}
 
-	public void setParent(String parent) {
-		this.parent = parent;
-	}
+    public PackageConfig setParent(String parent) {
+        this.parent = parent;
+        return this;
+    }
 
 	public String getModuleName() {
 		return moduleName;
 	}
 
-	public void setModuleName(String moduleName) {
-		this.moduleName = moduleName;
-	}
+    public PackageConfig setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+        return this;
+    }
 
 	public String getEntity() {
 		return entity;
 	}
 
-	public void setEntity(String entity) {
-		this.entity = entity;
-	}
+    public PackageConfig setEntity(String entity) {
+        this.entity = entity;
+        return this;
+    }
 
 	public String getService() {
 		return service;
 	}
 
-	public void setService(String service) {
-		this.service = service;
-	}
+    public PackageConfig setService(String service) {
+        this.service = service;
+        return this;
+    }
 
 	public String getServiceImpl() {
 		return serviceImpl;
 	}
 
-	public void setServiceImpl(String serviceImpl) {
-		this.serviceImpl = serviceImpl;
-	}
+    public PackageConfig setServiceImpl(String serviceImpl) {
+        this.serviceImpl = serviceImpl;
+        return this;
+    }
 
 	public String getMapper() {
 		return mapper;
 	}
 
-	public void setMapper(String mapper) {
-		this.mapper = mapper;
-	}
+    public PackageConfig setMapper(String mapper) {
+        this.mapper = mapper;
+        return this;
+    }
 
 	public String getXml() {
 		return xml;
 	}
 
-	public void setXml(String xml) {
-		this.xml = xml;
-	}
+    public PackageConfig setXml(String xml) {
+        this.xml = xml;
+        return this;
+    }
 
 	public String getController() {
 		if (StringUtils.isEmpty(controller)) {
@@ -117,8 +124,9 @@ public class PackageConfig {
 		return controller;
 	}
 
-	public void setController(String controller) {
-		this.controller = controller;
-	}
+    public PackageConfig setController(String controller) {
+        this.controller = controller;
+        return this;
+    }
 
 }

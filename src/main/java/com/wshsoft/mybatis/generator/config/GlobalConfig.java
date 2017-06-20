@@ -57,108 +57,134 @@ public class GlobalConfig {
 	private String serviceImplName;
 	private String controllerName;
 
-	public String getOutputDir() {
-		return outputDir;
-	}
+    /**
+     * 逻辑删除属性名称
+     */
+    private String logicDeletePropertyName;
 
-	public void setOutputDir(String outputDir) {
-		this.outputDir = outputDir;
-	}
+    public String getOutputDir() {
+        return outputDir;
+    }
+
+    public GlobalConfig setOutputDir(String outputDir) {
+        this.outputDir = outputDir;
+        return this;
+    }
 
 	public boolean isFileOverride() {
 		return fileOverride;
 	}
 
-	public void setFileOverride(boolean fileOverride) {
-		this.fileOverride = fileOverride;
-	}
+    public GlobalConfig setFileOverride(boolean fileOverride) {
+        this.fileOverride = fileOverride;
+        return this;
+    }
 
 	public boolean isOpen() {
 		return open;
 	}
 
-	public void setOpen(boolean open) {
-		this.open = open;
-	}
+    public GlobalConfig setOpen(boolean open) {
+        this.open = open;
+        return this;
+    }
 
 	public boolean isEnableCache() {
 		return enableCache;
 	}
 
-	public void setEnableCache(boolean enableCache) {
-		this.enableCache = enableCache;
-	}
+    public GlobalConfig setEnableCache(boolean enableCache) {
+        this.enableCache = enableCache;
+        return this;
+    }
 
 	public String getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(String author) {
-		this.author = author;
-	}
+    public GlobalConfig setAuthor(String author) {
+        this.author = author;
+        return this;
+    }
 
 	public boolean isActiveRecord() {
 		return activeRecord;
 	}
 
-	public void setActiveRecord(boolean activeRecord) {
-		this.activeRecord = activeRecord;
-	}
+    public GlobalConfig setActiveRecord(boolean activeRecord) {
+        this.activeRecord = activeRecord;
+        return this;
+    }
 
 	public boolean isBaseResultMap() {
 		return baseResultMap;
 	}
 
-	public void setBaseResultMap(boolean baseResultMap) {
-		this.baseResultMap = baseResultMap;
-	}
+    public GlobalConfig setBaseResultMap(boolean baseResultMap) {
+        this.baseResultMap = baseResultMap;
+        return this;
+    }
 
 	public boolean isBaseColumnList() {
 		return baseColumnList;
 	}
 
-	public void setBaseColumnList(boolean baseColumnList) {
-		this.baseColumnList = baseColumnList;
-	}
+    public GlobalConfig setBaseColumnList(boolean baseColumnList) {
+        this.baseColumnList = baseColumnList;
+        return this;
+    }
 
 	public String getMapperName() {
 		return mapperName;
 	}
 
-	public void setMapperName(String mapperName) {
-		this.mapperName = mapperName;
-	}
+    public GlobalConfig setMapperName(String mapperName) {
+        this.mapperName = mapperName;
+        return this;
+    }
 
 	public String getXmlName() {
 		return xmlName;
 	}
 
-	public void setXmlName(String xmlName) {
-		this.xmlName = xmlName;
-	}
+    public GlobalConfig setXmlName(String xmlName) {
+        this.xmlName = xmlName;
+        return this;
+    }
 
 	public String getServiceName() {
 		return serviceName;
 	}
 
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
-	}
+    public GlobalConfig setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+        return this;
+    }
 
 	public String getServiceImplName() {
 		return serviceImplName;
 	}
 
-	public void setServiceImplName(String serviceImplName) {
-		this.serviceImplName = serviceImplName;
-	}
+    public GlobalConfig setServiceImplName(String serviceImplName) {
+        this.serviceImplName = serviceImplName;
+        return this;
+    }
 
 	public String getControllerName() {
 		return controllerName;
 	}
 
-	public void setControllerName(String controllerName) {
-		this.controllerName = controllerName;
-	}
+    public GlobalConfig setControllerName(String controllerName) {
+        this.controllerName = controllerName;
+        return this;
+    }
+
+    public String getLogicDeletePropertyName() {
+        return logicDeletePropertyName;
+    }
+
+    public void setLogicDeletePropertyName(String logicDeletePropertyName) {
+        this.logicDeletePropertyName = logicDeletePropertyName;
+    }
 
 }

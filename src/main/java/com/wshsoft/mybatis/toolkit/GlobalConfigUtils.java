@@ -1,7 +1,6 @@
 package com.wshsoft.mybatis.toolkit;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,12 +33,12 @@ import com.wshsoft.mybatis.mapper.MetaObjectHandler;
  */
 public class GlobalConfigUtils {
 
+    // 日志
+    private static final Log logger = LogFactory.getLog(GlobalConfigUtils.class);
     /**
      * 默认参数
      */
     public static final GlobalConfiguration DEFAULT = defaults();
-    // 日志
-    private static final Log logger = LogFactory.getLog(GlobalConfigUtils.class);
     /**
      * 缓存全局信息
      */
@@ -75,8 +74,8 @@ public class GlobalConfigUtils {
      * 设置全局设置(以configuration地址值作为Key)
      * <p/>
      *
-     * @param configuration
-     * @param mybatisGlobalConfig
+     * @param configuration       Mybatis 容器配置对象
+     * @param mybatisGlobalConfig 全局配置
      * @return
      */
     public static void setGlobalConfig(Configuration configuration, GlobalConfiguration mybatisGlobalConfig) {
@@ -90,7 +89,7 @@ public class GlobalConfigUtils {
     /**
      * 获取MybatisGlobalConfig (统一所有入口)
      *
-     * @param configuration
+     * @param configuration Mybatis 容器配置对象
      * @return
      */
     public static GlobalConfiguration getGlobalConfig(Configuration configuration) {
@@ -101,9 +100,11 @@ public class GlobalConfigUtils {
     }
 
     /**
+     * <p>
      * 获取MybatisGlobalConfig (统一所有入口)
+     * </p>
      *
-     * @param configMark
+     * @param configMark 配置标记
      * @return
      */
     public static GlobalConfiguration getGlobalConfig(String configMark) {
@@ -156,10 +157,6 @@ public class GlobalConfigUtils {
         return getGlobalConfig(configuration).isRefresh();
     }
 
-    public static boolean isAutoSetDbType(Configuration configuration) {
-        return getGlobalConfig(configuration).isAutoSetDbType();
-    }
-
     public static Set<String> getMapperRegistryCache(Configuration configuration) {
         return getGlobalConfig(configuration).getMapperRegistryCache();
     }
@@ -173,26 +170,22 @@ public class GlobalConfigUtils {
     }
 
     /**
+     * <p>
      * 设置元数据相关属性
+     * </p>
      *
-     * @param dataSource
-     * @param globalConfig
+     * @param dataSource   数据源
+     * @param globalConfig 全局配置
      */
     public static void setMetaData(DataSource dataSource, GlobalConfiguration globalConfig) {
-        Connection connection = null;
-        try {
-            connection = dataSource.getConnection();
+        try (Connection connection = dataSource.getConnection()) {
             String jdbcUrl = connection.getMetaData().getURL();
             // 设置全局关键字
             globalConfig.setSqlKeywords(connection.getMetaData().getSQLKeywords());
             // 自动设置数据库类型
-            if (globalConfig.isAutoSetDbType()) {
-                globalConfig.setDbTypeByJdbcUrl(jdbcUrl);
-            }
-        } catch (SQLException e) {
-            logger.warn("Warn: GlobalConfiguration setMetaData Fail !  Cause:" + e);
-        } finally {
-            IOUtils.closeQuietly(connection);
+            globalConfig.setDbType(jdbcUrl);
+        } catch (Exception e) {
+            throw new MybatisExtendsException("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
         }
     }
 

@@ -575,16 +575,18 @@ public class ConfigBuilder {
 		return strategyConfig;
 	}
 
-	public void setStrategyConfig(StrategyConfig strategyConfig) {
-		this.strategyConfig = strategyConfig;
-	}
+    public ConfigBuilder setStrategyConfig(StrategyConfig strategyConfig) {
+        this.strategyConfig = strategyConfig;
+        return this;
+    }
 
 	public GlobalConfig getGlobalConfig() {
 		return globalConfig;
 	}
 
-	public void setGlobalConfig(GlobalConfig globalConfig) {
-		this.globalConfig = globalConfig;
-	}
+    public ConfigBuilder setGlobalConfig(GlobalConfig globalConfig) {
+        this.globalConfig = globalConfig;
+        return this;
+    }
 
 }

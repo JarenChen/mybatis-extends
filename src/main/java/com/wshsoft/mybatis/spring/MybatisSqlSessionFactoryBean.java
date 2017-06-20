@@ -516,18 +516,17 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
 		// 设置元数据相关
         GlobalConfigUtils.setMetaData(dataSource, globalConfig);
-		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
-		// TODO SqlRunner
-		SqlRunner.FACTORY = sqlSessionFactory;
-		// TODO 缓存 sqlSessionFactory
-		globalConfig.setSqlSessionFactory(sqlSessionFactory);
-		// TODO 设置全局参数属性
-		globalConfig.signGlobalConfig(sqlSessionFactory);
-
-		if (!isEmpty(this.mapperLocations)) {
-			if (globalConfig.isRefresh()) {
-				// TODO 设置自动刷新配置 减少配置
-                new MybatisMapperRefresh(sqlSessionFactory, 2,
+        SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
+        // TODO SqlRunner
+        SqlRunner.FACTORY = sqlSessionFactory;
+        // TODO 缓存 sqlSessionFactory
+        globalConfig.setSqlSessionFactory(sqlSessionFactory);
+        // TODO 设置全局参数属性
+        globalConfig.signGlobalConfig(sqlSessionFactory);
+        if (!isEmpty(this.mapperLocations)) {
+            if (globalConfig.isRefresh()) {
+                //TODO 设置自动刷新配置 减少配置
+                new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2,
                         2, true);
 			}
 			for (Resource mapperLocation : this.mapperLocations) {

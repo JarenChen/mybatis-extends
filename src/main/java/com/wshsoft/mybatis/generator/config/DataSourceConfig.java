@@ -66,9 +66,10 @@ public class DataSourceConfig {
 		return dbType;
 	}
 
-	public void setDbType(DbType dbType) {
-		this.dbType = dbType;
-	}
+    public DataSourceConfig setDbType(DbType dbType) {
+        this.dbType = dbType;
+        return this;
+    }
 
 	public ITypeConvert getTypeConvert() {
 		if (null == typeConvert) {
@@ -91,9 +92,10 @@ public class DataSourceConfig {
 		return typeConvert;
 	}
 
-	public void setTypeConvert(ITypeConvert typeConvert) {
-		this.typeConvert = typeConvert;
-	}
+    public DataSourceConfig setTypeConvert(ITypeConvert typeConvert) {
+        this.typeConvert = typeConvert;
+        return this;
+    }
 
 	/**
 	 * 创建数据库连接对象
@@ -115,32 +117,36 @@ public class DataSourceConfig {
 		return url;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public DataSourceConfig setUrl(String url) {
+        this.url = url;
+        return this;
+    }
 
 	public String getDriverName() {
 		return driverName;
 	}
 
-	public void setDriverName(String driverName) {
-		this.driverName = driverName;
-	}
+    public DataSourceConfig setDriverName(String driverName) {
+        this.driverName = driverName;
+        return this;
+    }
 
 	public String getUsername() {
 		return username;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public DataSourceConfig setUsername(String username) {
+        this.username = username;
+        return this;
+    }
 
 	public String getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public DataSourceConfig setPassword(String password) {
+        this.password = password;
+        return this;
+    }
 
 }

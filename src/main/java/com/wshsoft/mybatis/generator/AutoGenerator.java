@@ -20,7 +20,11 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
 import com.wshsoft.mybatis.generator.config.ConstVal;
+import com.wshsoft.mybatis.generator.config.DataSourceConfig;
 import com.wshsoft.mybatis.generator.config.FileOutConfig;
+import com.wshsoft.mybatis.generator.config.GlobalConfig;
+import com.wshsoft.mybatis.generator.config.PackageConfig;
+import com.wshsoft.mybatis.generator.config.StrategyConfig;
 import com.wshsoft.mybatis.generator.config.TemplateConfig;
 import com.wshsoft.mybatis.generator.config.builder.ConfigBuilder;
 import com.wshsoft.mybatis.generator.config.po.TableField;
@@ -34,14 +38,36 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
  * @author Carry xie
  * @since 2016/8/30
  */
-public class AutoGenerator extends AbstractGenerator {
+public class AutoGenerator {
 
 	private static final Log logger = LogFactory.getLog(AutoGenerator.class);
 
-	/**
-	 * velocity引擎
-	 */
-	private VelocityEngine engine;
+    protected ConfigBuilder config;
+    protected InjectionConfig injectionConfig;
+    /**
+     * 数据源配置
+     */
+    private DataSourceConfig dataSource;
+    /**
+     * 数据库表配置
+     */
+    private StrategyConfig strategy;
+    /**
+     * 包 相关配置
+     */
+    private PackageConfig packageInfo;
+    /**
+     * 模板 相关配置
+     */
+    private TemplateConfig template;
+    /**
+     * 全局 相关配置
+     */
+    private GlobalConfig globalConfig;
+    /**
+     * velocity引擎
+     */
+    private VelocityEngine engine;
 
 	/**
 	 * 生成代码
@@ -127,21 +153,23 @@ public class AutoGenerator extends AbstractGenerator {
 				// 表注解
 				tableInfo.setImportPackages("com.wshsoft.mybatis.annotations.TableName");
 			}
-			if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
-				// 父实体
-				tableInfo.setImportPackages(config.getSuperEntityClass());
-			} else {
-				tableInfo.setImportPackages("java.io.Serializable");
-			}
+            if (tableInfo.isLogicDelete(config.getGlobalConfig().getLogicDeletePropertyName())) {
+                // 逻辑删除注解
+                tableInfo.setImportPackages("com.wshsoft.mybatis.annotations.TableLogic");
+            }
+            if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
+                // 父实体
+                tableInfo.setImportPackages(config.getSuperEntityClass());
+            } else {
+                tableInfo.setImportPackages("java.io.Serializable");
+            }
             // Boolean类型is前缀处理
             if ( config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix() ) {
                 for (TableField field : tableInfo.getFields()) {
                     if (field.getPropertyType().equalsIgnoreCase("boolean")) {
                         if (field.getPropertyName().indexOf("is") != -1) {
-                            String noIsPropertyName = field.getPropertyName().substring(2, field.getPropertyName().length());
-                            String firstChar = noIsPropertyName.substring(0, 1).toLowerCase();
-                            String afterChar = noIsPropertyName.substring(1, noIsPropertyName.length());
-                            field.setPropertyName(config.getStrategyConfig(), firstChar + afterChar);
+                            field.setPropertyName(config.getStrategyConfig(),
+                                    field.getPropertyName().substring(0, 3).toLowerCase().substring(2));
                         }
                     }
                 }
@@ -155,6 +183,7 @@ public class AutoGenerator extends AbstractGenerator {
             ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
 			ctx.put("package", packageInfo);
 			ctx.put("author", config.getGlobalConfig().getAuthor());
+            ctx.put("logicDeletePropertyName", config.getGlobalConfig().getLogicDeletePropertyName());
 			ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
 			ctx.put("date", date);
 			ctx.put("table", tableInfo);
@@ -322,4 +351,80 @@ public class AutoGenerator extends AbstractGenerator {
 		return !file.exists() || config.getGlobalConfig().isFileOverride();
 	}
 
+
+    // ==================================  相关配置  ==================================
+    /**
+     * 初始化配置
+     */
+    protected void initConfig() {
+        if (null == config) {
+            config = new ConfigBuilder(packageInfo, dataSource, strategy, template, globalConfig);
+            if (null != injectionConfig) {
+                injectionConfig.setConfig(config);
+            }
+        }
+    }
+
+    public DataSourceConfig getDataSource() {
+        return dataSource;
+    }
+
+    public AutoGenerator setDataSource(DataSourceConfig dataSource) {
+        this.dataSource = dataSource;
+        return this;
+    }
+
+    public StrategyConfig getStrategy() {
+        return strategy;
+    }
+
+    public AutoGenerator setStrategy(StrategyConfig strategy) {
+        this.strategy = strategy;
+        return this;
+    }
+
+    public PackageConfig getPackageInfo() {
+        return packageInfo;
+    }
+
+    public AutoGenerator setPackageInfo(PackageConfig packageInfo) {
+        this.packageInfo = packageInfo;
+        return this;
+    }
+
+    public TemplateConfig getTemplate() {
+        return template;
+    }
+
+    public AutoGenerator setTemplate(TemplateConfig template) {
+        this.template = template;
+        return this;
+    }
+
+    public ConfigBuilder getConfig() {
+        return config;
+    }
+
+    public AutoGenerator setConfig(ConfigBuilder config) {
+        this.config = config;
+        return this;
+    }
+
+    public GlobalConfig getGlobalConfig() {
+        return globalConfig;
+    }
+
+    public AutoGenerator setGlobalConfig(GlobalConfig globalConfig) {
+        this.globalConfig = globalConfig;
+        return this;
+    }
+
+    public InjectionConfig getCfg() {
+        return injectionConfig;
+    }
+
+    public AutoGenerator setCfg(InjectionConfig injectionConfig) {
+        this.injectionConfig = injectionConfig;
+        return this;
+    }
 }
