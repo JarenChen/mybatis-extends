@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
@@ -93,12 +94,22 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
 		return sb.toString();
 	}
 
-	/**
-	 * SQL连接器
-	 */
-	private static class SafeAppendable implements Serializable {
-		private final Appendable appendable;
-		private boolean empty = true;
+    /**
+     * 查看构造器where是否为空
+     *
+     * @return
+     */
+    public boolean isEmptyOfWhere() {
+        return CollectionUtils.isEmpty(sql().where);
+    }
+
+    /**
+     * SQL连接器
+     */
+    private static class SafeAppendable implements Serializable {
+
+        private final Appendable appendable;
+        private boolean empty = true;
 
 		public SafeAppendable(Appendable appendable) {
 			super();

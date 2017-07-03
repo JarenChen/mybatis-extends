@@ -41,4 +41,8 @@
         <!-- 级联查询 -->
         <association column="role" property="role" select="com.wshsoft.mybatis.test.mysql.RoleMapper.selectById"/>
     </resultMap>
+    <!-- 测试 resultMap 结果集注入【 注意，实体需要注解 ！！ 】 -->
+    <select id="selectRoleList" resultMap="com.wshsoft.mybatis.test.mysql.mapper.RoleMapper.RoleMap">
+      SELECT * FROM role
+    </select>
 </mapper>

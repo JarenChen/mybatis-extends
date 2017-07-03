@@ -13,4 +13,7 @@ import com.wshsoft.mybatis.test.h2.entity.persistent.H2User;
  */
 public interface IH2UserService extends IService<H2User> {
 
+    public int myInsert(String name, int version);
+
+    public int myUpdate(Long id, String name);
 }

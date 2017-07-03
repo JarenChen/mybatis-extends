@@ -1,6 +1,7 @@
 package com.wshsoft.mybatis.toolkit;
 
 import java.lang.reflect.Proxy;
+import java.util.Properties;
 
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
@@ -26,4 +27,13 @@ public final class PluginUtils {
 		return target;
 	}
 
+    /**
+     * <p>
+     * 根据 key 获取 Properties 的值
+     * </p>
+     */
+    public static String getProperty(Properties properties, String key) {
+        String value = properties.getProperty(key);
+        return StringUtils.isEmpty(value) ? null : value;
+    }
 }

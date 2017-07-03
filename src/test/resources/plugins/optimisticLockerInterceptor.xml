@@ -24,6 +24,7 @@
 				<bean class="com.wshsoft.mybatis.plugins.PerformanceInterceptor" />
 			</array>
 		</property>
+		<property name="globalConfig" ref="globalConfig" />
 	</bean>
 
 	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
@@ -35,8 +36,8 @@
 			value="com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper" />
 	</bean>
 	<bean id="globalConfig" class="com.wshsoft.mybatis.entity.GlobalConfiguration">
-		<property name="sqlInjector" ref="mySqlInjector" />
+		<property name="sqlInjector">
+			<bean class="com.wshsoft.mybatis.mapper.LogicSqlInjector" />
+		</property>
 	</bean>
-
-	<bean id="mySqlInjector" class="com.wshsoft.mybatis.mapper.LogicSqlInjector" />
 </beans>

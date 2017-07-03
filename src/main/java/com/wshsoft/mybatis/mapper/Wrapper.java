@@ -59,14 +59,34 @@ public abstract class Wrapper<T> implements Serializable {
 	 */
 	protected String AND_OR = "AND";
 
-	/**
-	 * 兼容EntityWrapper
-	 *
-	 * @return
-	 */
-	public T getEntity() {
-		return null;
-	}
+    /**
+     * <p>
+     * 兼容EntityWrapper
+     * </p>
+     *
+     * @return
+     */
+    public T getEntity() {
+        return null;
+    }
+
+    /**
+     * 查看where构造是否为空
+     *
+     * @return
+     */
+    public boolean isEmptyOfWhere() {
+        return sql.isEmptyOfWhere();
+    }
+
+    /**
+     * 查看where构造是否不为空
+     *
+     * @return
+     */
+    public boolean isNotEmptyOfWhere() {
+        return !isEmptyOfWhere();
+    }
 
     public String getSqlSelect() {
         return StringUtils.isEmpty(sqlSelect) ? null : stripSqlInjection(sqlSelect);

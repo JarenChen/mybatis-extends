@@ -18,6 +18,7 @@ import com.wshsoft.mybatis.plugins.OptimisticLockerInterceptor;
 import com.wshsoft.mybatis.plugins.PaginationInterceptor;
 import com.wshsoft.mybatis.plugins.PerformanceInterceptor;
 import com.wshsoft.mybatis.spring.MybatisSqlSessionFactoryBean;
+import com.wshsoft.mybatis.test.h2.H2MetaObjectHandler;
 
 /**
  * <p>
@@ -43,13 +44,13 @@ public class MybatisExiendsConfig {
 		configuration.setJdbcTypeForNull(JdbcType.NULL);
 		sqlSessionFactory.setConfiguration(configuration);
 		PaginationInterceptor pagination = new PaginationInterceptor();
-		pagination.setDialectType("h2");
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
                 pagination,
                 optLock,
                 new PerformanceInterceptor()
         });
+        globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
 		sqlSessionFactory.setGlobalConfig(globalConfiguration);
 		return sqlSessionFactory.getObject();
 	}

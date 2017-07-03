@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.wshsoft.mybatis.enums.FieldFill;
 import com.wshsoft.mybatis.generator.config.ConstVal;
 import com.wshsoft.mybatis.generator.config.DataSourceConfig;
 import com.wshsoft.mybatis.generator.config.GlobalConfig;
@@ -19,6 +20,7 @@ import com.wshsoft.mybatis.generator.config.PackageConfig;
 import com.wshsoft.mybatis.generator.config.StrategyConfig;
 import com.wshsoft.mybatis.generator.config.TemplateConfig;
 import com.wshsoft.mybatis.generator.config.po.TableField;
+import com.wshsoft.mybatis.generator.config.po.TableFill;
 import com.wshsoft.mybatis.generator.config.po.TableInfo;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
@@ -469,6 +471,16 @@ public class ConfigBuilder {
                     // 跳过公共字段
                     commonFieldList.add(field);
                     continue;
+                }
+                // 填充逻辑判断
+                List<TableFill> tfs = this.getStrategyConfig().getTableFillList();
+                if (null != tfs) {
+                    for (TableFill tf : tfs) {
+                        if (tf.getFieldName().equals(field.getName())) {
+                            field.setFill(FieldFill.INSERT.name());
+                            break;
+                        }
+                    }
                 }
                 fieldList.add(field);
             }

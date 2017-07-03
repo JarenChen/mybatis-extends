@@ -621,11 +621,55 @@ public class StringUtils {
     }
 
     /**
-     * 驼峰转连字符
-     * <pre>
-     *     StringUtils.camelToHyphen( "managerAdminUserService" ) = manager-admin-user-service 
-     * </pre> 
-     * @see <a href="https://github.com/krasa/StringManipulation">document</a>
+     * <p>
+     * 第一个首字母小写,之后字符大小写的不变<br>
+     * StringUtils.firstCharToLower( "UserService" )     = userService
+     * StringUtils.firstCharToLower( "UserServiceImpl" ) = userServiceImpl
+     * </p>
+     *
+     * @param rawString 需要处理的字符串
+     * @return
+     */
+    public static String firstCharToLower(String rawString) {
+        return prefixToLower(rawString, 1);
+    }
+
+    /**
+     * <p>
+     * 前n个首字母小写,之后字符大小写的不变
+     * </p>
+     *
+     * @param rawString 需要处理的字符串
+     * @param index     多少个字符(从左至右)
+     * @return
+     */
+    public static String prefixToLower(String rawString, int index) {
+        String beforeChar = rawString.substring(0, index).toLowerCase();
+        String afterChar = rawString.substring(index, rawString.length());
+        return beforeChar + afterChar;
+    }
+
+    /**
+     * <p>
+     * 删除字符前缀之后,首字母小写,之后字符大小写的不变<br>
+     * StringUtils.removePrefixAfterPrefixToLower( "isUser", 2 )     = user
+     * StringUtils.removePrefixAfterPrefixToLower( "isUserInfo", 2 ) = userInfo
+     * </p>
+     *
+     * @param rawString 需要处理的字符串
+     * @param index     删除多少个字符(从左至右)
+     * @return
+     */
+    public static String removePrefixAfterPrefixToLower(String rawString, int index) {
+        return prefixToLower(rawString.substring(index, rawString.length()), 1);
+    }
+
+    /**
+     * <p>
+     * 驼峰转连字符<br>
+     * StringUtils.camelToHyphen( "managerAdminUserService" ) = manager-admin-user-service
+     * </p>
+     *
      * @param input
      * @return 以'-'分隔
      * @see <a href="https://github.com/krasa/StringManipulation">document</a>

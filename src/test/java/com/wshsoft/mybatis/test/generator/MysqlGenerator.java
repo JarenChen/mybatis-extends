@@ -1,18 +1,26 @@
 package com.wshsoft.mybatis.test.generator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Map;
+
+import com.wshsoft.mybatis.enums.FieldFill;
 import com.wshsoft.mybatis.generator.AutoGenerator;
 import com.wshsoft.mybatis.generator.InjectionConfig;
-import com.wshsoft.mybatis.generator.config.*;
+import com.wshsoft.mybatis.generator.config.DataSourceConfig;
+import com.wshsoft.mybatis.generator.config.FileOutConfig;
+import com.wshsoft.mybatis.generator.config.GlobalConfig;
+import com.wshsoft.mybatis.generator.config.PackageConfig;
+import com.wshsoft.mybatis.generator.config.StrategyConfig;
+import com.wshsoft.mybatis.generator.config.TemplateConfig;
 import com.wshsoft.mybatis.generator.config.converts.MySqlTypeConvert;
+import com.wshsoft.mybatis.generator.config.po.TableFill;
 import com.wshsoft.mybatis.generator.config.po.TableInfo;
 import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -30,6 +38,11 @@ public class MysqlGenerator {
 	 * </p>
 	 */
 	public static void main(String[] args) {
+        // 自定义需要填充的字段
+        List<TableFill> tableFillList = new ArrayList<>();
+        tableFillList.add(new TableFill("ASDD_SS", FieldFill.INSERT_UPDATE));
+
+        // 代码生成器
 		AutoGenerator mpg = new AutoGenerator();
 
 		// 全局配置
@@ -82,6 +95,7 @@ public class MysqlGenerator {
 		// strategy.setSuperEntityClass("com.wshsoft.demo.TestEntity");
 		// 自定义实体，公共字段
 		// strategy.setSuperEntityColumns(new String[] { "test_id", "age" });
+	    // strategy.setTableFillList(tableFillList);
 		// 自定义 mapper 父类
 		// strategy.setSuperMapperClass("com.wshsoft.demo.TestMapper");
 		// 自定义 service 父类

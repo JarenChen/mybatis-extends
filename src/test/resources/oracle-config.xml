@@ -59,9 +59,7 @@
 	     | dialectClazz 方言实现类
 	     |              自定义需要实现 com.wshsoft.mybatis.plugins.pagination.IDialect 接口
 	     | -->
-        <plugin interceptor="com.wshsoft.mybatis.plugins.PaginationInterceptor">
-            <property name="dialectType" value="oracle" />
-        </plugin>
+        <plugin interceptor="com.wshsoft.mybatis.plugins.PaginationInterceptor"/>
     </plugins>
 
 	<!-- 环境配置 -->

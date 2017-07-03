@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 import com.wshsoft.mybatis.test.mysql.MyBaseMapper;
+import com.wshsoft.mybatis.test.mysql.entity.Role;
 import com.wshsoft.mybatis.test.mysql.entity.User;
 
 /**
@@ -53,4 +54,6 @@ public interface UserMapper extends MyBaseMapper<User> {
 	 * @return
 	 */
 	List<User> forSelect(RowBounds pagination, @Param("ids") List<String> ids);
+    // 测试跨 xml resultMap
+    List<Role> selectRoleList();
 }

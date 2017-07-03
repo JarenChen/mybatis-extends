@@ -1,13 +1,12 @@
 package com.wshsoft.mybatis.test.h2.entity.persistent;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 import com.wshsoft.mybatis.annotations.TableField;
-import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.annotations.Version;
 import com.wshsoft.mybatis.enums.FieldStrategy;
+import com.wshsoft.mybatis.test.h2.entity.SuperEntity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -23,16 +22,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @TableName
-public class H2User implements Serializable {
-
-    /* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
-
-    /* 主键ID 注解，value 字段名，type 用户输入ID */
-    @TableId(value = "test_id")
-    private Long id;
-
+public class H2User extends SuperEntity {
     /* 测试忽略验证 */
     private String name;
 
@@ -51,55 +41,7 @@ public class H2User implements Serializable {
     private Integer version;
 
 
-    public H2User() {
-
-    }
-
-    public H2User(String name) {
-        this.name = name;
-    }
-
-    public H2User(Integer testType) {
-        this.testType = testType;
-    }
-
-    public H2User(String name, Integer age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    public H2User(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public H2User(Long id, Integer age) {
-        this.id = id;
-        this.age = age;
-    }
-
-    public H2User(Long id, String name, Integer age, Integer testType) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-        this.testType = testType;
-    }
-
-    public H2User(String name, Integer age, Integer testType) {
-        this.name = name;
-        this.age = age;
-        this.testType = testType;
-    }
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
+    public String getName() {
 		return name;
 	}
 
@@ -146,5 +88,45 @@ public class H2User implements Serializable {
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
+
+	public H2User() {
+
+    }
+
+    public H2User(String name) {
+        this.name = name;
+    }
+
+    public H2User(Integer testType) {
+        this.testType = testType;
+    }
+
+    public H2User(String name, Integer age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public H2User(Long id, String name) {
+        this.setId(id);
+        this.name = name;
+    }
+
+    public H2User(Long id, Integer age) {
+        this.setId(id);
+        this.age = age;
+    }
+
+    public H2User(Long id, String name, Integer age, Integer testType) {
+        this.setId(id);
+        this.name = name;
+        this.age = age;
+        this.testType = testType;
+    }
+
+    public H2User(String name, Integer age, Integer testType) {
+        this.name = name;
+        this.age = age;
+        this.testType = testType;
+    }
 
 }

@@ -1,7 +1,5 @@
 package com.wshsoft.mybatis.test.h2;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -25,6 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.wshsoft.mybatis.mapper.EntityWrapper;
 import com.wshsoft.mybatis.plugins.Page;
+import com.wshsoft.mybatis.test.h2.entity.mapper.H2UserNoVersionMapper;
 import com.wshsoft.mybatis.test.h2.entity.persistent.H2UserNoVersion;
 import com.wshsoft.mybatis.test.h2.service.IH2UserNoVersionService;
 
@@ -41,7 +40,10 @@ import com.wshsoft.mybatis.test.h2.service.IH2UserNoVersionService;
 public class H2UserNoVersionTest extends H2Test {
 
     @Autowired
-    private IH2UserNoVersionService userService;
+    IH2UserNoVersionService userService;
+
+    @Autowired
+    H2UserNoVersionMapper userMapper;
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
@@ -205,4 +207,33 @@ public class H2UserNoVersionTest extends H2Test {
     }
 
 
+    @Test
+    public void testInsertMy(){
+        String name="QiPa";
+        int version =1;
+        int row = userMapper.myInsertWithNameVersion(name, version);
+        Assert.assertEquals(1, row);
+    }
+
+    @Test
+    public void testUpdateMy(){
+        Long id = 10087L;
+        H2UserNoVersion user = new H2UserNoVersion();
+        user.setId(id);
+        user.setName("myUpdate");
+        user.setVersion(1);
+        userService.insert(user);
+
+        H2UserNoVersion dbUser = userService.selectById(id);
+        Assert.assertNotNull(dbUser);
+        Assert.assertEquals("myUpdate", dbUser.getName());
+
+        Assert.assertEquals(1, userMapper.myUpdateWithNameId(id, "updateMy"));
+
+        dbUser = userService.selectById(id);
+        Assert.assertNotNull(dbUser);
+        Assert.assertEquals("updateMy", dbUser.getName());
+        Assert.assertEquals(1, user.getVersion().intValue());
+
+    }
 }

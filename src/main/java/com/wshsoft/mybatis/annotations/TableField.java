@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.wshsoft.mybatis.enums.FieldIgnore;
+import com.wshsoft.mybatis.enums.FieldFill;
 import com.wshsoft.mybatis.enums.FieldStrategy;
 
 /**
@@ -61,8 +61,8 @@ public @interface TableField {
 
     /**
      * <p>
-     * 字段忽略策略
+     * 字段自动填充策略
      * </p>
      */
-    FieldIgnore ignore() default FieldIgnore.DEFAULT;
+    FieldFill fill() default FieldFill.DEFAULT;
 }

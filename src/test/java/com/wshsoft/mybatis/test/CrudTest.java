@@ -28,6 +28,10 @@ public class CrudTest {
     }
 
     public SqlSessionFactory sqlSessionFactory() {
+        return sqlSessionFactory("mysql-config.xml");
+    }
+
+    public SqlSessionFactory sqlSessionFactory(String configXml) {
         GlobalConfiguration global = this.globalConfiguration();
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");

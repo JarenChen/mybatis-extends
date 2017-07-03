@@ -20,9 +20,7 @@
 		<property name="plugins">
 			<array>
 				<bean class="com.wshsoft.mybatis.plugins.PerformanceInterceptor" />
-				<bean class="com.wshsoft.mybatis.plugins.PaginationInterceptor">
-					<property name="dialectType" value="mysql" />
-				</bean>
+				<bean class="com.wshsoft.mybatis.plugins.PaginationInterceptor"/>
 			</array>
 		</property>
 	</bean>

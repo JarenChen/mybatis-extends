@@ -153,7 +153,7 @@ public class AutoGenerator {
 				// 表注解
 				tableInfo.setImportPackages("com.wshsoft.mybatis.annotations.TableName");
 			}
-            if (tableInfo.isLogicDelete(config.getGlobalConfig().getLogicDeletePropertyName())) {
+            if (tableInfo.isLogicDelete(config.getStrategyConfig().getLogicDeleteFieldName())) {
                 // 逻辑删除注解
                 tableInfo.setImportPackages("com.wshsoft.mybatis.annotations.TableLogic");
             }
@@ -167,9 +167,9 @@ public class AutoGenerator {
             if ( config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix() ) {
                 for (TableField field : tableInfo.getFields()) {
                     if (field.getPropertyType().equalsIgnoreCase("boolean")) {
-                        if (field.getPropertyName().indexOf("is") != -1) {
+                        if (field.getPropertyName().contains("is")) {
                             field.setPropertyName(config.getStrategyConfig(),
-                                    field.getPropertyName().substring(0, 3).toLowerCase().substring(2));
+                                    StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
                         }
                     }
                 }
@@ -183,7 +183,7 @@ public class AutoGenerator {
             ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
 			ctx.put("package", packageInfo);
 			ctx.put("author", config.getGlobalConfig().getAuthor());
-            ctx.put("logicDeletePropertyName", config.getGlobalConfig().getLogicDeletePropertyName());
+            ctx.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
 			ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
 			ctx.put("date", date);
 			ctx.put("table", tableInfo);

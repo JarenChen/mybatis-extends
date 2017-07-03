@@ -41,7 +41,7 @@ public class PaginationInterceptorTest {
 		SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession();
 		Connection conn = session.getConnection();
 		Reader reader = Resources
-				.getResourceAsReader("com/wshsoft/mybatis/test/plugins/paginationInterceptor/CreateDB.sql");
+				.getResourceAsReader("plugins/paginationInterceptor/CreateDB.sql");
 		ScriptRunner runner = new ScriptRunner(conn);
 		runner.setLogWriter(null);
 		runner.runScript(reader);

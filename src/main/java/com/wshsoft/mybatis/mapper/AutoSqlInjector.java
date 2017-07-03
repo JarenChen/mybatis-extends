@@ -27,7 +27,7 @@ import org.apache.ibatis.session.Configuration;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.entity.TableFieldInfo;
 import com.wshsoft.mybatis.entity.TableInfo;
-import com.wshsoft.mybatis.enums.FieldIgnore;
+import com.wshsoft.mybatis.enums.FieldFill;
 import com.wshsoft.mybatis.enums.FieldStrategy;
 import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.enums.SqlMethod;
@@ -224,15 +224,14 @@ public class AutoSqlInjector implements ISqlInjector {
             }
         }
 
-		List<TableFieldInfo> fieldList = table.getFieldList();
-
-		for (TableFieldInfo fieldInfo : fieldList) {
-            /* 判断是否插入忽略，插入忽略就不生成这个SQL */
-            // TODO 忽略策略待完善
-            if (fieldInfo.getFieldIgnore() == FieldIgnore.INSERT) {
-                continue;
-            }
-            if (selective) {
+        // 是否 IF 标签判断
+        boolean ifTag;
+        List<TableFieldInfo> fieldList = table.getFieldList();
+        for (TableFieldInfo fieldInfo : fieldList) {
+            // 在FieldIgnore,INSERT_UPDATE,INSERT 时设置为false
+            ifTag = !(FieldFill.INSERT == fieldInfo.getFieldFill()
+                    || FieldFill.INSERT_UPDATE == fieldInfo.getFieldFill());
+            if (selective && ifTag) {
                 fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
                 fieldBuilder.append(fieldInfo.getColumn()).append(",");
                 fieldBuilder.append(convertIfTagIgnored(fieldInfo, true));
@@ -311,22 +310,22 @@ public class AutoSqlInjector implements ISqlInjector {
 		this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
 	}
 
-	/**
-	 * <p>
-	 * 注入更新 SQL 语句
-	 * </p>
-	 *
-	 * @param mapperClass
-	 * @param modelClass
-	 * @param table
-	 */
+    /**
+     * <p>
+     * 注入更新 SQL 语句
+     * </p>
+     *
+     * @param mapperClass
+     * @param modelClass
+     * @param table
+     */
     protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
         String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et."), table.getKeyColumn(),
-                "et."+table.getKeyProperty(),
-                "<if test=\"et instanceof java.util.Map\">"+
-                        "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
-                        +"and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
+                "et." + table.getKeyProperty(),
+                "<if test=\"et instanceof java.util.Map\">"
+                        + "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
+                        + "and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
                         + "</if>"
                 +"</if>"
         );
@@ -461,22 +460,21 @@ public class AutoSqlInjector implements ISqlInjector {
         this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Object.class, table);
     }
 
-	/**
-	 * <p>
-	 * 注入EntityWrapper查询总记录数 SQL 语句
-	 * </p>
-	 *
-	 * @param mapperClass
-	 * @param modelClass
-	 * @param table
-	 *            表信息
-	 */
-	protected void injectSelectCountSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		SqlMethod sqlMethod = SqlMethod.SELECT_COUNT;
-		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhereEntityWrapper(table));
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Integer.class, null);
-	}
+    /**
+     * <p>
+     * 注入EntityWrapper查询总记录数 SQL 语句
+     * </p>
+     *
+     * @param mapperClass
+     * @param modelClass
+     * @param table       表信息
+     */
+    protected void injectSelectCountSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+        SqlMethod sqlMethod = SqlMethod.SELECT_COUNT;
+        String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhereEntityWrapper(table));
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Integer.class, null);
+    }
 
     /**
      * <p>
@@ -503,54 +501,53 @@ public class AutoSqlInjector implements ISqlInjector {
             where.append(convertIfTag(fieldInfo, true));
         }
         where.append("\n</if>");
-        where.append("\n<if test=\"ew.sqlSegment!=null\">\n${ew.sqlSegment}\n</if>");
+        where.append("\n<if test=\"ew!=null and ew.sqlSegment!=null and ew.notEmptyOfWhere\">\n${ew.sqlSegment}\n</if>");
         where.append("\n</if>");
         where.append("\n</where>");
+        where.append("\n<if test=\"ew!=null and ew.sqlSegment!=null and ew.emptyOfWhere\">\n${ew.sqlSegment}\n</if>");
         return where.toString();
     }
 
-	/**
-	 * <p>
-	 * SQL 更新 set 语句
-	 * </p>
-	 *
-	 * @param selective
-	 *            是否选择判断
-	 * @param table
-	 *            表信息
-	 * @param prefix
-	 *            前缀
-	 * @return
-	 */
-	protected String sqlSet(boolean selective, TableInfo table, String prefix) {
-		StringBuilder set = new StringBuilder();
-		set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
-		List<TableFieldInfo> fieldList = table.getFieldList();
-		for (TableFieldInfo fieldInfo : fieldList) {
-            /* 判断是不是更新忽略，是的话不生成此SQL */
-            // TODO 忽略策略待完善
-            if (fieldInfo.getFieldIgnore() == FieldIgnore.UPDATE) {
-                continue;
+    /**
+     * <p>
+     * SQL 更新 set 语句
+     * </p>
+     *
+     * @param selective 是否选择判断
+     * @param table     表信息
+     * @param prefix    前缀
+     * @return
+     */
+    protected String sqlSet(boolean selective, TableInfo table, String prefix) {
+        StringBuilder set = new StringBuilder();
+        set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
+
+        // 是否 IF 标签判断
+        boolean ifTag;
+        List<TableFieldInfo> fieldList = table.getFieldList();
+        for (TableFieldInfo fieldInfo : fieldList) {
+            // 判断是否更新忽略,在FieldIgnore,UPDATE,INSERT_UPDATE设置为false
+            ifTag = !(FieldFill.UPDATE == fieldInfo.getFieldFill()
+                    || FieldFill.INSERT_UPDATE == fieldInfo.getFieldFill());
+            if (selective && ifTag) {
+                set.append(convertIfTag(true, fieldInfo, prefix, false));
+                set.append(fieldInfo.getColumn()).append("=#{");
+                if (null != prefix) {
+                    set.append(prefix);
+                }
+                set.append(fieldInfo.getEl()).append("},");
+                set.append(convertIfTag(true, fieldInfo, null, true));
+            } else {
+                set.append(fieldInfo.getColumn()).append("=#{");
+                if (null != prefix) {
+                    set.append(prefix);
+                }
+                set.append(fieldInfo.getEl()).append("},");
             }
-			if (selective) {
-				set.append(convertIfTag(true, fieldInfo, prefix, false));
-				set.append(fieldInfo.getColumn()).append("=#{");
-				if (null != prefix) {
-					set.append(prefix);
-				}
-				set.append(fieldInfo.getEl()).append("},");
-				set.append(convertIfTag(true, fieldInfo, null, true));
-			} else {
-				set.append(fieldInfo.getColumn()).append("=#{");
-				if (null != prefix) {
-					set.append(prefix);
-				}
-				set.append(fieldInfo.getEl()).append("},");
-			}
-		}
-		set.append("\n</trim>");
-		return set.toString();
-	}
+        }
+        set.append("\n</trim>");
+        return set.toString();
+    }
 
     /**
      * <p>

@@ -46,35 +46,35 @@ public class ReflectionKit {
 		return StringUtils.concatCapitalize(boolean.class.equals(fieldType) ? "is" : "get", str);
 	}
 
-	/**
-	 * 获取 public get方法的值
-	 *
-	 * @param cls
-	 * @param entity
-	 *            实体
-	 * @param str
-	 *            属性字符串内容
-	 * @return Object
-	 */
-	public static Object getMethodValue(Class<?> cls, Object entity, String str) {
-		Map<String, Field> fieldMaps = getFieldMap(cls);
-		try {
-			if (MapUtils.isEmpty(fieldMaps)) {
-				throw new MybatisExtendsException(
-						String.format("Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str));
-			}
-			Method method = cls.getMethod(getMethodCapitalize(fieldMaps.get(str), str));
-			return method.invoke(entity);
-		} catch (NoSuchMethodException e) {
-			throw new MybatisExtendsException(
-					String.format("Error: NoSuchMethod in %s.  Cause:", cls.getSimpleName()) + e);
-		} catch (IllegalAccessException e) {
-			throw new MybatisExtendsException(
-					String.format("Error: Cannot execute a private method. in %s.  Cause:", cls.getSimpleName()) + e);
-		} catch (InvocationTargetException e) {
-			throw new MybatisExtendsException("Error: InvocationTargetException on getMethodValue.  Cause:" + e);
-		}
-	}
+    /**
+     * <p>
+     * 获取 public get方法的值
+     * </p>
+     *
+     * @param cls
+     * @param entity 实体
+     * @param str    属性字符串内容
+     * @return Object
+     */
+    public static Object getMethodValue(Class<?> cls, Object entity, String str) {
+        Map<String, Field> fieldMaps = getFieldMap(cls);
+        try {
+            if (MapUtils.isEmpty(fieldMaps)) {
+                throw new MybatisExtendsException(
+                        String.format("Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str));
+            }
+            Method method = cls.getMethod(getMethodCapitalize(fieldMaps.get(str), str));
+            return method.invoke(entity);
+        } catch (NoSuchMethodException e) {
+            throw new MybatisExtendsException(String.format("Error: NoSuchMethod in %s.  Cause:", cls.getSimpleName()) + e);
+        } catch (IllegalAccessException e) {
+            throw new MybatisExtendsException(String.format("Error: Cannot execute a private method. in %s.  Cause:",
+                    cls.getSimpleName())
+                    + e);
+        } catch (InvocationTargetException e) {
+            throw new MybatisExtendsException("Error: InvocationTargetException on getMethodValue.  Cause:" + e);
+        }
+    }
 
 	/**
 	 * 获取 public get方法的值

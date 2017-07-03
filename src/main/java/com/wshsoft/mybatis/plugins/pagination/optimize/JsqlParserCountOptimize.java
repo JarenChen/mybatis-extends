@@ -1,9 +1,12 @@
-package com.wshsoft.mybatis.toolkit;
+package com.wshsoft.mybatis.plugins.pagination.optimize;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wshsoft.mybatis.entity.CountOptimize;
+import com.wshsoft.mybatis.parser.AbstractSqlParser;
+import com.wshsoft.mybatis.parser.SqlInfo;
+import com.wshsoft.mybatis.toolkit.CollectionUtils;
+import com.wshsoft.mybatis.toolkit.SqlUtils;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
@@ -19,27 +22,23 @@ import net.sf.jsqlparser.statement.select.SelectItem;
 
 /**
  * <p>
- * JsqlParserUtils工具类
+ * JsqlParser Count Optimize
  * </p>
- * 
+ *
  * @author Carry xie
- * @Date 2016-11-30
+ * @since 2017-06-20
  */
-public class JsqlParserUtils {
-
+public class JsqlParserCountOptimize extends AbstractSqlParser {
     private static final List<SelectItem> countSelectItem = countSelectItem();
 
-    /**
-     * <p>
-     * jsqlparser方式获取select的count语句
-     * </p>
-     *
-     * @param originalSql selectSQL
-     * @return
-     */
-    public static CountOptimize jsqlparserCount(CountOptimize countOptimize, String originalSql) {
+    @Override
+    public SqlInfo optimizeSql(String sql) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(" JsqlParserCountOptimize sql=" + sql);
+        }
+        SqlInfo sqlInfo = SqlInfo.newInstance();
         try {
-            Select selectStatement = (Select) CCJSqlParserUtil.parse(originalSql);
+            Select selectStatement = (Select) CCJSqlParserUtil.parse(sql);
             PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
             Distinct distinct = plainSelect.getDistinct();
             List<Expression> groupBy = plainSelect.getGroupByColumnReferences();
@@ -48,25 +47,26 @@ public class JsqlParserUtils {
             // 添加包含groupBy 不去除orderBy
             if (CollectionUtils.isEmpty(groupBy) && CollectionUtils.isNotEmpty(orderBy)) {
                 plainSelect.setOrderByElements(null);
-                countOptimize.setOrderBy(false);
+                sqlInfo.setOrderBy(false);
             }
 
             // 包含 distinct、groupBy不优化
             if (distinct != null || CollectionUtils.isNotEmpty(groupBy)) {
-                countOptimize.setCountSQL(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
-                return countOptimize;
+                sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
+                return sqlInfo;
             }
 
             // 优化 SQL
             plainSelect.setSelectItems(countSelectItem);
-            countOptimize.setCountSQL(selectStatement.toString());
-            return countOptimize;
+            sqlInfo.setSql(selectStatement.toString());
+            return sqlInfo;
         } catch (Throwable e) {
             // 无法优化使用原 SQL
-            countOptimize.setCountSQL(String.format(SqlUtils.SQL_BASE_COUNT, originalSql));
-            return countOptimize;
+            sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, sql));
+            return sqlInfo;
         }
     }
+
 
     /**
      * <p>

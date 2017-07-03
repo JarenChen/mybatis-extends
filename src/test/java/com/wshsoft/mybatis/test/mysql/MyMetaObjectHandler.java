@@ -1,7 +1,5 @@
 package com.wshsoft.mybatis.test.mysql;
 
-import java.sql.Timestamp;
-
 import org.apache.ibatis.reflection.MetaObject;
 
 import com.wshsoft.mybatis.mapper.MetaObjectHandler;
@@ -19,30 +17,28 @@ public class MyMetaObjectHandler extends MetaObjectHandler {
 	/**
 	 * 测试 user 表 name 字段为空自动填充
 	 */
-	@Override
-	public void insertFill(MetaObject metaObject) {
-		// Object name = metaObject.getValue("name");
-		// if (null == name) {
-		// metaObject.setValue("name", "instert-fill");
-		// }
-
-        System.out.println("*************************");
-        System.out.println("insert fill");
-        System.out.println("*************************");
-
+    public void insertFill(MetaObject metaObject) {
         // 测试下划线
         Object testType = getFieldValByName("testType", metaObject);
-        System.out.println("testType="+testType);
-        if(testType==null){
+        System.out.println("testType=" + testType);
+        if (testType == null) {// 如果不会设置这里不需要判断, 直接 set
+            System.out.println("*************************");
+            System.out.println("insert fill");
+            System.out.println("*************************");
             setFieldValByName("testType", 3, metaObject);
         }
     }
 
     @Override
+    public boolean openUpdateFill() {
+        System.out.println("*************************");
+        System.out.println(" 关闭更新填充 ");
+        System.out.println("*************************");
+        return false;
+    }
+
+    @Override
     public void updateFill(MetaObject metaObject) {
-        System.out.println("*************************");
-        System.out.println("update fill");
-        System.out.println("*************************");
-        setFieldValByName("lastUpdatedDt", new Timestamp(System.currentTimeMillis()), metaObject);
+        // 这里不会执行
     }
 }

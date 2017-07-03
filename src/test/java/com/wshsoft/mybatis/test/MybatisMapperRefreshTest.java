@@ -1,18 +1,12 @@
 package com.wshsoft.mybatis.test;
 
-import java.io.InputStream;
-
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import com.wshsoft.mybatis.MybatisSessionFactoryBuilder;
-import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.plugins.pagination.Pagination;
 import com.wshsoft.mybatis.spring.MybatisMapperRefresh;
-import com.wshsoft.mybatis.test.mysql.MySqlInjector;
-import com.wshsoft.mybatis.test.mysql.UserMapperTest;
 import com.wshsoft.mybatis.test.mysql.mapper.UserMapper;
 import com.wshsoft.mybatis.toolkit.SystemClock;
 
@@ -26,16 +20,15 @@ import com.wshsoft.mybatis.toolkit.SystemClock;
  * @author Carry xie
  * @Date 2016-08-25
  */
-public class MybatisMapperRefreshTest {
-	/**
-	 * 测试 Mybatis XML 修改自动刷新
-	 */
+public class MybatisMapperRefreshTest extends CrudTest {
+
+
+    /**
+     * 测试 Mybatis XML 修改自动刷新
+     */
     public static void main(String[] args) throws Exception {
-		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		mf.setGlobalConfig(new GlobalConfiguration(new MySqlInjector()));
-		Resource[] resource = new ClassPathResource[] { new ClassPathResource("mysql/UserMapper.xml") };
-		SqlSessionFactory sessionFactory = mf.build(in);
+        Resource[] resource = new ClassPathResource[]{new ClassPathResource("mysql/UserMapper.xml")};
+        SqlSessionFactory sessionFactory = new CrudTest().sqlSessionFactory();
         new MybatisMapperRefresh(sessionFactory, 0, 5, true);
 		boolean isReturn = false;
 		SqlSession session = null;

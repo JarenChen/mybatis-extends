@@ -14,7 +14,9 @@ import com.wshsoft.mybatis.MybatisConfiguration;
 import com.wshsoft.mybatis.MybatisXMLLanguageDriver;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.plugins.PaginationInterceptor;
+import com.wshsoft.mybatis.plugins.PerformanceInterceptor;
 import com.wshsoft.mybatis.spring.MybatisSqlSessionFactoryBean;
+import com.wshsoft.mybatis.test.h2.H2MetaObjectHandler;
 import com.wshsoft.mybatis.test.mysql.MyMetaObjectHandler;
 
 /**
@@ -42,6 +44,7 @@ public class MybatisPlusMetaObjConfig {
         PaginationInterceptor pagination = new PaginationInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
                 pagination,
+                new PerformanceInterceptor()
         });
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
         return sqlSessionFactory.getObject();
@@ -51,7 +54,7 @@ public class MybatisPlusMetaObjConfig {
     public GlobalConfiguration globalConfiguration() {
         GlobalConfiguration globalConfiguration = new GlobalConfiguration();
         globalConfiguration.setIdType(2);
-        globalConfiguration.setMetaObjectHandler(new MyMetaObjectHandler());
+        globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
         return globalConfiguration;
     }
 }

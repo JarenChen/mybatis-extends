@@ -8,7 +8,7 @@ import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.annotations.Version;
-import com.wshsoft.mybatis.enums.FieldStrategy;
+import com.wshsoft.mybatis.enums.FieldFill;
 import com.wshsoft.mybatis.enums.IdType;
 
 import lombok.Data;
@@ -44,7 +44,7 @@ public class H2UserMetaObj implements Serializable {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
+    @TableField(value = "test_type", fill = FieldFill.INSERT)
     private Integer testType;
 
     private String desc;

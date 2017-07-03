@@ -33,6 +33,7 @@ public class MybatisConfiguration extends Configuration {
 	 * 初始化调用
 	 */
 	public MybatisConfiguration() {
+        this.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
 		 logger.debug("mybatis-extends init success.");
 	}
 

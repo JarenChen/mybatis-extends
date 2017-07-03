@@ -31,6 +31,9 @@ CREATE TABLE `role` (
 -- ----------------------------
 -- Records of role
 -- ----------------------------
+BEGIN;
+INSERT INTO `role` VALUES ('1', '1', '1', '1');
+COMMIT;
 
 -- ----------------------------
 -- Table structure for `test`

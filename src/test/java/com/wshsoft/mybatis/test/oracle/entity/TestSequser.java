@@ -3,11 +3,18 @@ package com.wshsoft.mybatis.test.oracle.entity;
 import java.io.Serializable;
 
 import com.wshsoft.mybatis.annotations.TableField;
+import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
+import com.wshsoft.mybatis.enums.IdType;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 用户表
  */
+@Data
+@Accessors(chain = true)
 @TableName("TEST_SEQUSER")
 // @KeySequence("SEQ_TEST")
 public class TestSequser extends BaseTestEntity implements Serializable {
@@ -15,11 +22,17 @@ public class TestSequser extends BaseTestEntity implements Serializable {
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 主键ID
-	 */
-	// @TableId(value = "ID")
-	// private Long id;
+    /**
+     * 主键ID
+     */
+    @TableId(value = "TEST_ID", type = IdType.INPUT)
+    private Long id;
+    /**
+     * 主键ID
+     */
+    // @TableId(value = "ID")
+    // private Long id;
+
 
     /**
      * 名称
@@ -49,13 +62,13 @@ public class TestSequser extends BaseTestEntity implements Serializable {
 		this.testType = testType;
 	}
 
-	// public Long getId() {
-	// return id;
-	// }
+	 public Long getId() {
+	 return id;
+	 }
 
-	// public void setId(Long id) {
-	// this.id = id;
-	// }
+	 public void setId(Long id) {
+	 this.id = id;
+	 }
 
 	public String getName() {
 		return name;

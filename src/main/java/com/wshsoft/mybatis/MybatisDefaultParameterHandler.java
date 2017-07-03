@@ -89,6 +89,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	 * @return
 	 */
 	protected static Object processBatch(MappedStatement ms, Object parameterObject) {
+	//检查parameterObject
+	if (null == parameterObject) return null;
 		boolean isFill = false;
 		// 全局配置是否配置填充器
         MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
@@ -111,18 +113,26 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                         /*
                          * 非表映射类不处理
 						 */
-						objList.add(parameter);
-					}
-				}
-				return objList;
-			} else {
-                TableInfo tableInfo;
-                if(parameterObject instanceof java.util.Map){
-                    Object et = ((java.util.Map)parameterObject).get("et");
-                    if(et!=null){
-                        tableInfo = TableInfoHelper.getTableInfo(et.getClass());
-                    }else{
-                        tableInfo = null;
+                        objList.add(parameter);
+                    }
+                }
+                return objList;
+            } else {
+                TableInfo tableInfo = null;
+                if (parameterObject instanceof Map) {
+                    Map map = (Map) parameterObject;
+                    if (map.containsKey("et")) {
+                        Object et = map.get("et");
+                        if (et != null) {
+                            if(et instanceof Map){
+                                Map realEtMap = (Map) et;
+                                if(realEtMap.containsKey("MP_OPTLOCK_ET_ORIGINAL")){//refer to OptimisticLockerInterceptor.MP_OPTLOCK_ET_ORIGINAL
+                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get("MP_OPTLOCK_ET_ORIGINAL").getClass());
+                                }
+                            }else {
+                                tableInfo = TableInfoHelper.getTableInfo(et.getClass());
+                            }
+                        }
                     }
                 }else{
                     tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());

@@ -1,7 +1,5 @@
 package com.wshsoft.mybatis.test.h2;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -280,4 +278,34 @@ public class H2UserNoOptLockTest extends H2Test {
         }
     }
 
+
+    @Test
+    public void testInsertMy(){
+        String name="QiPa";
+        int version =1;
+        int row = userService.myInsert(name, version);
+        Assert.assertEquals(1, row);
+    }
+
+    @Test
+    public void testUpdateMy(){
+        Long id = 10087L;
+        H2User user = new H2User();
+        user.setId(id);
+        user.setName("myUpdate");
+        user.setVersion(1);
+        userService.insert(user);
+
+        H2User dbUser = userService.selectById(id);
+        Assert.assertNotNull(dbUser);
+        Assert.assertEquals("myUpdate", dbUser.getName());
+
+        Assert.assertEquals(1,userService.myUpdate(id, "updateMy"));
+
+        dbUser = userService.selectById(id);
+        Assert.assertNotNull(dbUser);
+        Assert.assertEquals("updateMy", dbUser.getName());
+        Assert.assertEquals(1, user.getVersion().intValue());
+
+    }
 }

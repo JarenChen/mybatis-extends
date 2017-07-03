@@ -18,7 +18,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
+import com.wshsoft.mybatis.mapper.Condition;
 import com.wshsoft.mybatis.mapper.EntityWrapper;
+import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.test.h2.config.ServiceConfig;
 import com.wshsoft.mybatis.test.h2.entity.persistent.H2UserLogicDelete;
 import com.wshsoft.mybatis.test.h2.service.IH2UserLogicDeleteService;
@@ -78,7 +80,10 @@ public class H2LogicDeleteTest extends H2Test {
         H2UserLogicDelete userFromDB = userService.selectById(user.getId());
         Assert.assertEquals("Caratacus", userFromDB.getDesc());
         Assert.assertEquals(1, userFromDB.getVersion().intValue());
+        Page page = new Page();
 
+        page.setOrderByField("desc");
+        userService.selectPage(page, Condition.create().eq("desc","111"));
         userService.deleteById(id);
         list = userService.selectList(ew);
         System.out.println("************************************");
@@ -95,7 +100,7 @@ public class H2LogicDeleteTest extends H2Test {
         userService.insert(user);
         Long id = user.getId();
         Assert.assertNotNull(id);
-
+        Assert.assertNotNull(userService.selectList(Condition.create().orderBy("age")));
         H2UserLogicDelete userFromDB = userService.selectById(user.getId());
         Assert.assertNull(userFromDB);
     }

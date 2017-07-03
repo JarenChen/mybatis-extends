@@ -22,6 +22,7 @@ public class TableField {
 	private String propertyName;
 	private DbColumnType columnType;
 	private String comment;
+    private String fill;
 
 	public boolean isConvert() {
 		return convert;
@@ -127,4 +128,11 @@ public class TableField {
 		return firstChar.toUpperCase() + propertyName.substring(1);
 	}
 
+    public String getFill() {
+        return fill;
+    }
+
+    public void setFill(String fill) {
+        this.fill = fill;
+    }
 }

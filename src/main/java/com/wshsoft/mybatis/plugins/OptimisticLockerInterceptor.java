@@ -44,8 +44,7 @@ import com.wshsoft.mybatis.toolkit.TableInfoHelper;
  * @author Carry xie
  * @since 2017-04-08
  */
-@Intercepts({
-        @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
+@Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class OptimisticLockerInterceptor implements Interceptor {
 
     private final Map<Class<?>, EntityField> versionFieldCache = new HashMap<>();
@@ -53,6 +52,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
 
     private static final String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
     private static final String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
+    public static final String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
     private static final String NAME_ENTITY = "et";
     private static final String NAME_ENTITY_WRAPPER = "ew";
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
@@ -78,9 +78,11 @@ public class OptimisticLockerInterceptor implements Interceptor {
             //if(!map.containsKey(NAME_ENTITY)) {
             //    return invocation.proceed();
             //}
-
-            Object et = map.get(NAME_ENTITY);
-            if(ew!=null){
+            Object et = null;
+            if(map.containsKey(NAME_ENTITY)){
+                et = map.get(NAME_ENTITY);
+            }
+            if (ew != null) {
                 Object entity = ew.getEntity();
                 if(entity!=null){
                     EntityField ef = getVersionField(entity.getClass());
@@ -92,7 +94,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                         }
                     }
                 }
-            }else{
+            } else if(et!=null) {
                 String methodId = ms.getId();
                 String updateMethodName = methodId.substring(ms.getId().lastIndexOf(".")+1);
                 if(PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)){//update(entity, null) -->> update all. ignore version
@@ -129,6 +131,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                         entityMap.put(versionField.getName(), getUpdatedVersionVal(originalVersionVal));
                         entityMap.put(MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
                         entityMap.put(MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
+                        entityMap.put(MP_OPTLOCK_ET_ORIGINAL, et);
                         map.put(NAME_ENTITY, entityMap);
                     }
                 }

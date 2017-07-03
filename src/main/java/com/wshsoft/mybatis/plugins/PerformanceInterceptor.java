@@ -32,10 +32,9 @@ import com.wshsoft.mybatis.toolkit.SystemClock;
  * @author Carry xie
  * @Date 2016-07-07
  */
-@Intercepts({
-		@Signature(type = StatementHandler.class, method = "query", args = { Statement.class, ResultHandler.class }),
-		@Signature(type = StatementHandler.class, method = "update", args = { Statement.class }),
-		@Signature(type = StatementHandler.class, method = "batch", args = { Statement.class }) })
+@Intercepts({@Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
+        @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
+        @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
 public class PerformanceInterceptor implements Interceptor {
     private static final Log logger = LogFactory.getLog(PerformanceInterceptor.class);
     /**

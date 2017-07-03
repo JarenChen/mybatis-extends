@@ -10,6 +10,7 @@ import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableLogic;
 import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.annotations.Version;
+import com.wshsoft.mybatis.enums.FieldFill;
 import com.wshsoft.mybatis.enums.FieldStrategy;
 
 /**
@@ -40,10 +41,10 @@ public class User implements Serializable {
 	/* BigDecimal 测试 */
 	private BigDecimal price;
 
-	/* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
-	@TableLogic(value = "-2") // 该注解为了测试逻辑删除、这里设置 -2 为删除值
-	private Integer testType;
+    /* 测试下划线字段命名类型, 字段填充 */
+    @TableField(value = "test_type", fill = FieldFill.INSERT)
+    @TableLogic(value = "-2") // 该注解为了测试逻辑删除、这里设置 -2 为删除值
+    private Integer testType;
 
 	@TableField(el = "role.id", value = "role_id")
 	private Role role;

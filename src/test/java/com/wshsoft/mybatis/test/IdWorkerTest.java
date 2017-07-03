@@ -26,7 +26,14 @@ import com.wshsoft.mybatis.toolkit.IdWorker;
  */
 public class IdWorkerTest {
 
-    @Test
+    public static void main(String[] args) throws Exception {
+        IdWorkerTest test = new IdWorkerTest();
+        test.test();
+        test.test1();
+        test.test2();
+    }
+
+    //@Test
     public void test() throws Exception {
         int count = 1000;
         System.err.println("共有" + count + "个数参与测试");

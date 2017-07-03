@@ -42,24 +42,16 @@ public class Pagination extends RowBounds implements Serializable {
 	 **/
 	private boolean openSort = true;
 
-	/**
-	 * 查询总数优化（默认 false 该属性只针对于Optimize.DEFAULT有效)
-	 * 
-	 * @see com.wshsoft.mybatis.enums.Optimize
-	 *
-	 */
-	private boolean optimizeCount = false;
-
-	/**
-	 * <p>
-	 * SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）
-	 * </p>
-	 * <p>
-	 * DESC 表示按倒序排序(即：从大到小排序)<br>
-	 * ASC 表示按正序排序(即：从小到大排序)
-	 * </p>
-	 */
-	private String orderByField;
+    /**
+     * <p>
+     * SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）
+     * </p>
+     * <p>
+     * DESC 表示按倒序排序(即：从大到小排序)<br>
+     * ASC 表示按正序排序(即：从小到大排序)
+     * </p>
+     */
+    private String orderByField;
 
 	/**
 	 * 是否为升序 ASC（ 默认： true ）
@@ -160,17 +152,9 @@ public class Pagination extends RowBounds implements Serializable {
 		this.searchCount = searchCount;
 	}
 
-	public boolean isOptimizeCount() {
-		return optimizeCount;
-	}
-
-	public void setOptimizeCount(boolean optimizeCount) {
-		this.optimizeCount = optimizeCount;
-	}
-
-	public String getOrderByField() {
-		return orderByField;
-	}
+    public String getOrderByField() {
+        return orderByField;
+    }
 
 	public void setOrderByField(String orderByField) {
 		if (StringUtils.isNotEmpty(orderByField)) {
