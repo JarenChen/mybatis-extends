@@ -2,6 +2,8 @@ package com.wshsoft.mybatis.mapper;
 
 import org.apache.ibatis.reflection.MetaObject;
 
+import com.wshsoft.mybatis.toolkit.StringUtils;
+
 /**
  * <p>
  * 元对象字段填充控制器抽象类，实现公共字段自动写入
@@ -44,9 +46,12 @@ public abstract class MetaObjectHandler {
      * @param metaObject meta object parameter
      */
     public MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
-        if (metaObject.hasGetter(fieldName)) {
+        if (metaObject.hasSetter(fieldName) &&
+                metaObject.hasGetter(fieldName)) {
             metaObject.setValue(fieldName, fieldVal);
-        } else if (metaObject.hasGetter(META_OBJ_PREFIX + "." + fieldName)) {
+        } else if (metaObject.hasGetter(META_OBJ_PREFIX) &&
+                StringUtils.checkValNotNull(metaObject.getValue(META_OBJ_PREFIX)) &&
+                metaObject.hasSetter(META_OBJ_PREFIX + "." + fieldName)) {
             metaObject.setValue(META_OBJ_PREFIX + "." + fieldName, fieldVal);
         }
         return this;

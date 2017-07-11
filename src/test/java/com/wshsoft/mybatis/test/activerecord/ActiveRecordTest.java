@@ -30,10 +30,14 @@ public class ActiveRecordTest extends CrudTest {
         boolean rlt = t1.insert();
         print(" ar save=" + rlt + ", id=" + t1.getId());
 
-		// 根据ID更新
-		t1.setType("t1023");
-		rlt = t1.updateById();
-		print(" ar updateById:" + rlt);
+        // 根据ID更新
+        t1.setType("t1001");
+        rlt = t1.updateAllColumnById();
+        print(" ar updateAllColumnById:" + rlt);
+
+        t1.setType("t1023");
+        rlt = t1.updateById();
+        print(" ar updateById:" + rlt);
 
 		// 更新 SQL
 		Test t11 = new Test();

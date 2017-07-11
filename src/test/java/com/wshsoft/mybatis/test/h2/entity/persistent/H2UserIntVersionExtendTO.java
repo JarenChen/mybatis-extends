@@ -1,6 +1,7 @@
 package com.wshsoft.mybatis.test.h2.entity.persistent;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableName;
@@ -37,6 +38,8 @@ public class H2UserIntVersionExtendTO extends BaseIntVersionEntity {
     private Integer testType;
 
     private String desc;
+	@TableField("last_updated_dt")
+    private Date lastUpdatedDt;
 
 	public String getName() {
 		return name;

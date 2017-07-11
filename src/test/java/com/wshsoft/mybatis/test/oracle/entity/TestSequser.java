@@ -25,8 +25,8 @@ public class TestSequser extends BaseTestEntity implements Serializable {
     /**
      * 主键ID
      */
-    @TableId(value = "TEST_ID", type = IdType.INPUT)
-    private Long id;
+//    @TableId(value = "TEST_ID", type = IdType.INPUT)
+//    private Long id;
     /**
      * 主键ID
      */
@@ -62,14 +62,6 @@ public class TestSequser extends BaseTestEntity implements Serializable {
 		this.testType = testType;
 	}
 
-	 public Long getId() {
-	 return id;
-	 }
-
-	 public void setId(Long id) {
-	 this.id = id;
-	 }
-
 	public String getName() {
 		return name;
 	}
@@ -94,12 +86,12 @@ public class TestSequser extends BaseTestEntity implements Serializable {
 		this.testType = testType;
 	}
 
-    @Override
-    public String toString() {
-        return "TestSequser{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                ", testType=" + testType +
-                '}';
-    }
+    //public Long getId() {
+    //	return id;
+    //}
+
+    //public void setId(Long id) {
+    //	this.id = id;
+    //}
+
 }

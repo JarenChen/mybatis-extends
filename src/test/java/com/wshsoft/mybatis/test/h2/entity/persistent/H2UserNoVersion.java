@@ -2,6 +2,7 @@ package com.wshsoft.mybatis.test.h2.entity.persistent;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
@@ -48,6 +49,8 @@ public class H2UserNoVersion implements Serializable {
 
     private Integer version;
 
+    @TableField("last_updated_dt")
+    private Date lastUpdatedDt;
 
     public H2UserNoVersion() {
 

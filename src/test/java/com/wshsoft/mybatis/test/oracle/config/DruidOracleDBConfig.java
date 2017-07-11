@@ -1,34 +1,31 @@
 package com.wshsoft.mybatis.test.oracle.config;
 
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import oracle.jdbc.driver.OracleDriver;
-
+import com.alibaba.druid.pool.DruidDataSource;
 
 /**
- * 对应的数据库配置
+ * <p>
+ * </p>
  *
  * @author Carry xie
+ * @date 2017/7/4
  */
 @Configuration
 @EnableTransactionManagement
-public class OracleDBConfig {
+public class DruidOracleDBConfig {
 
     @Bean
-    public DataSource dataSource() throws SQLException {
-        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setDriver(new OracleDriver());
-        dataSource.setUrl("jdbc:oracle:thin:@localhost:1521:xe");
-        dataSource.setUsername("carry");
-        dataSource.setPassword("carry");
+    public DataSource getDruidDataSource(){
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setUrl("jdbc:oracle:thin:@192.168.10.169:1521:orcl");
+        dataSource.setUsername("sa");
+        dataSource.setPassword("sa");
         return dataSource;
     }
 

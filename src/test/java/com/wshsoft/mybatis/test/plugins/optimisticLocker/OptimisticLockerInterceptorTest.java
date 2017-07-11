@@ -27,7 +27,6 @@ import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.DateVersionUserM
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.IntVersionUserMapper;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.LogicVersionUserMapper;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.LongVersionUserMapper;
-import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.StringVersionUserMapper;
 import com.wshsoft.mybatis.test.plugins.optimisticLocker.mapper.TimestampVersionUserMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -42,8 +41,6 @@ public class OptimisticLockerInterceptorTest {
 	private DateVersionUserMapper dateVersionUserMapper;
 	@Autowired
 	private TimestampVersionUserMapper timestampVersionUserMapper;
-	@Autowired
-	private StringVersionUserMapper stringersionUserMapper;
 	@Autowired
 	private LogicVersionUserMapper logicVersionUserMapper;
 	@Autowired

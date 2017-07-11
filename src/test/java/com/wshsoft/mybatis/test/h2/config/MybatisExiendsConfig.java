@@ -33,8 +33,7 @@ import com.wshsoft.mybatis.test.h2.H2MetaObjectHandler;
 public class MybatisExiendsConfig {
 
 	@Bean("mybatisSqlSession")
-	public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader,
-			GlobalConfiguration globalConfiguration) throws Exception {
+	 public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
 		MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
 		sqlSessionFactory.setDataSource(dataSource);
 		// sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));

@@ -15,6 +15,7 @@ import com.wshsoft.mybatis.MybatisXMLLanguageDriver;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.incrementer.OracleKeyGenerator;
 import com.wshsoft.mybatis.plugins.PaginationInterceptor;
+import com.wshsoft.mybatis.plugins.PerformanceInterceptor;
 import com.wshsoft.mybatis.spring.MybatisSqlSessionFactoryBean;
 
 /**
@@ -29,7 +30,7 @@ import com.wshsoft.mybatis.spring.MybatisSqlSessionFactoryBean;
 @MapperScan("com.wshsoft.mybatis.test.oracle.mapper")
 public class OracleMybatisExtendsConfig {
 
-    @Bean
+    @Bean("mybatisSqlSession")
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
@@ -40,9 +41,9 @@ public class OracleMybatisExtendsConfig {
         configuration.setMapUnderscoreToCamelCase(true);
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
-        pagination.setDialectType("oracle");
         sqlSessionFactory.setPlugins(new Interceptor[]{
-                pagination
+                pagination,
+                new PerformanceInterceptor()
         });
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
         return sqlSessionFactory.getObject();
@@ -52,7 +53,7 @@ public class OracleMybatisExtendsConfig {
     public GlobalConfiguration globalConfiguration() {
         GlobalConfiguration conf = new GlobalConfiguration();
         conf.setIdType(1);
-        conf.setDbType("oracle");
+//        conf.setDbType("oracle");
         conf.setKeyGenerator(new OracleKeyGenerator());
 //        conf.setDbColumnUnderline(true);
         return conf;

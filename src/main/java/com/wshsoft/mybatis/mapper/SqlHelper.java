@@ -14,6 +14,7 @@ import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
+import com.wshsoft.mybatis.toolkit.MapUtils;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
 /**
@@ -142,23 +143,29 @@ public class SqlHelper {
 		return null;
 	}
 
-	/**
-	 * 填充Wrapper
-	 *
-	 * @param page
-	 * @param wrapper
-	 */
-	public static void fillWrapper(Page<?> page, Wrapper<?> wrapper) {
-		if (null == page) {
-			return;
-		}
-		if (isNotEmptyOfWrapper(wrapper)) {
-			if (page.isOpenSort()) {
-				wrapper.orderBy(page.getOrderByField(), page.isAsc());
-			}
-			wrapper.allEq(page.getCondition());
-		}
-	}
+    /**
+     * <p>
+     * 填充Wrapper
+     * </p>
+     *
+     * @param page    分页对象
+     * @param wrapper SQL包装对象
+     */
+    public static void fillWrapper(Page<?> page, Wrapper<?> wrapper) {
+        if (null == page) {
+            return;
+        }
+        //处理Wrapper为空,但是page.getCondition()不为空的情况
+        if (MapUtils.isNotEmpty(page.getCondition()) && isEmptyOfWrapper(wrapper)) {
+            wrapper = Condition.create();
+        }
+        if (isNotEmptyOfWrapper(wrapper)) {
+            if (page.isOpenSort()) {
+                wrapper.orderBy(page.getOrderByField(), page.isAsc());
+            }
+            wrapper.allEq(page.getCondition());
+        }
+    }
 
 	/**
 	 * 判断Wrapper为空

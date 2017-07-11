@@ -161,7 +161,11 @@ public class TableInfo {
 					// 普通字段
 					pkgSet.add("com.wshsoft.mybatis.annotations.TableField");
 				}
-			}
+                if (null != field.getFill()) {
+                    // 填充字段
+                    pkgSet.add("com.wshsoft.mybatis.enums.FieldFill");
+                }
+            }
 			if (!pkgSet.isEmpty()) {
 				this.importPackages = new ArrayList<String>(Arrays.asList(pkgSet.toArray(new String[] {})));
 			}

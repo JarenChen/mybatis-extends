@@ -2,9 +2,12 @@ package com.wshsoft.mybatis.toolkit;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -28,6 +31,7 @@ import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.entity.TableFieldInfo;
 import com.wshsoft.mybatis.entity.TableInfo;
+import com.wshsoft.mybatis.enums.FieldFill;
 import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.incrementer.IKeyGenerator;
@@ -43,43 +47,54 @@ import com.wshsoft.mybatis.mapper.SqlRunner;
  */
 public class TableInfoHelper {
 
-	private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
-	/**
-	 * 缓存反射类表信息
-	 */
-	private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<String, TableInfo>();
-	/**
-	 * 默认表主键
-	 */
-	private static final String DEFAULT_ID_NAME = "id";
+    private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
+    /**
+     * 缓存反射类表信息
+     */
+    private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<>();
+    /**
+     * 自动填充字段信息
+     */
+    private static final Map<FieldFill, Map<Class<?>, Set<String>>> fieldFillMap = new ConcurrentHashMap<>();
+    /**
+     * 默认表主键
+     */
+    private static final String DEFAULT_ID_NAME = "id";
 
-	/**
-	 * <p>
-	 * 获取实体映射表信息
-	 * <p>
-	 * 
-	 * @param clazz
-	 *            反射实体类
-	 * @return
-	 */
-	public static TableInfo getTableInfo(Class<?> clazz) {
-		return tableInfoCache.get(clazz.getName());
-	}
+    /**
+     * <p>
+     * 获取自动填充信息
+     * <p>
+     *
+     * @param fieldFill
+     * @return
+     */
+    public static Map<Class<?>, Set<String>> getFieldFillMap(FieldFill fieldFill) {
+        return fieldFillMap.get(fieldFill);
+    }
 
-	/**
-	 * <p>
-	 * 获取所有实体映射表信息
-	 * <p>
-	 * 
-	 * @return
-	 */
-	public static List<TableInfo> getTableInfos() {
-		List<TableInfo> tableInfos = new ArrayList<TableInfo>();
-		for (Map.Entry<String, TableInfo> entry : tableInfoCache.entrySet()) {
-			tableInfos.add(entry.getValue());
-		}
-		return tableInfos;
-	}
+    /**
+     * <p>
+     * 获取实体映射表信息
+     * <p>
+     *
+     * @param clazz 反射实体类
+     * @return
+     */
+    public static TableInfo getTableInfo(Class<?> clazz) {
+        return tableInfoCache.get(ClassUtils.getUserClass(clazz).getName());
+    }
+
+    /**
+     * <p>
+     * 获取所有实体映射表信息
+     * <p>
+     *
+     * @return
+     */
+    public static List<TableInfo> getTableInfos() {
+        return new ArrayList<>(tableInfoCache.values());
+    }
 
     /**
      * <p>
@@ -181,30 +196,78 @@ public class TableInfoHelper {
 		/*
 		 * 注入
 		 */
-		tableInfoCache.put(clazz.getName(), tableInfo);
-		return tableInfo;
-	}
+        tableInfoCache.put(clazz.getName(), tableInfo);
+        //初始化填充字段缓存信息
+        initFieldFillCache(clazz, tableInfo);
+        return tableInfo;
+    }
 
-	/**
-	 * <p>
-	 * 判断主键注解是否存在
-	 * </p>
-	 * 
-	 * @param list
-	 *            字段列表
-	 * @return
-	 */
-	public static boolean existTableId(List<Field> list) {
-		boolean exist = false;
-		for (Field field : list) {
-			TableId tableId = field.getAnnotation(TableId.class);
-			if (tableId != null) {
-				exist = true;
-				break;
-			}
-		}
-		return exist;
-	}
+    /**
+     * 初始化填充字段缓存信息
+     *
+     * @param clazz
+     * @param tableInfo
+     */
+    private static void initFieldFillCache(Class<?> clazz, TableInfo tableInfo) {
+        clazz = ClassUtils.getUserClass(clazz);
+        List<TableFieldInfo> tableFieldInfos = tableInfo.getFieldList();
+        for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
+            FieldFill fieldFill = tableFieldInfo.getFieldFill();
+            if (null == fieldFill || FieldFill.DEFAULT.equals(fieldFill)) {
+                continue;
+            }
+            switch (fieldFill) {
+                case INSERT:
+                    initFieldFill(FieldFill.INSERT, clazz, tableFieldInfo);
+                    break;
+                case UPDATE:
+                    initFieldFill(FieldFill.UPDATE, clazz, tableFieldInfo);
+                    break;
+                case INSERT_UPDATE:
+                    initFieldFill(FieldFill.INSERT, clazz, tableFieldInfo);
+                    initFieldFill(FieldFill.UPDATE, clazz, tableFieldInfo);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * 初始化填充
+     *
+     * @param fieldFill
+     * @param clazz
+     * @param tableFieldInfo
+     */
+    private static void initFieldFill(FieldFill fieldFill, Class<?> clazz, TableFieldInfo tableFieldInfo) {
+        Map<Class<?>, Set<String>> fillFieldMap = fieldFillMap.get(fieldFill);
+        if (MapUtils.isEmpty(fillFieldMap)) {
+            fillFieldMap = new HashMap<>();
+            fillFieldMap.put(clazz, new TreeSet<String>());
+            fieldFillMap.put(fieldFill, fillFieldMap);
+        }
+        Set<String> properties = fillFieldMap.get(clazz);
+        properties.add(tableFieldInfo.getProperty());
+    }
+
+    /**
+     * <p>
+     * 判断主键注解是否存在
+     * </p>
+     *
+     * @param list 字段列表
+     * @return
+     */
+    public static boolean existTableId(List<Field> list) {
+        boolean exist = false;
+        for (Field field : list) {
+            TableId tableId = field.getAnnotation(TableId.class);
+            if (tableId != null) {
+                exist = true;
+                break;
+            }
+        }
+        return exist;
+    }
 
     /**
      * <p>
@@ -346,20 +409,20 @@ public class TableInfoHelper {
 	 * @return
 	 */
     public static List<Field> getAllFields(Class<?> clazz) {
-		List<Field> fieldList = ReflectionKit.getFieldList(clazz);
-		if (CollectionUtils.isNotEmpty(fieldList)) {
-			Iterator<Field> iterator = fieldList.iterator();
-			while (iterator.hasNext()) {
-				Field field = iterator.next();
-				/* 过滤注解非表字段属性 */
-				TableField tableField = field.getAnnotation(TableField.class);
-				if (tableField != null && !tableField.exist()) {
-					iterator.remove();
-				}
-			}
-		}
-		return fieldList;
-	}
+        List<Field> fieldList = ReflectionKit.getFieldList(ClassUtils.getUserClass(clazz));
+        if (CollectionUtils.isNotEmpty(fieldList)) {
+            Iterator<Field> iterator = fieldList.iterator();
+            while (iterator.hasNext()) {
+                Field field = iterator.next();
+                /* 过滤注解非表字段属性 */
+                TableField tableField = field.getAnnotation(TableField.class);
+                if (tableField != null && !tableField.exist()) {
+                    iterator.remove();
+                }
+            }
+        }
+        return fieldList;
+    }
 
     /**
      * 初始化SqlSessionFactory (供Mybatis原生调用)
