@@ -355,10 +355,25 @@ public class H2UserTest extends H2Test {
     }
 
     @Test
-    public void testInsertMy(){
-        String name="QiPa";
-        int version =1;
+    public void testInsertMy() {
+        String name = "自定义insert";
+        int version = 1;
         int row = userService.myInsert(name, version);
+        Assert.assertEquals(1, row);
+    }
+
+    @Test
+    public void testInsertObjectWithParam() {
+        String name = "自定义insert带Param注解";
+        int version = 1;
+        int row = userService.myInsertWithParam(name, version);
+        Assert.assertEquals(1, row);
+    }
+    @Test
+    public void testInsertObjectWithoutParam() {
+        String name = "自定义insert带Param注解";
+        int version = 1;
+        int row = userService.myInsertWithoutParam(name, version);
         Assert.assertEquals(1, row);
     }
 

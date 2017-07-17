@@ -2,6 +2,7 @@ package com.wshsoft.mybatis.test.mysql.entity;
 
 import java.io.Serializable;
 
+import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableName;
 
 /**
@@ -20,7 +21,28 @@ public class NotPK implements Serializable {
 
 	private String uuid;
 
-	private String type;
+    @TableField("is1")
+    private boolean isIs;
+    @TableField("is2")
+    private Boolean isis;
+
+    private String type;
+
+    public Boolean getIsis() {
+        return isis;
+    }
+
+    public void setIsis(Boolean isis) {
+        this.isis = isis;
+    }
+
+    public boolean isIs() {
+        return isIs;
+    }
+
+    public void setIs(boolean is) {
+        isIs = is;
+    }
 
 	public String getUuid() {
 		return uuid;

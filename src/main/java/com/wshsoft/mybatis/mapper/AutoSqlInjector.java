@@ -764,24 +764,24 @@ public class AutoSqlInjector implements ISqlInjector {
 		}
 
 		/* 前缀处理 */
-		String property = fieldInfo.getProperty();
-		if (null != prefix) {
-			property = prefix + property;
-		}
-
-		// 验证逻辑
-		if (fieldStrategy == FieldStrategy.NOT_EMPTY) {
-			String propertyType = fieldInfo.getPropertyType();
-			if (StringUtils.isCharSequence(propertyType)) {
-				return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
-			} else {
-				return String.format("\n\t<if test=\"%s!=null \">", property);
-			}
-		} else {
-			// FieldStrategy.NOT_NULL
-			return String.format("\n\t<if test=\"%s!=null\">", property);
-		}
-	}
+        String property = fieldInfo.getProperty();
+        Class propertyType = fieldInfo.getPropertyType();
+        property = StringUtils.removeIsPrefixIfBoolean(property, propertyType);
+        if (null != prefix) {
+            property = prefix + property;
+        }
+        // 验证逻辑
+        if (fieldStrategy == FieldStrategy.NOT_EMPTY) {
+            if (StringUtils.isCharSequence(propertyType)) {
+                return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
+            } else {
+                return String.format("\n\t<if test=\"%s!=null \">", property);
+            }
+        } else {
+            // FieldStrategy.NOT_NULL
+            return String.format("\n\t<if test=\"%s!=null\">", property);
+        }
+    }
 
 	protected String convertIfTagIgnored(TableFieldInfo fieldInfo, boolean close) {
 		return convertIfTag(true, fieldInfo, null, close);

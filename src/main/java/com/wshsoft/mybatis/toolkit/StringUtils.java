@@ -23,6 +23,11 @@ public class StringUtils {
 	 */
 	public static final String EMPTY = "";
 
+    /**
+     * 空字符
+     */
+    public static final String IS = "is";
+    
 	/**
 	 * 下划线字符
 	 */
@@ -607,6 +612,29 @@ public class StringUtils {
 	}
 
     /**
+     * <p>
+     * 去除boolean类型is开头的字符串
+     * </p>
+     *
+     * @param propertyName 字段名
+     * @param propertyType 字段类型
+     * @return
+     */
+    public static String removeIsPrefixIfBoolean(String propertyName, Class<?> propertyType) {
+        if (isBoolean(propertyType) && propertyName.startsWith(IS)) {
+            String property = propertyName.replaceFirst(IS, EMPTY);
+            if (isEmpty(property)) {
+                return propertyName;
+            } else {
+                String firstCharToLowerStr = firstCharToLower(property);
+                return property.equals(firstCharToLowerStr) ? propertyName : firstCharToLowerStr;
+            }
+        }
+        return propertyName;
+    }
+
+    /**
+     * <p>
      * 是否为CharSequence类型
      *
      * @param propertyType
@@ -618,6 +646,18 @@ public class StringUtils {
         } catch (ClassNotFoundException e) {
             return false;
         }
+    }
+
+    /**
+     * <p>
+     * 是否为Boolean类型(包含普通类型)
+     * </p>
+     *
+     * @param propertyCls
+     * @return
+     */
+    public static Boolean isBoolean(Class<?> propertyCls) {
+        return propertyCls != null && (boolean.class.isAssignableFrom(propertyCls) || Boolean.class.isAssignableFrom(propertyCls));
     }
 
     /**

@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
 import com.wshsoft.mybatis.MybatisConfiguration;
-import com.wshsoft.mybatis.MybatisXMLLanguageDriver;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.mapper.LogicSqlInjector;
 import com.wshsoft.mybatis.plugins.OptimisticLockerInterceptor;
@@ -39,7 +38,8 @@ public class MybatisExiendsConfig {
 		// sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
 		sqlSessionFactory.setTypeAliasesPackage("com.wshsoft.mybatis.test.h2.entity.persistent");
 		MybatisConfiguration configuration = new MybatisConfiguration();
-		configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+//        configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+//        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
 		configuration.setJdbcTypeForNull(JdbcType.NULL);
 		sqlSessionFactory.setConfiguration(configuration);
 		PaginationInterceptor pagination = new PaginationInterceptor();
