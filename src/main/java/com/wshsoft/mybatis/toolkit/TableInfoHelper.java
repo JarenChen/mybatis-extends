@@ -198,7 +198,7 @@ public class TableInfoHelper {
 		 */
         tableInfoCache.put(clazz.getName(), tableInfo);
         //初始化填充字段缓存信息
-        initFieldFillCache(clazz, tableInfo);
+        //initFieldFillCache(clazz, tableInfo);
         return tableInfo;
     }
 

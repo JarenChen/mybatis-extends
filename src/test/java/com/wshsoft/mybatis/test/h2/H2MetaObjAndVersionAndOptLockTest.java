@@ -199,7 +199,7 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test{
 
     @Test
     public void testInsertMy() {
-        String name = "�Զ���insert";
+        String name = "自定义insert";
         int version = 1;
         int row = userMapper.myInsertWithNameVersion(name, version);
         Assert.assertEquals(1, row);
@@ -207,7 +207,7 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test{
 
     @Test
     public void testInsertObjectWithParam() {
-        String name = "�Զ���insert��Paramע��";
+        String name = "自定义insert带Param注解";
         int version = 1;
         H2UserVersionAndLogicDeleteEntity user = new H2UserVersionAndLogicDeleteEntity();
         user.setName(name);
@@ -217,7 +217,7 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test{
     }
     @Test
     public void testInsertObjectWithoutParam() {
-        String name = "�Զ���insert��Paramע��";
+        String name = "自定义insert带Param注解";
         int version = 1;
         H2UserVersionAndLogicDeleteEntity user = new H2UserVersionAndLogicDeleteEntity();
         user.setName(name);
