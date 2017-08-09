@@ -25,6 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.wshsoft.mybatis.mapper.EntityWrapper;
 import com.wshsoft.mybatis.plugins.Page;
+import com.wshsoft.mybatis.test.h2.entity.mapper.H2UserMapper;
 import com.wshsoft.mybatis.test.h2.entity.persistent.H2User;
 import com.wshsoft.mybatis.test.h2.service.IH2UserService;
 
@@ -42,6 +43,8 @@ public class H2UserTest extends H2Test {
 
 	@Autowired
 	private IH2UserService userService;
+    @Autowired
+    H2UserMapper userMapper;
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
@@ -184,8 +187,8 @@ public class H2UserTest extends H2Test {
     }
 
     @Test
-    public void testUpdateByEntityWrapperOptLock(){
-        Long id = 992L;
+    public void testUpdateByEntityWrapperOptLock() {
+        Long id = 1992L;
         H2User user = new H2User();
         user.setId(id);
         user.setName("992");
@@ -411,6 +414,74 @@ public class H2UserTest extends H2Test {
             System.out.println(u);
         }
         System.out.println(pageResult.getTotal());
+
+    }
+
+
+    @Test
+    public void testEntityWrapperSelectSql(){
+        EntityWrapper<H2User> ew = new EntityWrapper<>();
+        ew.setSqlSelect("test_id as id, name, age");
+        List<H2User> list = userService.selectList(ew);
+        for(H2User u:list){
+            Assert.assertNotNull(u.getId());
+            Assert.assertNotNull(u.getName());
+            Assert.assertNull(u.getPrice());
+        }
+
+    }
+
+    @Test
+    public void testQueryWithParamInSelectStatement(){
+        Map<String,Object> param = new HashMap<>();
+        String nameParam = "selectStmtParam";
+        param.put("nameParam", nameParam);
+        param.put("ageFrom", 1);
+        param.put("ageTo", 100);
+        List<H2User> list = userService.queryWithParamInSelectStatememt(param);
+        Assert.assertNotNull(list);
+        for(H2User u:list){
+            Assert.assertEquals(nameParam, u.getName());
+            Assert.assertNotNull(u.getId());
+        }
+    }
+    @Test
+    public void testQueryWithParamInSelectStatement4Page(){
+        Map<String,Object> param = new HashMap<>();
+        String nameParam = "selectStmtParam";
+        param.put("nameParam", nameParam);
+        param.put("ageFrom", 1);
+        param.put("ageTo", 100);
+        Page<H2User> page = userService.queryWithParamInSelectStatememt4Page(param, new Page<H2User>(0,10));
+        Assert.assertNotNull(page.getRecords());
+        for(H2User u:page.getRecords()){
+            Assert.assertEquals(nameParam, u.getName());
+            Assert.assertNotNull(u.getId());
+        }
+        Assert.assertNotEquals(0, page.getTotal());
+    }
+
+    @Test
+    public void testSelectCountWithParamInSelectItems(){
+        Map<String,Object> param = new HashMap<>();
+        String nameParam = "selectStmtParam";
+        param.put("nameParam", nameParam);
+        param.put("ageFrom", 1);
+        param.put("ageTo", 100);
+        int count = userService.selectCountWithParamInSelectItems(param);
+        Assert.assertNotEquals(0, count);
+    }
+
+    @Test
+    public void testPageWithDollarParamInSelectItems(){
+        Map<String,Object> param = new HashMap<>();
+        String nameParam = "selectStmtParam";
+        param.put("nameParam", nameParam);
+        param.put("ageFrom", 1);
+        param.put("ageTo", 100);
+        Page<H2User> page = new Page<H2User>(0,10);
+        userMapper.selectUserWithDollarParamInSelectStatememt4Page(param, page);
+        Assert.assertNotEquals(0, page.getTotal());
 
     }
 

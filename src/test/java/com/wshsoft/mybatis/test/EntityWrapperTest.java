@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.wshsoft.mybatis.entity.Columns;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,6 +16,7 @@ import com.wshsoft.mybatis.entity.Column;
 import com.wshsoft.mybatis.enums.SqlLike;
 import com.wshsoft.mybatis.mapper.Condition;
 import com.wshsoft.mybatis.mapper.EntityWrapper;
+import com.wshsoft.mybatis.mapper.Wrapper;
 import com.wshsoft.mybatis.test.mysql.entity.User;
 
 /**
@@ -338,6 +340,17 @@ public class EntityWrapperTest {
      * 测试 sqlselect
      */
     @Test
+    public void testSqlSelectStrings() {
+        EntityWrapper entityWrapper = new EntityWrapper();
+        entityWrapper.setSqlSelect("name", "age", "sex");
+        System.out.println(entityWrapper.getSqlSelect());
+        Assert.assertEquals("name,age,sex", entityWrapper.getSqlSelect());
+    }
+
+    /**
+     * 测试 sqlselect
+     */
+    @Test
     public void testSqlSelect() {
         EntityWrapper entityWrapper = new EntityWrapper();
         // entityWrapper.setSqlSelect(Column.create().column("col").as("name"),null,Column.create(),Column.create().as("11"),Column.create().column("col"));
@@ -345,6 +358,39 @@ public class EntityWrapperTest {
         System.out.println(entityWrapper.getSqlSelect());
         Assert.assertNotNull("col AS name,col", entityWrapper.getSqlSelect());
 
-	}
+    }
+
+    /**
+     * 测试 sqlselect
+     */
+    @Test
+    public void testSqlSelectColumns() {
+        EntityWrapper entityWrapper = new EntityWrapper();
+        Columns columns = Columns.create().column("name", "name1").column("age").column("sex", "sex1", false);
+        entityWrapper.setSqlSelect(columns);
+        System.out.println(entityWrapper.getSqlSelect());
+        Assert.assertEquals("name AS name1,age,sex AS sex1", entityWrapper.getSqlSelect());
+    }
+
+    /**
+     * 测试 EntityWrapper orderBy
+     */
+    @Test
+    public void testEntityWrapperOrderBy() {
+        EntityWrapper entityWrapper = new EntityWrapper();
+        entityWrapper.orderBy("id desc");
+        System.out.println(entityWrapper.getSqlSegment());
+        Assert.assertEquals("ORDER BY id desc", entityWrapper.getSqlSegment());
+    }
+
+    /**
+     * 测试 Condition orderBy
+     */
+    @Test
+    public void testConditionOrderBy() {
+        Wrapper wrapper = Condition.create().orderBy("id desc");
+        System.out.println(wrapper.getSqlSegment());
+        Assert.assertEquals("ORDER BY id desc", wrapper.getSqlSegment());
+    }
 
 }

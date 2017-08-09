@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.wshsoft.mybatis.entity.Column;
+import com.wshsoft.mybatis.entity.Columns;
+import com.wshsoft.mybatis.entity.Column;
 import com.wshsoft.mybatis.enums.SqlLike;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.toolkit.ArrayUtils;
@@ -99,37 +101,79 @@ public abstract class Wrapper<T> implements Serializable {
 		return this;
 	}
 
-	/**
-	 * 使用对象封装的setsqlselect
-	 *
-	 * @param column
-	 * @return
-	 */
-	public Wrapper<T> setSqlSelect(Column... column) {
-		if (ArrayUtils.isNotEmpty(column)) {
-			StringBuilder builder = new StringBuilder();
-			for (int i = 0; i < column.length; i++) {
-				if (column[i] != null) {
-					String col = column[i].getColumn();
-					String as = column[i].getAs();
-					if (StringUtils.isEmpty(col)) {
-						continue;
-					}
-					builder.append(col).append(as);
-					if (i < column.length - 1) {
-						builder.append(",");
-					}
-				}
-			}
-			this.sqlSelect = builder.toString();
-		}
-		return this;
-	}
+    /**
+     * <p>
+     * 使用字符串数组封装sqlSelect，便于在不需要指定 AS 的情况下通过实体类自动生成的列静态字段快速组装 sqlSelect，<br/>
+     * 减少手动录入的错误率
+     * </p>
+     * @param columns 字段
+     * @return
+     */
+    public Wrapper<T> setSqlSelect(String... columns) {
+        StringBuilder builder = new StringBuilder();
+        for (String column : columns) {
+            if (StringUtils.isNotEmpty(column)) {
+                if (builder.length() > 0) {
+                    builder.append(",");
+                }
+                builder.append(column);
+            }
+        }
+        this.sqlSelect = builder.toString();
+        return this;
+    }
 
-	/**
-	 * SQL 片段 (子类实现)
-	 */
-	public abstract String getSqlSegment();
+    /**
+     * <p>
+     * 使用对象封装的setsqlselect
+     * </p>
+     *
+     * @param column 字段
+     * @return
+     */
+    public Wrapper<T> setSqlSelect(Column... column) {
+        if (ArrayUtils.isNotEmpty(column)) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < column.length; i++) {
+                if (column[i] != null) {
+                    String col = column[i].getColumn();
+                    String as = column[i].getAs();
+                    if (StringUtils.isEmpty(col)) {
+                        continue;
+                    }
+                    builder.append(col).append(as);
+                    if (i < column.length - 1) {
+                        builder.append(",");
+                    }
+                }
+            }
+            this.sqlSelect = builder.toString();
+        }
+        return this;
+    }
+
+    /**
+     * <p>
+     * 使用对象封装的setsqlselect
+     * </p>
+     *
+     * @param columns 字段
+     * @return
+     */
+    public Wrapper<T> setSqlSelect(Columns columns) {
+        Column[] columnArray = columns.getColumns();
+        if (ArrayUtils.isNotEmpty(columnArray)) {
+            setSqlSelect(columnArray);
+        }
+        return this;
+    }
+
+    /**
+     * <p>
+     * SQL 片段 (子类实现)
+     * </p>
+     */
+    public abstract String getSqlSegment();
 
     public String toString() {
         StringBuilder sb = new StringBuilder("Wrapper<T>:");

@@ -25,7 +25,11 @@ public class DataSourceConfig {
 	 * 数据库类型
 	 */
 	private DbType dbType;
-	/**
+    /**
+     * PostgreSQL schemaname
+     */
+    private String schemaname = "public";
+    /**
 	 * 类型转换
 	 */
 	private ITypeConvert typeConvert;
@@ -69,6 +73,14 @@ public class DataSourceConfig {
     public DataSourceConfig setDbType(DbType dbType) {
         this.dbType = dbType;
         return this;
+    }
+
+    public String getSchemaname() {
+        return schemaname;
+    }
+
+    public void setSchemaname(String schemaname) {
+        this.schemaname = schemaname;
     }
 
 	public ITypeConvert getTypeConvert() {

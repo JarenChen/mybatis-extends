@@ -64,7 +64,7 @@ public class OptimisticLockerInterceptorTest {
 		IntVersionUser versionUser = intVersionUserMapper.selectById(1);
 		Integer originVersion = versionUser.getVersion();
 		// 更新数据
-		versionUser.setName("苗神");
+		versionUser.setName("建哥");
 		intVersionUserMapper.updateById(versionUser);
 		Assert.assertTrue(intVersionUserMapper.selectById(1).getVersion() == originVersion + 1);
 
@@ -74,14 +74,14 @@ public class OptimisticLockerInterceptorTest {
 		Integer originVersion2 = versionUser2.getVersion();
 		versionUser2.setAge(16);
 		// 更新数据
-		versionUser2.setName("苗神");
+		versionUser2.setName("建哥");
 		intVersionUserMapper.updateById(versionUser2);
 		Assert.assertTrue(intVersionUserMapper.selectById(2).getVersion() == originVersion2 + 1);
 
 		// 测试一次数据库中version为null
 		IntVersionUser versionUser3 = intVersionUserMapper.selectById(3);
 		// 更新数据
-		versionUser3.setName("苗神");
+		versionUser3.setName("建哥");
 		intVersionUserMapper.updateById(versionUser3);
 		Assert.assertTrue(intVersionUserMapper.selectById(3).getVersion() == null);
 
@@ -93,7 +93,7 @@ public class OptimisticLockerInterceptorTest {
 		LongVersionUser versionUser = longVersionUserMapper.selectById(1);
 		Long originVersion = versionUser.getVersion();
 		// 更新数据
-		versionUser.setName("苗神");
+		versionUser.setName("建哥");
 		longVersionUserMapper.updateById(versionUser);
 		Assert.assertTrue(longVersionUserMapper.selectById(1).getVersion() == originVersion + 1);
 	}
@@ -103,7 +103,7 @@ public class OptimisticLockerInterceptorTest {
 		// 插入数据
 		DateVersionUser versionUser = new DateVersionUser();
 		versionUser.setId(15L);
-		versionUser.setName("苗神");
+		versionUser.setName("建哥");
 		Date originVersion = new Date();
 		versionUser.setVersion(originVersion);
 		dateVersionUserMapper.insert(versionUser);
@@ -119,7 +119,7 @@ public class OptimisticLockerInterceptorTest {
 		// 插入数据
 		TimestampVersionUser versionUser = new TimestampVersionUser();
 		versionUser.setId(15L);
-		versionUser.setName("苗神");
+		versionUser.setName("建哥");
 		Timestamp originVersion = new Timestamp(new Date().getTime());
 		versionUser.setVersion(originVersion);
 		timestampVersionUserMapper.insert(versionUser);

@@ -33,6 +33,17 @@ public class PageHelper {
 
     /**
      * <p>
+     * 释放资源并获取总条数
+     * </p>
+     */
+    public static int freeTotal() {
+        int total = getTotal();
+        remove();// 释放资源
+        return total;
+    }
+
+    /**
+     * <p>
      * 获取分页
      * </p>
      *
