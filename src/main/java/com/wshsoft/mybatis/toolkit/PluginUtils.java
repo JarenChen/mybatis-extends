@@ -3,6 +3,7 @@ package com.wshsoft.mybatis.toolkit;
 import java.lang.reflect.Proxy;
 import java.util.Properties;
 
+import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
@@ -13,19 +14,37 @@ import org.apache.ibatis.reflection.SystemMetaObject;
  */
 public final class PluginUtils {
 
-	private PluginUtils() {
-	}
+    public static final String DELEGATE_BOUNDSQL_SQL = "delegate.boundSql.sql";
+    public static final String DELEGATE_MAPPEDSTATEMENT = "delegate.mappedStatement";
 
-	/**
-	 * 获得真正的处理对象,可能多层代理.
-	 */
-	public static Object realTarget(Object target) {
-		if (Proxy.isProxyClass(target.getClass())) {
-			MetaObject metaObject = SystemMetaObject.forObject(target);
-			return realTarget(metaObject.getValue("h.target"));
-		}
-		return target;
-	}
+    private PluginUtils() {
+        // to do nothing
+    }
+
+    /**
+     * <p>
+     * 获取当前执行 MappedStatement
+     * </p>
+     *
+     * @param metaObject 元对象
+     * @return
+     */
+    public static MappedStatement getMappedStatement(MetaObject metaObject) {
+        return (MappedStatement) metaObject.getValue(DELEGATE_MAPPEDSTATEMENT);
+    }
+
+    /**
+     * <p>
+     * 获得真正的处理对象,可能多层代理.
+     * </p>
+     */
+    public static Object realTarget(Object target) {
+        if (Proxy.isProxyClass(target.getClass())) {
+            MetaObject metaObject = SystemMetaObject.forObject(target);
+            return realTarget(metaObject.getValue("h.target"));
+        }
+        return target;
+    }
 
     /**
      * <p>

@@ -1,23 +1,23 @@
-package com.wshsoft.mybatis.test;
+package com.wshsoft.mybatis.test.sql;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.wshsoft.mybatis.parser.SqlInfo;
 import com.wshsoft.mybatis.plugins.pagination.optimize.JsqlParserCountOptimize;
+import com.wshsoft.mybatis.plugins.parser.SqlInfo;
 
 /**
  * <p>
  * 测试SqlUtils工具类
  * </p>
- * 
+ *
  * @author Carry xie
- * @Date 2016-11-3
+ * @since 2016-11-3
  */
 public class SqlUtilsTest {
 
     public SqlInfo jsqlParserCountSqlInfo(String sql) {
-        return new JsqlParserCountOptimize().optimizeSql(sql);
+        return new JsqlParserCountOptimize().optimizeSql(null, sql);
     }
 
     /**
@@ -35,7 +35,7 @@ public class SqlUtilsTest {
         Assert.assertEquals("SELECT COUNT(1) FROM user a LEFT JOIN (SELECT uuid FROM user2) b ON b.id = a.aid WHERE a = 1",
                 countsql);
 
-	}
+    }
 
     /**
      * 测试jsqlparser方式

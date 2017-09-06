@@ -3,8 +3,11 @@ package com.wshsoft.mybatis.plugins.pagination.optimize;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wshsoft.mybatis.parser.AbstractSqlParser;
-import com.wshsoft.mybatis.parser.SqlInfo;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.reflection.MetaObject;
+import com.wshsoft.mybatis.plugins.parser.ISqlParser;
+import com.wshsoft.mybatis.plugins.parser.SqlInfo;
 import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.SqlUtils;
 
@@ -28,11 +31,14 @@ import net.sf.jsqlparser.statement.select.SelectItem;
  * @author Carry xie
  * @since 2017-06-20
  */
-public class JsqlParserCountOptimize extends AbstractSqlParser {
+public class JsqlParserCountOptimize implements ISqlParser {
+
+    // 日志
+    private final Log logger = LogFactory.getLog(JsqlParserCountOptimize.class);
     private static final List<SelectItem> countSelectItem = countSelectItem();
 
     @Override
-    public SqlInfo optimizeSql(String sql) {
+    public SqlInfo optimizeSql(MetaObject metaObject, String sql) {
         if (logger.isDebugEnabled()) {
             logger.debug(" JsqlParserCountOptimize sql=" + sql);
         }
@@ -51,7 +57,7 @@ public class JsqlParserCountOptimize extends AbstractSqlParser {
             }
             //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
             for (SelectItem item : plainSelect.getSelectItems()) {
-                if(item.toString().contains("?")){
+                if (item.toString().contains("?")) {
                     sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
                     return sqlInfo;
                 }
@@ -61,7 +67,6 @@ public class JsqlParserCountOptimize extends AbstractSqlParser {
                 sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
                 return sqlInfo;
             }
-
             // 优化 SQL
             plainSelect.setSelectItems(countSelectItem);
             sqlInfo.setSql(selectStatement.toString());
@@ -78,8 +83,6 @@ public class JsqlParserCountOptimize extends AbstractSqlParser {
      * <p>
      * 获取jsqlparser中count的SelectItem
      * </p>
-     *
-     * @return
      */
     private static List<SelectItem> countSelectItem() {
         Function function = new Function();

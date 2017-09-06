@@ -1,4 +1,4 @@
-package com.wshsoft.mybatis.parser;
+package com.wshsoft.mybatis.plugins.parser;
 
 /**
  * <p>
@@ -21,15 +21,17 @@ public class SqlInfo {
         return sql;
     }
 
-    public void setSql(String sql) {
+    public SqlInfo setSql(String sql) {
         this.sql = sql;
+        return this;
     }
 
     public boolean isOrderBy() {
         return orderBy;
     }
 
-    public void setOrderBy(boolean orderBy) {
+    public SqlInfo setOrderBy(boolean orderBy) {
         this.orderBy = orderBy;
+        return this;
     }
 }

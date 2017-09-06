@@ -18,10 +18,10 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import com.wshsoft.mybatis.enums.DBType;
-import com.wshsoft.mybatis.parser.AbstractSqlParser;
-import com.wshsoft.mybatis.parser.SqlInfo;
 import com.wshsoft.mybatis.plugins.pagination.DialectFactory;
 import com.wshsoft.mybatis.plugins.pagination.Pagination;
+import com.wshsoft.mybatis.plugins.parser.ISqlParser;
+import com.wshsoft.mybatis.plugins.parser.SqlInfo;
 import com.wshsoft.mybatis.toolkit.JdbcUtils;
 import com.wshsoft.mybatis.toolkit.PluginUtils;
 import com.wshsoft.mybatis.toolkit.SqlUtils;
@@ -42,7 +42,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
     /* 溢出总页数，设置第一页 */
     private boolean overflowCurrent = false;
     // COUNT SQL 解析
-    private AbstractSqlParser sqlParser;
+    private ISqlParser sqlParser;
     /* 方言类型 */
     private String dialectType;
     /* 方言实现类 */
@@ -136,17 +136,19 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 		}
 	}
 
-	@Override
-	public void setDialectType(String dialectType) {
-		this.dialectType = dialectType;
-	}
-
-    public void setSqlParser(AbstractSqlParser sqlParser) {
-        this.sqlParser = sqlParser;
+    public CachePaginationInterceptor setDialectType(String dialectType) {
+        this.dialectType = dialectType;
+        return this;
     }
 
-    public void setOverflowCurrent(boolean overflowCurrent) {
+    public CachePaginationInterceptor setSqlParser(ISqlParser sqlParser) {
+        this.sqlParser = sqlParser;
+        return this;
+    }
+
+    public CachePaginationInterceptor setOverflowCurrent(boolean overflowCurrent) {
         this.overflowCurrent = overflowCurrent;
+        return this;
     }
 
 }

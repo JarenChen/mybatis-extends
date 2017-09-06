@@ -2,10 +2,10 @@ package com.wshsoft.mybatis.toolkit;
 
 
 import com.wshsoft.mybatis.enums.SqlLike;
+import com.wshsoft.mybatis.plugins.parser.ISqlParser;
+import com.wshsoft.mybatis.plugins.parser.SqlInfo;
 import com.wshsoft.mybatis.plugins.pagination.Pagination;
 import com.wshsoft.mybatis.plugins.pagination.optimize.JsqlParserCountOptimize;
-import com.wshsoft.mybatis.parser.AbstractSqlParser;
-import com.wshsoft.mybatis.parser.SqlInfo;
 
 /**
  * <p>
@@ -19,7 +19,7 @@ public class SqlUtils {
 
     private final static SqlFormatter sqlFormatter = new SqlFormatter();
     public final static String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s ) TOTAL";
-    public static AbstractSqlParser COUNT_SQL_PARSER = null;
+    public static ISqlParser COUNT_SQL_PARSER = null;
 
     /**
      * <p>
@@ -30,7 +30,7 @@ public class SqlUtils {
      * @param originalSql 需要计算Count SQL
      * @return SqlInfo
      */
-    public static SqlInfo getCountOptimize(AbstractSqlParser sqlParser, String originalSql) {
+    public static SqlInfo getCountOptimize(ISqlParser sqlParser, String originalSql) {
         // COUNT SQL 解析器
         if (null == COUNT_SQL_PARSER) {
             if (null != sqlParser) {
@@ -41,7 +41,7 @@ public class SqlUtils {
                 COUNT_SQL_PARSER = new JsqlParserCountOptimize();
             }
         }
-        return COUNT_SQL_PARSER.optimizeSql(originalSql);
+        return COUNT_SQL_PARSER.optimizeSql(null, originalSql);
     }
 
 	/**
