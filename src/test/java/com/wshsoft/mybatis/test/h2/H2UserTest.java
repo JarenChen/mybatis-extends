@@ -15,14 +15,17 @@ import javax.sql.DataSource;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.wshsoft.mybatis.entity.Column;
 import com.wshsoft.mybatis.mapper.EntityWrapper;
 import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.test.h2.entity.mapper.H2UserMapper;
@@ -39,6 +42,7 @@ import com.wshsoft.mybatis.test.h2.service.IH2UserService;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
+@FixMethodOrder(value=MethodSorters.DEFAULT)
 public class H2UserTest extends H2Test {
 
 	@Autowired
@@ -483,6 +487,23 @@ public class H2UserTest extends H2Test {
         userMapper.selectUserWithDollarParamInSelectStatememt4Page(param, page);
         Assert.assertNotEquals(0, page.getTotal());
 
+    }
+
+    @Test
+    public void testDistinctColumn() {
+        EntityWrapper<H2User> ew = new EntityWrapper<>();
+        ew.setSqlSelect(Column.create().column("distinct test_type"));//setMapUnderscoreToCamelCase(true)
+        List<H2User> list = userService.selectList(ew);
+        System.out.println("xiejian:"+list.size());
+        for (H2User u : list) {
+            System.out.println("getTestType=" + u.getTestType());
+            Assert.assertNotNull(u.getTestType());
+        }
+        ew.setSqlSelect("distinct test_type as testType");
+        for (H2User u : userService.selectList(ew)) {
+            System.out.println("testType=" + u.getTestType());
+            Assert.assertNotNull(u.getTestType());
+        }
     }
 
 }

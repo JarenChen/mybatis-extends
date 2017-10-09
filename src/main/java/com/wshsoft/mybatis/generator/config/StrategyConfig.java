@@ -205,16 +205,16 @@ public class StrategyConfig {
         return this;
     }
 
-	public boolean includeSuperEntityColumns(String fieldName) {
-		if (null != superEntityColumns) {
-			for (String column : superEntityColumns) {
-				if (column.contains(fieldName)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    public boolean includeSuperEntityColumns(String fieldName) {
+        if (null != superEntityColumns) {
+            for (String column : superEntityColumns) {
+                if (column.equals(fieldName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 	public String[] getSuperEntityColumns() {
 		return superEntityColumns;

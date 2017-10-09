@@ -71,8 +71,8 @@
 			<dataSource type="UNPOOLED">
 				<property name="driver" value="oracle.jdbc.driver.OracleDriver" />
 				<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
-				<property name="username" value="mp" />
-				<property name="password" value="mp" />
+				<property name="username" value="sa" />
+				<property name="password" value="sa" />
 			<!-- 
 				<property name="driver" value="${jdbc.driver}" />
 				<property name="url" value="${jdbc.url}" />
@@ -92,8 +92,8 @@
      | package  指向可以找到Mapper接口的包名
      | -->
     <mappers>
-        <mapper class="com.wshsoft.mybatis.test.oracle.TestUserMapper" />
-        <mapper class="com.wshsoft.mybatis.test.oracle.TestSequserMapper" />
+        <mapper class="com.wshsoft.mybatis.test.oracle.mapper.TestUserMapper" />
+        <mapper class="com.wshsoft.mybatis.test.oracle.mapper.TestSequserMapper" />
         <mapper resource="oracle/TestUserMapper.xml"/>
     </mappers>
 </configuration>

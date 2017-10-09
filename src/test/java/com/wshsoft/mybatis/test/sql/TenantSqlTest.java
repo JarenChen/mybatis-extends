@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.plugins.parser.SqlInfo;
-import com.wshsoft.mybatis.plugins.tenant.TenantSqlParser;
-import com.wshsoft.mybatis.plugins.tenant.TenantHandler;
+import com.wshsoft.mybatis.plugins.parser.tenant.TenantSqlParser;
+import com.wshsoft.mybatis.plugins.parser.tenant.TenantHandler;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;

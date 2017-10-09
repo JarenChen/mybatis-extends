@@ -113,17 +113,19 @@ public class Pagination extends RowBounds implements Serializable {
 		return total;
 	}
 
-	public void setTotal(int total) {
-		this.total = total;
-	}
+    public Pagination setTotal(int total) {
+        this.total = total;
+        return this;
+    }
 
 	public int getSize() {
 		return size;
 	}
 
-	public void setSize(int size) {
-		this.size = size;
-	}
+    public Pagination setSize(int size) {
+        this.size = size;
+        return this;
+    }
 
 	public int getPages() {
 		if (this.size == 0) {
@@ -140,43 +142,48 @@ public class Pagination extends RowBounds implements Serializable {
 		return current;
 	}
 
-	public void setCurrent(int current) {
-		this.current = current;
-	}
+    public Pagination setCurrent(int current) {
+        this.current = current;
+        return this;
+    }
 
 	public boolean isSearchCount() {
 		return searchCount;
 	}
 
-	public void setSearchCount(boolean searchCount) {
-		this.searchCount = searchCount;
-	}
+    public Pagination setSearchCount(boolean searchCount) {
+        this.searchCount = searchCount;
+        return this;
+    }
 
     public String getOrderByField() {
         return orderByField;
     }
 
-	public void setOrderByField(String orderByField) {
-		if (StringUtils.isNotEmpty(orderByField)) {
-			this.orderByField = orderByField;
-		}
-	}
+    public Pagination setOrderByField(String orderByField) {
+        if (StringUtils.isNotEmpty(orderByField)) {
+            this.orderByField = orderByField;
+        }
+        return this;
+    }
 
 	public boolean isOpenSort() {
 		return openSort;
 	}
 
-	public void setOpenSort(boolean openSort) {
-		this.openSort = openSort;
-	}
+    public Pagination setOpenSort(boolean openSort) {
+        this.openSort = openSort;
+        return this;
+    }
 
 	public boolean isAsc() {
 		return isAsc;
 	}
 
-	public void setAsc(boolean isAsc) {
-		this.isAsc = isAsc;
-	}
+    public Pagination setAsc(boolean isAsc) {
+        this.isAsc = isAsc;
+        return this;
+    }
 
 	@Override
 	public String toString() {

@@ -9,8 +9,8 @@ package com.wshsoft.mybatis.generator.config.rules;
  * @since 2016-04-25
  */
 public enum QuerySQL {
-	MYSQL("mysql", "show tables", "show table status", "show full fields from %s", "NAME", "COMMENT", "FIELD", "TYPE",
-			"COMMENT", "KEY"),
+    MYSQL("mysql", "show tables", "show table status", "show full fields from `%s`", "NAME", "COMMENT", "FIELD", "TYPE",
+            "COMMENT", "KEY"),
 
     ORACLE("oracle", "SELECT * FROM USER_TABLES", "SELECT * FROM USER_TAB_COMMENTS",
             "SELECT A.COLUMN_NAME, CASE WHEN A.DATA_TYPE='NUMBER' THEN "
@@ -46,9 +46,9 @@ public enum QuerySQL {
 
     POSTGRE_SQL("postgre_sql", "select tablename from pg_tables where schemaname='%s' ORDER BY tablename",
             "SELECT A.tablename, obj_description(relfilenode, 'pg_class') AS comments FROM pg_tables A, pg_class B WHERE A.schemaname='%s' AND A.tablename = B.relname",
-            "SELECT DISTINCT A.attname AS name,format_type(A.atttypid,A.atttypmod) AS type,col_description(A.attrelid,A.attnum) AS comment,(CASE C.contype WHEN 'p' THEN 'PRI' ELSE '' END) AS key"
-                    + " FROM pg_attribute A INNER JOIN pg_class B ON A.attrelid = B.oid"
-                    + " LEFT JOIN pg_constraint C ON A.attnum = C.conkey[1] AND A.attrelid = C.conrelid WHERE B.relname = '%s' AND A.attnum>0 AND position('...' in A.attname) < 1",
+            "SELECT A.attname AS name, format_type(A.atttypid, A.atttypmod) AS type,col_description(A.attrelid, A.attnum) AS comment, (CASE C.contype WHEN 'p' THEN 'PRI' ELSE '' END) AS key " +
+            "FROM pg_attribute A LEFT JOIN pg_constraint C ON A.attnum = C.conkey[1] AND A.attrelid = C.conrelid " +
+            "WHERE  A.attrelid = '%s.%s'::regclass AND A.attnum > 0 AND NOT A.attisdropped ORDER  BY A.attnum",
             "tablename", "comments", "name", "type", "comment", "key");
 
 	private final String dbType;

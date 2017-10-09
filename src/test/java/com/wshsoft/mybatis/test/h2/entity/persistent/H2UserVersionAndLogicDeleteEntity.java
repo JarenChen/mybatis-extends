@@ -37,6 +37,10 @@ import lombok.experimental.Accessors;
  * @author Carry xie
  */
 /* 表名 value 注解【 驼峰命名可无 】, resultMap 注解测试【 映射 xml 的 resultMap 内容 】 */
+/**
+ * @author Administrator
+ *
+ */
 @Data
 @Accessors(chain = true)
 @TableName("h2user")
@@ -70,6 +74,10 @@ public class H2UserVersionAndLogicDeleteEntity implements Serializable {
     @TableField(value = "test_date")
     @Version
     private Date testDate;
+    
+    @TableField("last_updated_dt")
+    private Date lastUpdatedDt;
+    
 
     public Long getId() {
 		return id;
@@ -135,8 +143,15 @@ public class H2UserVersionAndLogicDeleteEntity implements Serializable {
 		this.testDate = testDate;
 	}
 
-    @TableField("last_updated_dt")
-    private Date lastUpdatedDt;
+    
+	public Date getLastUpdatedDt() {
+		return lastUpdatedDt;
+	}
+
+	public void setLastUpdatedDt(Date lastUpdatedDt) {
+		this.lastUpdatedDt = lastUpdatedDt;
+	}
+
 	public H2UserVersionAndLogicDeleteEntity() {
 
     }

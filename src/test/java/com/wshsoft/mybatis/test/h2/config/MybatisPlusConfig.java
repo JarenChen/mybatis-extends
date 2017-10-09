@@ -29,7 +29,7 @@ import com.wshsoft.mybatis.test.h2.H2MetaObjectHandler;
  */
 @Configuration
 @MapperScan("com.wshsoft.mybatis.test.h2.entity.mapper")
-public class MybatisExiendsConfig {
+public class MybatisPlusConfig {
 
 	@Bean("mybatisSqlSession")
 	 public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
@@ -41,6 +41,7 @@ public class MybatisExiendsConfig {
 //        configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
 //        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
 		configuration.setJdbcTypeForNull(JdbcType.NULL);
+        configuration.setMapUnderscoreToCamelCase(true);
 		sqlSessionFactory.setConfiguration(configuration);
 		PaginationInterceptor pagination = new PaginationInterceptor();
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();

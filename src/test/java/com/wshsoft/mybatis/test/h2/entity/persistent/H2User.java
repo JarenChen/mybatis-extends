@@ -22,9 +22,14 @@ import lombok.experimental.Accessors;
 /* 表名 value 注解【 驼峰命名可无 】, resultMap 注解测试【 映射 xml 的 resultMap 内容 】 */
 @Data
 @Accessors(chain = true)
-@TableName
+@TableName("h2user")
 public class H2User extends SuperEntity {
-    /* 测试忽略验证 */
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/* 测试忽略验证 */
     private String name;
 
     private Integer age;
@@ -43,9 +48,16 @@ public class H2User extends SuperEntity {
 
     @Version
     private Integer version;
+    
+    public Date getLastUpdatedDt() {
+		return lastUpdatedDt;
+	}
 
+	public void setLastUpdatedDt(Date lastUpdatedDt) {
+		this.lastUpdatedDt = lastUpdatedDt;
+	}
 
-    public String getName() {
+	public String getName() {
 		return name;
 	}
 

@@ -29,7 +29,7 @@ import com.wshsoft.mybatis.spring.MybatisSqlSessionFactoryBean;
  */
 @Configuration
 @MapperScan("com.wshsoft.mybatis.test.h2.entity.mapper")
-public class MybatisExiendsLoginDeleteConfig {
+public class MybatisPlusLoginDeleteConfig {
 
     @Bean("mybatisSqlSession")
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {

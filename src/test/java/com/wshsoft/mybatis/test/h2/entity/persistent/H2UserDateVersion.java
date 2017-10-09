@@ -57,7 +57,17 @@ public class H2UserDateVersion implements Serializable {
     @TableField("last_updated_dt")
     private Date lastUpdatedDt;
 
-    public H2UserDateVersion() {
+    
+    
+    public Date getLastUpdatedDt() {
+		return lastUpdatedDt;
+	}
+
+	public void setLastUpdatedDt(Date lastUpdatedDt) {
+		this.lastUpdatedDt = lastUpdatedDt;
+	}
+
+	public H2UserDateVersion() {
 
     }
 

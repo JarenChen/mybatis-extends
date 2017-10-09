@@ -38,8 +38,17 @@ public class H2UserIntVersionExtendTO extends BaseIntVersionEntity {
     private Integer testType;
 
     private String desc;
+    
 	@TableField("last_updated_dt")
     private Date lastUpdatedDt;
+
+	public Date getLastUpdatedDt() {
+		return lastUpdatedDt;
+	}
+
+	public void setLastUpdatedDt(Date lastUpdatedDt) {
+		this.lastUpdatedDt = lastUpdatedDt;
+	}
 
 	public String getName() {
 		return name;

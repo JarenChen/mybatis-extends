@@ -51,8 +51,16 @@ public class H2UserNoVersion implements Serializable {
 
     @TableField("last_updated_dt")
     private Date lastUpdatedDt;
+    
+    public Date getLastUpdatedDt() {
+		return lastUpdatedDt;
+	}
 
-    public H2UserNoVersion() {
+	public void setLastUpdatedDt(Date lastUpdatedDt) {
+		this.lastUpdatedDt = lastUpdatedDt;
+	}
+
+	public H2UserNoVersion() {
 
     }
 

@@ -1,4 +1,4 @@
-package com.wshsoft.mybatis.plugins.tenant;
+package com.wshsoft.mybatis.plugins.parser.tenant;
 
 import java.util.List;
 

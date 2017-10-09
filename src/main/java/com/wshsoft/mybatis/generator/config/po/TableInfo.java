@@ -163,6 +163,7 @@ public class TableInfo {
 				}
                 if (null != field.getFill()) {
                     // 填充字段
+                    pkgSet.add("com.wshsoft.mybatis.annotations.TableField");
                     pkgSet.add("com.wshsoft.mybatis.enums.FieldFill");
                 }
             }
