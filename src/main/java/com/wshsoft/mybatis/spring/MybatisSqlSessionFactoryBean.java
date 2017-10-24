@@ -8,7 +8,9 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -28,6 +30,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -43,6 +46,7 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import com.wshsoft.mybatis.MybatisConfiguration;
 import com.wshsoft.mybatis.MybatisXMLConfigBuilder;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
+import com.wshsoft.mybatis.enums.IEnum;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.mapper.SqlRunner;
 import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
@@ -92,7 +96,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private String typeAliasesPackage;
 
-	private Class<?> typeAliasesSuperType;
+    // TODO 自定义枚举包
+    private String typeEnumsPackage;
+
+    private Class<?> typeAliasesSuperType;
 
 	// issue #19. No default provider.
 	private DatabaseIdProvider databaseIdProvider;
@@ -191,17 +198,20 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		this.typeAliasesPackage = typeAliasesPackage;
 	}
 
-	/**
-	 * Super class which domain objects have to extend to have a type alias
-	 * created. No effect if there is no package to scan configured.
-	 * 
-	 * @since 1.1.2
-	 * @param typeAliasesSuperType
-	 *            super class for domain objects
-	 */
-	public void setTypeAliasesSuperType(Class<?> typeAliasesSuperType) {
-		this.typeAliasesSuperType = typeAliasesSuperType;
-	}
+    public void setTypeEnumsPackage(String typeEnumsPackage) {
+        this.typeEnumsPackage = typeEnumsPackage;
+    }
+
+    /**
+     * Super class which domain objects have to extend to have a type alias created.
+     * No effect if there is no package to scan configured.
+     *
+     * @param typeAliasesSuperType super class for domain objects
+     * @since 1.1.2
+     */
+    public void setTypeAliasesSuperType(Class<?> typeAliasesSuperType) {
+        this.typeAliasesSuperType = typeAliasesSuperType;
+    }
 
 	/**
 	 * Packages to search for type handlers.
@@ -441,9 +451,40 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 						typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Scanned package: '" + packageToScan + "' for aliases");
-				}
-			}
-		}
+                }
+            }
+        }
+
+        // TODO 自定义枚举类扫描处理
+        if (hasLength(this.typeEnumsPackage)) {
+            Set<Class> classes = null;
+            if (typeEnumsPackage.contains("*") && !typeEnumsPackage.contains(",")
+                    && !typeEnumsPackage.contains(";")) {
+                classes = PackageHelper.scanTypePackage(typeEnumsPackage);
+            } else {
+                String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
+                        ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+                if (typeEnumsPackageArray == null) {
+                    throw new MybatisExtendsException("not find typeEnumsPackage:" + typeEnumsPackage);
+                }
+                classes = new HashSet<Class>();
+                for (String typePackage : typeEnumsPackageArray) {
+                    classes.addAll(PackageHelper.scanTypePackage(typePackage));
+                }
+            }
+            // 取得类型转换注册器
+            TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+            for (Class cls : classes) {
+                if (cls.isEnum()) {
+                    if (IEnum.class.isAssignableFrom(cls)) {
+                        typeHandlerRegistry.register(cls.getName(), "com.baomidou.mybatisplus.enums.IEnumTypeHandler");
+                    } else {
+                        // 使用原生 EnumOrdinalTypeHandler
+                        typeHandlerRegistry.register(cls.getName(), "org.apache.ibatis.type.EnumOrdinalTypeHandler");
+                    }
+                }
+            }
+        }
 
 		if (!isEmpty(this.typeAliases)) {
 			for (Class<?> typeAlias : this.typeAliases) {

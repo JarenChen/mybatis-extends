@@ -158,17 +158,22 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
 		return target;
 	}
 
-	@Override
-	public void setProperties(Properties prop) {
-		String dialectType = prop.getProperty("dialectType");
-		String dialectClazz = prop.getProperty("dialectClazz");
-		if (StringUtils.isNotEmpty(dialectType)) {
-			this.dialectType = dialectType;
-		}
-		if (StringUtils.isNotEmpty(dialectClazz)) {
-			this.dialectClazz = dialectClazz;
-		}
-	}
+    @Override
+    public void setProperties(Properties prop) {
+        String dialectType = prop.getProperty("dialectType");
+        String dialectClazz = prop.getProperty("dialectClazz");
+        String localPage = prop.getProperty("localPage");
+
+        if (StringUtils.isNotEmpty(dialectType)) {
+            this.dialectType = dialectType;
+        }
+        if (StringUtils.isNotEmpty(dialectClazz)) {
+            this.dialectClazz = dialectClazz;
+        }
+        if (StringUtils.isNotEmpty(localPage)) {
+            this.localPage = Boolean.valueOf(localPage);
+        }
+    }
 
     public PaginationInterceptor setDialectType(String dialectType) {
         this.dialectType = dialectType;

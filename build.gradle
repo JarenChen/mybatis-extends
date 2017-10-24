@@ -15,7 +15,7 @@ ext {
 }
 
 group = 'com.wshsoft'
-version = '2.1.2-SNAPSHOT'
+version = '2.1.4-SNAPSHOT'
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
 

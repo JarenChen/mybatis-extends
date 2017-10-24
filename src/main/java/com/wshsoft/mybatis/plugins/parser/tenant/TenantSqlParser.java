@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.plugins.parser.AbstractJsqlParser;
-import com.wshsoft.mybatis.plugins.parser.SqlInfo;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -13,14 +12,12 @@ import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.LateralSubSelect;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SetOperationList;
@@ -32,37 +29,21 @@ import net.sf.jsqlparser.statement.update.Update;
 
 /**
  * <p>
- * 租户 SQL 解析
+ * 租户 SQL 解析（ TenantId 行级 ）
  * </p>
  *
  * @author Carry xie
- * @since 2017-06-20
+ * @since 2017-09-01
  */
 public class TenantSqlParser extends AbstractJsqlParser {
 
     private TenantHandler tenantHandler;
 
-    @Override
-    public SqlInfo processParser(Statement statement) {
-        if (statement instanceof Insert) {
-            this.processInsert((Insert) statement);
-        } else if (statement instanceof Select) {
-            this.processSelectBody(((Select) statement).getSelectBody());
-        } else if (statement instanceof Update) {
-            this.processUpdate((Update) statement);
-        } else if (statement instanceof Delete) {
-            this.processDelete((Delete) statement);
-        }
-        logger.debug("parser sql: " + statement.toString());
-        return SqlInfo.newInstance().setSql(statement.toString());
-    }
-
     /**
-     * <p>
      * select 语句处理
-     * </p>
      */
-    protected void processSelectBody(SelectBody selectBody) {
+    @Override
+    public void processSelectBody(SelectBody selectBody) {
         if (selectBody instanceof PlainSelect) {
             processPlainSelect((PlainSelect) selectBody);
         } else if (selectBody instanceof WithItem) {
@@ -86,7 +67,8 @@ public class TenantSqlParser extends AbstractJsqlParser {
      * insert 语句处理
      * </p>
      */
-    protected void processInsert(Insert insert) {
+    @Override
+    public void processInsert(Insert insert) {
         if (this.tenantHandler.doTableFilter(insert.getTable().getName())) {
             // 过滤退出执行
             return;
@@ -106,7 +88,8 @@ public class TenantSqlParser extends AbstractJsqlParser {
      * update 语句处理
      * </p>
      */
-    protected void processUpdate(Update update) {
+    @Override
+    public void processUpdate(Update update) {
         List<Table> tableList = update.getTables();
         if (null == tableList || tableList.size() >= 2) {
             throw new MybatisExtendsException("Failed to process multiple-table update, please exclude the statementId");
@@ -124,7 +107,8 @@ public class TenantSqlParser extends AbstractJsqlParser {
      * delete 语句处理
      * </p>
      */
-    protected void processDelete(Delete delete) {
+    @Override
+    public void processDelete(Delete delete) {
         if (this.tenantHandler.doTableFilter(delete.getTable().getName())) {
             // 过滤退出执行
             return;
@@ -140,7 +124,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
     protected BinaryExpression andExpression(Table table, Expression where) {
         //获得where条件表达式
         EqualsTo equalsTo = new EqualsTo();
-        if (where instanceof BinaryExpression) {
+        if (null != where) {
             equalsTo.setLeftExpression(new Column(this.tenantHandler.getTenantIdColumn()));
             equalsTo.setRightExpression(tenantHandler.getTenantId());
             return new AndExpression(equalsTo, where);
@@ -193,8 +177,6 @@ public class TenantSqlParser extends AbstractJsqlParser {
 
     /**
      * 处理子查询等
-     *
-     * @param fromItem
      */
     protected void processFromItem(FromItem fromItem) {
         if (fromItem instanceof SubJoin) {
@@ -225,8 +207,6 @@ public class TenantSqlParser extends AbstractJsqlParser {
 
     /**
      * 处理联接语句
-     *
-     * @param join
      */
     protected void processJoin(Join join) {
         if (join.getRightItem() instanceof Table) {
@@ -239,14 +219,8 @@ public class TenantSqlParser extends AbstractJsqlParser {
         }
     }
 
-
     /**
      * 处理条件
-     * TODO 未解决sql注入问题(考虑替换StringValue为LongValue),因为线上数据库租户字段为int暂时不存在注入问题
-     *
-     * @param expression
-     * @param table
-     * @return
      */
     protected Expression builderExpression(Expression expression, Table table) {
         //生成字段名
