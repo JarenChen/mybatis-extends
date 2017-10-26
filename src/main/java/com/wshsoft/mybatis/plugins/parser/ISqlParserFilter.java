@@ -12,6 +12,6 @@ import org.apache.ibatis.reflection.MetaObject;
  */
 public interface ISqlParserFilter {
 
-    boolean doFilter(MetaObject metaObject);
+	boolean doFilter(MetaObject metaObject);
 
 }

@@ -32,35 +32,33 @@ import com.wshsoft.mybatis.test.h2.H2MetaObjectHandler;
 public class MybatisPlusConfig {
 
 	@Bean("mybatisSqlSession")
-	 public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
+	public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader,
+			GlobalConfiguration globalConfiguration) throws Exception {
 		MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
 		sqlSessionFactory.setDataSource(dataSource);
 		// sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
 		sqlSessionFactory.setTypeAliasesPackage("com.wshsoft.mybatis.test.h2.entity.persistent");
 		MybatisConfiguration configuration = new MybatisConfiguration();
-//        configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
-//        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+		// configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+		// org.apache.ibatis.session.Configuration configuration = new
+		// org.apache.ibatis.session.Configuration();
 		configuration.setJdbcTypeForNull(JdbcType.NULL);
-        configuration.setMapUnderscoreToCamelCase(true);
+		configuration.setMapUnderscoreToCamelCase(true);
 		sqlSessionFactory.setConfiguration(configuration);
 		PaginationInterceptor pagination = new PaginationInterceptor();
-        OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
-        sqlSessionFactory.setPlugins(new Interceptor[]{
-                pagination,
-                optLock,
-                new PerformanceInterceptor()
-        });
-        globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
+		OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
+		sqlSessionFactory.setPlugins(new Interceptor[] { pagination, optLock, new PerformanceInterceptor() });
+		globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
 		sqlSessionFactory.setGlobalConfig(globalConfiguration);
 		return sqlSessionFactory.getObject();
 	}
 
-    @Bean
-    public GlobalConfiguration globalConfiguration() {
-        GlobalConfiguration conf = new GlobalConfiguration(new LogicSqlInjector());
-        conf.setLogicDeleteValue("-1");
-        conf.setLogicNotDeleteValue("1");
-        conf.setIdType(2);
-        return conf;
-    }
+	@Bean
+	public GlobalConfiguration globalConfiguration() {
+		GlobalConfiguration conf = new GlobalConfiguration(new LogicSqlInjector());
+		conf.setLogicDeleteValue("-1");
+		conf.setLogicNotDeleteValue("1");
+		conf.setIdType(2);
+		return conf;
+	}
 }

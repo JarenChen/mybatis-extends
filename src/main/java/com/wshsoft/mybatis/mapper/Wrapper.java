@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.wshsoft.mybatis.entity.Column;
 import com.wshsoft.mybatis.entity.Columns;
-import com.wshsoft.mybatis.entity.Column;
 import com.wshsoft.mybatis.enums.SqlLike;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.toolkit.ArrayUtils;
@@ -61,38 +60,38 @@ public abstract class Wrapper<T> implements Serializable {
 	 */
 	protected String AND_OR = "AND";
 
-    /**
-     * <p>
-     * 兼容EntityWrapper
-     * </p>
-     *
-     * @return
-     */
-    public T getEntity() {
-        return null;
-    }
+	/**
+	 * <p>
+	 * 兼容EntityWrapper
+	 * </p>
+	 *
+	 * @return
+	 */
+	public T getEntity() {
+		return null;
+	}
 
-    /**
-     * 查看where构造是否为空
-     *
-     * @return
-     */
-    public boolean isEmptyOfWhere() {
-        return sql.isEmptyOfWhere();
-    }
+	/**
+	 * 查看where构造是否为空
+	 *
+	 * @return
+	 */
+	public boolean isEmptyOfWhere() {
+		return sql.isEmptyOfWhere();
+	}
 
-    /**
-     * 查看where构造是否不为空
-     *
-     * @return
-     */
-    public boolean isNotEmptyOfWhere() {
-        return !isEmptyOfWhere();
-    }
+	/**
+	 * 查看where构造是否不为空
+	 *
+	 * @return
+	 */
+	public boolean isNotEmptyOfWhere() {
+		return !isEmptyOfWhere();
+	}
 
-    public String getSqlSelect() {
-        return StringUtils.isEmpty(sqlSelect) ? null : stripSqlInjection(sqlSelect);
-    }
+	public String getSqlSelect() {
+		return StringUtils.isEmpty(sqlSelect) ? null : stripSqlInjection(sqlSelect);
+	}
 
 	public Wrapper<T> setSqlSelect(String sqlSelect) {
 		if (StringUtils.isNotEmpty(sqlSelect)) {
@@ -101,233 +100,246 @@ public abstract class Wrapper<T> implements Serializable {
 		return this;
 	}
 
-    /**
-     * <p>
-     * 使用字符串数组封装sqlSelect，便于在不需要指定 AS 的情况下通过实体类自动生成的列静态字段快速组装 sqlSelect，<br/>
-     * 减少手动录入的错误率
-     * </p>
-     * @param columns 字段
-     * @return
-     */
-    public Wrapper<T> setSqlSelect(String... columns) {
-        StringBuilder builder = new StringBuilder();
-        for (String column : columns) {
-            if (StringUtils.isNotEmpty(column)) {
-                if (builder.length() > 0) {
-                    builder.append(",");
-                }
-                builder.append(column);
-            }
-        }
-        this.sqlSelect = builder.toString();
-        return this;
-    }
+	/**
+	 * <p>
+	 * 使用字符串数组封装sqlSelect，便于在不需要指定 AS 的情况下通过实体类自动生成的列静态字段快速组装 sqlSelect，<br/>
+	 * 减少手动录入的错误率
+	 * </p>
+	 * 
+	 * @param columns
+	 *            字段
+	 * @return
+	 */
+	public Wrapper<T> setSqlSelect(String... columns) {
+		StringBuilder builder = new StringBuilder();
+		for (String column : columns) {
+			if (StringUtils.isNotEmpty(column)) {
+				if (builder.length() > 0) {
+					builder.append(",");
+				}
+				builder.append(column);
+			}
+		}
+		this.sqlSelect = builder.toString();
+		return this;
+	}
 
-    /**
-     * <p>
-     * 使用对象封装的setsqlselect
-     * </p>
-     *
-     * @param column 字段
-     * @return
-     */
-    public Wrapper<T> setSqlSelect(Column... column) {
-        if (ArrayUtils.isNotEmpty(column)) {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < column.length; i++) {
-                if (column[i] != null) {
-                    String col = column[i].getColumn();
-                    String as = column[i].getAs();
-                    if (StringUtils.isEmpty(col)) {
-                        continue;
-                    }
-                    builder.append(col).append(as);
-                    if (i < column.length - 1) {
-                        builder.append(",");
-                    }
-                }
-            }
-            this.sqlSelect = builder.toString();
-        }
-        return this;
-    }
+	/**
+	 * <p>
+	 * 使用对象封装的setsqlselect
+	 * </p>
+	 *
+	 * @param column
+	 *            字段
+	 * @return
+	 */
+	public Wrapper<T> setSqlSelect(Column... column) {
+		if (ArrayUtils.isNotEmpty(column)) {
+			StringBuilder builder = new StringBuilder();
+			for (int i = 0; i < column.length; i++) {
+				if (column[i] != null) {
+					String col = column[i].getColumn();
+					String as = column[i].getAs();
+					if (StringUtils.isEmpty(col)) {
+						continue;
+					}
+					builder.append(col).append(as);
+					if (i < column.length - 1) {
+						builder.append(",");
+					}
+				}
+			}
+			this.sqlSelect = builder.toString();
+		}
+		return this;
+	}
 
-    /**
-     * <p>
-     * 使用对象封装的setsqlselect
-     * </p>
-     *
-     * @param columns 字段
-     * @return
-     */
-    public Wrapper<T> setSqlSelect(Columns columns) {
-        Column[] columnArray = columns.getColumns();
-        if (ArrayUtils.isNotEmpty(columnArray)) {
-            setSqlSelect(columnArray);
-        }
-        return this;
-    }
+	/**
+	 * <p>
+	 * 使用对象封装的setsqlselect
+	 * </p>
+	 *
+	 * @param columns
+	 *            字段
+	 * @return
+	 */
+	public Wrapper<T> setSqlSelect(Columns columns) {
+		Column[] columnArray = columns.getColumns();
+		if (ArrayUtils.isNotEmpty(columnArray)) {
+			setSqlSelect(columnArray);
+		}
+		return this;
+	}
 
-    /**
-     * <p>
-     * SQL 片段 (子类实现)
-     * </p>
-     */
-    public abstract String getSqlSegment();
+	/**
+	 * <p>
+	 * SQL 片段 (子类实现)
+	 * </p>
+	 */
+	public abstract String getSqlSegment();
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder("Wrapper<T>:");
-        String sqlSegment = getSqlSegment();
-        sb.append(replacePlaceholder(sqlSegment));
-        Object entity = getEntity();
-        if (entity != null) {
-            sb.append("\n");
-            sb.append("entity=").append(entity.toString());
-        }
-        return sb.toString();
-    }
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("Wrapper<T>:");
+		String sqlSegment = getSqlSegment();
+		sb.append(replacePlaceholder(sqlSegment));
+		Object entity = getEntity();
+		if (entity != null) {
+			sb.append("\n");
+			sb.append("entity=").append(entity.toString());
+		}
+		return sb.toString();
+	}
 
-    /**
-     * 替换占位符
-     *
-     * @param sqlSegment
-     * @return
-     */
-    private String replacePlaceholder(String sqlSegment) {
-        if (StringUtils.isEmpty(sqlSegment)) {
-            return StringUtils.EMPTY;
-        }
-        return sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}", "\\?");
-    }
+	/**
+	 * 替换占位符
+	 *
+	 * @param sqlSegment
+	 * @return
+	 */
+	private String replacePlaceholder(String sqlSegment) {
+		if (StringUtils.isEmpty(sqlSegment)) {
+			return StringUtils.EMPTY;
+		}
+		return sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}", "\\?");
+	}
 
-    /**
-     * 原生占位符sql
-     *
-     * @return
-     */
-    public String originalSql() {
-        return replacePlaceholder(getSqlSegment());
-    }
+	/**
+	 * 原生占位符sql
+	 *
+	 * @return
+	 */
+	public String originalSql() {
+		return replacePlaceholder(getSqlSegment());
+	}
 
-    /**
-     * <p>
-     * SQL中WHERE关键字跟的条件语句
-     * </p>
-     * <p>
-     * eg: ew.where("name='zhangsan'").where(id!=null, "id={0}", id);
-     * <p>
-     * 输出:<br>
-     * 如果id=123:  WHERE (NAME='zhangsan' AND id=123)<br>
-     * 如果id=null: WHERE (NAME='zhangsan')
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param sqlWhere where语句
-     * @param params   参数集
-     * @return this
-     */
-    public Wrapper<T> where(boolean condition, String sqlWhere, Object... params) {
-        if (condition)
-            sql.WHERE(formatSql(sqlWhere, params));
-        return this;
-    }
+	/**
+	 * <p>
+	 * SQL中WHERE关键字跟的条件语句
+	 * </p>
+	 * <p>
+	 * eg: ew.where("name='zhangsan'").where(id!=null, "id={0}", id);
+	 * <p>
+	 * 输出:<br>
+	 * 如果id=123: WHERE (NAME='zhangsan' AND id=123)<br>
+	 * 如果id=null: WHERE (NAME='zhangsan')
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param sqlWhere
+	 *            where语句
+	 * @param params
+	 *            参数集
+	 * @return this
+	 */
+	public Wrapper<T> where(boolean condition, String sqlWhere, Object... params) {
+		if (condition)
+			sql.WHERE(formatSql(sqlWhere, params));
+		return this;
+	}
 
-    /**
-     * <p>
-     * SQL中WHERE关键字跟的条件语句
-     * </p>
-     * <p>
-     * eg: ew.where("name='zhangsan'").where("id={0}","123");
-     * <p>
-     * 输出: WHERE (NAME='zhangsan' AND id=123)
-     * </p>
-     *
-     * @param sqlWhere where语句
-     * @param params   参数集
-     * @return this
-     */
-    public Wrapper<T> where(String sqlWhere, Object... params) {
-        return where(true, sqlWhere, params);
-    }
+	/**
+	 * <p>
+	 * SQL中WHERE关键字跟的条件语句
+	 * </p>
+	 * <p>
+	 * eg: ew.where("name='zhangsan'").where("id={0}","123");
+	 * <p>
+	 * 输出: WHERE (NAME='zhangsan' AND id=123)
+	 * </p>
+	 *
+	 * @param sqlWhere
+	 *            where语句
+	 * @param params
+	 *            参数集
+	 * @return this
+	 */
+	public Wrapper<T> where(String sqlWhere, Object... params) {
+		return where(true, sqlWhere, params);
+	}
 
-    /**
-     * <p>
-     * 等同于SQL的"field=value"表达式
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param column
-     * @param params
-     * @return
-     */
-    public Wrapper<T> eq(boolean condition, String column, Object params) {
-        if (condition)
-            sql.WHERE(formatSql(String.format("%s = {0}", column), params));
-        return this;
-    }
+	/**
+	 * <p>
+	 * 等同于SQL的"field=value"表达式
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> eq(boolean condition, String column, Object params) {
+		if (condition)
+			sql.WHERE(formatSql(String.format("%s = {0}", column), params));
+		return this;
+	}
 
-    /**
-     * <p>
-     * 等同于SQL的"field=value"表达式
-     * </p>
-     *
-     * @param column
-     * @param params
-     * @return
-     */
-    public Wrapper<T> eq(String column, Object params) {
-        return eq(true, column, params);
-    }
+	/**
+	 * <p>
+	 * 等同于SQL的"field=value"表达式
+	 * </p>
+	 *
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> eq(String column, Object params) {
+		return eq(true, column, params);
+	}
 
-    /**
-     * <p>
-     * 等同于SQL的"field <> value"表达式
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param column
-     * @param params
-     * @return
-     */
-    public Wrapper<T> ne(boolean condition, String column, Object params) {
-        if (condition)
-            sql.WHERE(formatSql(String.format("%s <> {0}", column), params));
-        return this;
-    }
+	/**
+	 * <p>
+	 * 等同于SQL的"field <> value"表达式
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> ne(boolean condition, String column, Object params) {
+		if (condition)
+			sql.WHERE(formatSql(String.format("%s <> {0}", column), params));
+		return this;
+	}
 
-    /**
-     * <p>
-     * 等同于SQL的"field <> value"表达式
-     * </p>
-     *
-     * @param column
-     * @param params
-     * @return
-     */
-    public Wrapper<T> ne(String column, Object params) {
-        return ne(true, column, params);
+	/**
+	 * <p>
+	 * 等同于SQL的"field <> value"表达式
+	 * </p>
+	 *
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> ne(String column, Object params) {
+		return ne(true, column, params);
 
-    }
+	}
 
-    /**
-     * <p>
-     * 等同于SQL的"field=value"表达式
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param params
-     * @return
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public Wrapper<T> allEq(boolean condition, Map<String, Object> params) {
-        if (condition && MapUtils.isNotEmpty(params)) {
-            Iterator iterator = params.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, Object> entry = (Map.Entry<String, Object>) iterator.next();
-                Object value = entry.getValue();
-                if (StringUtils.checkValNotNull(value)) {
-                    sql.WHERE(formatSql(String.format("%s = {0}", entry.getKey()), entry.getValue()));
-                }
+	/**
+	 * <p>
+	 * 等同于SQL的"field=value"表达式
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param params
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Wrapper<T> allEq(boolean condition, Map<String, Object> params) {
+		if (condition && MapUtils.isNotEmpty(params)) {
+			Iterator iterator = params.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Map.Entry<String, Object> entry = (Map.Entry<String, Object>) iterator.next();
+				Object value = entry.getValue();
+				if (StringUtils.checkValNotNull(value)) {
+					sql.WHERE(formatSql(String.format("%s = {0}", entry.getKey()), entry.getValue()));
+				}
 
 			}
 
@@ -335,925 +347,1042 @@ public abstract class Wrapper<T> implements Serializable {
 		return this;
 	}
 
-    /**
-     * <p>
-     * 等同于SQL的"field=value"表达式
-     * </p>
-     *
-     * @param params
-     * @return
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public Wrapper<T> allEq(Map<String, Object> params) {
-        return allEq(true, params);
-    }
-
-    /**
-     * <p>
-     * 等同于SQL的"field>value"表达式
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param column
-     * @param params
-     * @return
-     */
-    public Wrapper<T> gt(boolean condition, String column, Object params) {
-        if (condition)
-            sql.WHERE(formatSql(String.format("%s > {0}", column), params));
-        return this;
-    }
-
-    /**
-     * <p>
-     * 等同于SQL的"field>value"表达式
-     * </p>
-     *
-     * @param column
-     * @param params
-     * @return
-     */
-    public Wrapper<T> gt(String column, Object params) {
-        return gt(true, column, params);
-    }
-
-    /**
-     * <p>
-     * 等同于SQL的"field>=value"表达式
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param column
-     * @param params
-     * @return
-     */
-    public Wrapper<T> ge(boolean condition, String column, Object params) {
-        if (condition)
-            sql.WHERE(formatSql(String.format("%s >= {0}", column), params));
-        return this;
-    }
-
-    /**
-     * <p>
-     * 等同于SQL的"field>=value"表达式
-     * </p>
-     *
-     * @param column
-     * @param params
-     * @return
-     */
-    public Wrapper<T> ge(String column, Object params) {
-        return ge(true, column, params);
-    }
-
-    /**
-     * <p>
-     * 等同于SQL的"field<value"表达式
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param column
-     * @param params
-     * @return
-     */
-    public Wrapper<T> lt(boolean condition, String column, Object params) {
-        if (condition)
-            sql.WHERE(formatSql(String.format("%s < {0}", column), params));
-        return this;
-    }
-
-    /**
-     * <p>
-     * 等同于SQL的"field<value"表达式
-     * </p>
-     *
-     * @param column
-     * @param params
-     * @return
-     */
-    public Wrapper<T> lt(String column, Object params) {
-        return lt(true, column, params);
-    }
-
-    /**
-     * <p>
-     * 等同于SQL的"field<=value"表达式
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param column
-     * @param params
-     * @return
-     */
-    public Wrapper<T> le(boolean condition, String column, Object params) {
-        if (condition)
-            sql.WHERE(formatSql(String.format("%s <= {0}", column), params));
-        return this;
-    }
-
-    /**
-     * <p>
-     * 等同于SQL的"field<=value"表达式
-     * </p>
-     *
-     * @param column
-     * @param params
-     * @return
-     */
-    public Wrapper<T> le(String column, Object params) {
-        return le(true, column, params);
-    }
-
-    /**
-     * <p>
-     * AND 连接后续条件
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param sqlAnd and条件语句
-     * @param params 参数集
-     * @return this
-     */
-    public Wrapper<T> and(boolean condition, String sqlAnd, Object... params) {
-        if (condition)
-            sql.AND().WHERE(formatSql(sqlAnd, params));
-        return this;
-    }
-
-    /**
-     * <p>
-     * AND 连接后续条件
-     * </p>
-     *
-     * @param sqlAnd and条件语句
-     * @param params 参数集
-     * @return this
-     */
-    public Wrapper<T> and(String sqlAnd, Object... params) {
-        return and(true, sqlAnd, params);
-    }
-
-    /**
-     * <p>
-     * 使用AND连接并换行
-     * </p>
-     * <p>
-     * eg: ew.where("name='zhangsan'").and("id=11").andNew("statu=1"); 输出： WHERE
-     * (name='zhangsan' AND id=11) AND (statu=1)
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param sqlAnd AND 条件语句
-     * @param params 参数值
-     * @return this
-     */
-    public Wrapper<T> andNew(boolean condition, String sqlAnd, Object... params) {
-        if (condition)
-            sql.AND_NEW().WHERE(formatSql(sqlAnd, params));
-        return this;
-    }
-
-    /**
-     * <p>
-     * 使用AND连接并换行
-     * </p>
-     * <p>
-     * eg: ew.where("name='zhangsan'").and("id=11").andNew("statu=1"); 输出： WHERE
-     * (name='zhangsan' AND id=11) AND (statu=1)
-     * </p>
-     *
-     * @return this
-     */
-    public Wrapper<T> andNew() {
-        sql.AND_NEW();
-        return this;
-    }
-
-    /**
-     * <p>
-     * 使用AND连接并换行
-     * </p>
-     * <p>
-     * eg: ew.where("name='zhangsan'").and("id=11").andNew("statu=1"); 输出： WHERE
-     * (name='zhangsan' AND id=11) AND (statu=1)
-     * </p>
-     *
-     * @param sqlAnd AND 条件语句
-     * @param params 参数值
-     * @return this
-     */
-    public Wrapper<T> andNew(String sqlAnd, Object... params) {
-        return andNew(true, sqlAnd, params);
-    }
-
-    /**
-     * <p>
-     * 使用AND连接并换行
-     * </p>
-     * <p>
-     *
-     * @return this
-     */
-    public Wrapper<T> and() {
-        sql.AND();
-        return this;
-    }
-
-    /**
-     * <p>
-     * 使用OR连接并换行
-     * </p>
-     *
-     * @return this
-     */
-    public Wrapper<T> or() {
-        sql.OR();
-        return this;
-    }
-
-    /**
-     * <p>
-     * 添加OR条件
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param sqlOr  or 条件语句
-     * @param params 参数集
-     * @return this
-     */
-    public Wrapper<T> or(boolean condition, String sqlOr, Object... params) {
-        if (condition) {
-            if (StringUtils.isEmpty(sql.toString())) {
-                AND_OR = "OR";
-            }
-            sql.OR().WHERE(formatSql(sqlOr, params));
-        }
-        return this;
-    }
-
-    /**
-     * <p>
-     * 添加OR条件
-     * </p>
-     *
-     * @param sqlOr  or 条件语句
-     * @param params 参数集
-     * @return this
-     */
-    public Wrapper<T> or(String sqlOr, Object... params) {
-        return or(true, sqlOr, params);
-    }
-
-    /**
-     * <p>
-     * 使用OR换行，并添加一个带()的新的条件
-     * </p>
-     * <p>
-     * eg: ew.where("name='zhangsan'").and("id=11").orNew("statu=1"); 输出： WHERE
-     * (name='zhangsan' AND id=11) OR (statu=1)
-     * </p>
-     *
-     * @return this
-     */
-    public Wrapper<T> orNew() {
-        sql.OR_NEW();
-        return this;
-    }
-
-    /**
-     * <p>
-     * 使用OR换行，并添加一个带()的新的条件
-     * </p>
-     * <p>
-     * eg: ew.where("name='zhangsan'").and("id=11").orNew("statu=1"); 输出： WHERE
-     * (name='zhangsan' AND id=11) OR (statu=1)
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param sqlOr  AND 条件语句
-     * @param params 参数值
-     * @return this
-     */
-    public Wrapper<T> orNew(boolean condition, String sqlOr, Object... params) {
-        if (condition) {
-            if (StringUtils.isEmpty(sql.toString())) {
-                AND_OR = "OR";
-            }
-            sql.OR_NEW().WHERE(formatSql(sqlOr, params));
-        }
-        return this;
-    }
-
-    /**
-     * <p>
-     * 使用OR换行，并添加一个带()的新的条件
-     * </p>
-     * <p>
-     * eg: ew.where("name='zhangsan'").and("id=11").orNew("statu=1"); 输出： WHERE
-     * (name='zhangsan' AND id=11) OR (statu=1)
-     * </p>
-     *
-     * @param sqlOr  AND 条件语句
-     * @param params 参数值
-     * @return this
-     */
-    public Wrapper<T> orNew(String sqlOr, Object... params) {
-        return orNew(true, sqlOr, params);
-    }
-
-    /**
-     * <p>
-     * SQL中groupBy关键字跟的条件语句
-     * </p>
-     * <p>
-     * eg: ew.where("name='zhangsan'").groupBy("id,name")
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param columns SQL 中的 Group by 语句，无需输入 Group By 关键字
-     * @return this
-     */
-    public Wrapper<T> groupBy(boolean condition, String columns) {
-        if (condition)
-            sql.GROUP_BY(columns);
-        return this;
-    }
-
-    /**
-     * <p>
-     * SQL中groupBy关键字跟的条件语句
-     * </p>
-     * <p>
-     * eg: ew.where("name='zhangsan'").groupBy("id,name")
-     * </p>
-     *
-     * @param columns SQL 中的 Group by 语句，无需输入 Group By 关键字
-     * @return this
-     */
-    public Wrapper<T> groupBy(String columns) {
-        return groupBy(true, columns);
-    }
-
-    /**
-     * <p>
-     * SQL中having关键字跟的条件语句
-     * </p>
-     * <p>
-     * eg: ew.groupBy("id,name").having("id={0}",22).and("password is not null")
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param sqlHaving having关键字后面跟随的语句
-     * @param params    参数集
-     * @return EntityWrapper<T>
-     */
-    public Wrapper<T> having(boolean condition, String sqlHaving, Object... params) {
-        if (condition)
-            sql.HAVING(formatSql(sqlHaving, params));
-        return this;
-    }
-
-    /**
-     * <p>
-     * SQL中having关键字跟的条件语句
-     * </p>
-     * <p>
-     * eg: ew.groupBy("id,name").having("id={0}",22).and("password is not null")
-     * </p>
-     *
-     * @param sqlHaving having关键字后面跟随的语句
-     * @param params    参数集
-     * @return EntityWrapper<T>
-     */
-    public Wrapper<T> having(String sqlHaving, Object... params) {
-        return having(true, sqlHaving, params);
-    }
-
-    /**
-     * <p>
-     * SQL中orderby关键字跟的条件语句
-     * </p>
-     * <p>
-     * eg: ew.groupBy("id,name").having("id={0}",22).and("password is not null"
-     * ).orderBy("id,name")
-     * </p>
-     *
-     * @param condition 拼接的前置条件
-     * @param columns SQL 中的 order by 语句，无需输入 Order By 关键字
-     * @return this
-     */
-    public Wrapper<T> orderBy(boolean condition, String columns) {
-        if (condition)
-            sql.ORDER_BY(columns);
-        return this;
-    }
-
-    /**
-     * <p>
-     * SQL中orderby关键字跟的条件语句
-     * </p>
-     * <p>
-     * eg: ew.groupBy("id,name").having("id={0}",22).and("password is not null"
-     * ).orderBy("id,name")
-     * </p>
-     *
-     * @param columns SQL 中的 order by 语句，无需输入 Order By 关键字
-     * @return this
-     */
-    public Wrapper<T> orderBy(String columns) {
-        return orderBy(true, columns);
-    }
-
-    /**
-     * <p>
-     * SQL中orderby关键字跟的条件语句，可根据变更动态排序
-     * </p>
-     * @param condition 拼接的前置条件
-     * @param columns SQL 中的 order by 语句，无需输入 Order By 关键字
-     * @param isAsc   是否为升序
-     * @return this
-     */
-    public Wrapper<T> orderBy(boolean condition, String columns, boolean isAsc) {
-        if (condition && StringUtils.isNotEmpty(columns)) {
-            sql.ORDER_BY(columns + (isAsc ? " ASC" : " DESC"));
-        }
-        return this;
-    }
-
-    /**
-     * <p>
-     * SQL中orderby关键字跟的条件语句，可根据变更动态排序
-     * </p>
-     *
-     * @param columns SQL 中的 order by 语句，无需输入 Order By 关键字
-     * @param isAsc   是否为升序
-     * @return this
-     */
-    public Wrapper<T> orderBy(String columns, boolean isAsc) {
-        return orderBy(true, columns, isAsc);
-    }
-
-    /**
-     * LIKE条件语句，value中无需前后%
-     *
-     * @param condition 拼接的前置条件
-     * @param column 字段名称
-     * @param value  匹配值
-     * @return this
-     */
-    public Wrapper<T> like(boolean condition, String column, String value) {
-        if (condition)
-            handerLike(column, value, SqlLike.DEFAULT, false);
-        return this;
-    }
-
-    /**
-     * LIKE条件语句，value中无需前后%
-     *
-     * @param column 字段名称
-     * @param value  匹配值
-     * @return this
-     */
-    public Wrapper<T> like(String column, String value) {
-        return like(true, column, value);
-    }
-
-    /**
-     * NOT LIKE条件语句，value中无需前后%
-     *
-     * @param condition 拼接的前置条件
-     * @param column 字段名称
-     * @param value  匹配值
-     * @return this
-     */
-    public Wrapper<T> notLike(boolean condition, String column, String value) {
-        if (condition)
-            handerLike(column, value, SqlLike.DEFAULT, true);
-        return this;
-    }
-
-    /**
-     * NOT LIKE条件语句，value中无需前后%
-     *
-     * @param column 字段名称
-     * @param value  匹配值
-     * @return this
-     */
-    public Wrapper<T> notLike(String column, String value) {
-        return notLike(true, column, value);
-    }
-
-    /**
-     * 处理LIKE操作
-     *
-     * @param column 字段名称
-     * @param value  like匹配值
-     * @param isNot  是否为NOT LIKE操作
-     */
-    private void handerLike(String column, String value, SqlLike type, boolean isNot) {
-        if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
-            StringBuilder inSql = new StringBuilder();
-            inSql.append(column);
-            if (isNot) {
-                inSql.append(" NOT");
-            }
-            inSql.append(" LIKE {0}");
-            sql.WHERE(formatSql(inSql.toString(), SqlUtils.concatLike(value, type)));
-        }
-    }
-
-    /**
-     * LIKE条件语句，value中无需前后%
-     *
-     * @param condition 拼接的前置条件
-     * @param column 字段名称
-     * @param value  匹配值
-     * @param type
-     * @return this
-     */
-    public Wrapper<T> like(boolean condition, String column, String value, SqlLike type) {
-        if (condition)
-            handerLike(column, value, type, false);
-        return this;
-    }
-
-    /**
-     * LIKE条件语句，value中无需前后%
-     *
-     * @param column 字段名称
-     * @param value  匹配值
-     * @param type
-     * @return this
-     */
-    public Wrapper<T> like(String column, String value, SqlLike type) {
-        return like(true, column, value, type);
-    }
-
-    /**
-     * NOT LIKE条件语句，value中无需前后%
-     *
-     * @param condition 拼接的前置条件
-     * @param column 字段名称
-     * @param value  匹配值
-     * @param type
-     * @return this
-     */
-    public Wrapper<T> notLike(boolean condition, String column, String value, SqlLike type) {
-        if (condition)
-            handerLike(column, value, type, true);
-        return this;
-    }
-
-    /**
-     * NOT LIKE条件语句，value中无需前后%
-     *
-     * @param column 字段名称
-     * @param value  匹配值
-     * @param type
-     * @return this
-     */
-    public Wrapper<T> notLike(String column, String value, SqlLike type) {
-        return notLike(true, column, value, type);
-    }
-
-    /**
-     * is not null 条件
-     *
-     * @param condition 拼接的前置条件
-     * @param columns 字段名称。多个字段以逗号分隔。
-     * @return this
-     */
-    public Wrapper<T> isNotNull(boolean condition, String columns) {
-        if (condition)
-            sql.IS_NOT_NULL(columns);
-        return this;
-    }
-
-    /**
-     * is not null 条件
-     *
-     * @param columns 字段名称。多个字段以逗号分隔。
-     * @return this
-     */
-    public Wrapper<T> isNotNull(String columns) {
-        return isNotNull(true, columns);
-    }
-
-    /**
-     * is not null 条件
-     *
-     * @param condition 拼接的前置条件
-     * @param columns 字段名称。多个字段以逗号分隔。
-     * @return this
-     */
-    public Wrapper<T> isNull(boolean condition, String columns) {
-        if (condition)
-            sql.IS_NULL(columns);
-        return this;
-    }
-
-    /**
-     * is not null 条件
-     *
-     * @param columns 字段名称。多个字段以逗号分隔。
-     * @return this
-     */
-    public Wrapper<T> isNull(String columns) {
-        return isNull(true, columns);
-    }
-
-    /**
-     * EXISTS 条件语句，目前适配mysql及oracle
-     *
-     * @param condition 拼接的前置条件
-     * @param value 匹配值
-     * @return this
-     */
-    public Wrapper<T> exists(boolean condition, String value) {
-        if (condition)
-            sql.EXISTS(value);
-        return this;
-    }
-
-    /**
-     * EXISTS 条件语句，目前适配mysql及oracle
-     *
-     * @param value 匹配值
-     * @return this
-     */
-    public Wrapper<T> exists(String value) {
-        return exists(true, value);
-    }
-
-    /**
-     * NOT EXISTS条件语句
-     *
-     * @param condition 拼接的前置条件
-     * @param value 匹配值
-     * @return this
-     */
-    public Wrapper<T> notExists(boolean condition, String value) {
-        if (condition)
-            sql.NOT_EXISTS(value);
-        return this;
-    }
-
-    /**
-     * NOT EXISTS条件语句
-     *
-     * @param value 匹配值
-     * @return this
-     */
-    public Wrapper<T> notExists(String value) {
-        return notExists(true, value);
-    }
-
-    /**
-     * IN 条件语句，目前适配mysql及oracle
-     *
-     * @param condition 拼接的前置条件
-     * @param column 字段名称
-     * @param value  逗号拼接的字符串
-     * @return this
-     */
-    public Wrapper<T> in(boolean condition, String column, String value) {
-        if (condition && StringUtils.isNotEmpty(value)) {
-            in(column, StringUtils.splitWorker(value, ",", -1, false));
-        }
-        return this;
-    }
-
-    /**
-     * IN 条件语句，目前适配mysql及oracle
-     *
-     * @param column 字段名称
-     * @param value  逗号拼接的字符串
-     * @return this
-     */
-    public Wrapper<T> in(String column, String value) {
-        return in(true, column, value);
-    }
-
-    /**
-     * NOT IN条件语句
-     *
-     * @param condition 拼接的前置条件
-     * @param column 字段名称
-     * @param value  逗号拼接的字符串
-     * @return this
-     */
-    public Wrapper<T> notIn(boolean condition, String column, String value) {
-        if (condition && StringUtils.isNotEmpty(value)) {
-            notIn(column, StringUtils.splitWorker(value, ",", -1, false));
-        }
-        return this;
-    }
-
-    /**
-     * NOT IN条件语句
-     *
-     * @param column 字段名称
-     * @param value  逗号拼接的字符串
-     * @return this
-     */
-    public Wrapper<T> notIn(String column, String value) {
-        return notIn(true, column, value);
-    }
-
-    /**
-     * IN 条件语句，目前适配mysql及oracle
-     *
-     * @param condition 拼接的前置条件
-     * @param column 字段名称
-     * @param value  匹配值 List集合
-     * @return this
-     */
-    public Wrapper<T> in(boolean condition, String column, Collection<?> value) {
-        if (condition && CollectionUtils.isNotEmpty(value))
-            sql.WHERE(formatSql(inExpression(column, value, false), value.toArray()));
-        return this;
-    }
-
-    /**
-     * IN 条件语句，目前适配mysql及oracle
-     *
-     * @param column 字段名称
-     * @param value  匹配值 List集合
-     * @return this
-     */
-    public Wrapper<T> in(String column, Collection<?> value) {
-        return in(true, column, value);
-    }
-
-    /**
-     * NOT IN 条件语句，目前适配mysql及oracle
-     *
-     * @param condition 拼接的前置条件
-     * @param column 字段名称
-     * @param value  匹配值 List集合
-     * @return this
-     */
-    public Wrapper<T> notIn(boolean condition, String column, Collection<?> value) {
-        if (condition && CollectionUtils.isNotEmpty(value))
-            sql.WHERE(formatSql(inExpression(column, value, true), value.toArray()));
-        return this;
-    }
-
-    /**
-     * NOT IN 条件语句，目前适配mysql及oracle
-     *
-     * @param column 字段名称
-     * @param value  匹配值 List集合
-     * @return this
-     */
-    public Wrapper<T> notIn(String column, Collection<?> value) {
-        return notIn(true, column, value);
-    }
-
-    /**
-     * IN 条件语句，目前适配mysql及oracle
-     *
-     * @param condition 拼接的前置条件
-     * @param column 字段名称
-     * @param value  匹配值 object数组
-     * @return this
-     */
-    public Wrapper<T> in(boolean condition, String column, Object[] value) {
-        if (condition && ArrayUtils.isNotEmpty(value))
-            sql.WHERE(formatSql(inExpression(column, Arrays.asList(value), false), value));
-        return this;
-    }
-
-    /**
-     * IN 条件语句，目前适配mysql及oracle
-     *
-     * @param column 字段名称
-     * @param value  匹配值 object数组
-     * @return this
-     */
-    public Wrapper<T> in(String column, Object[] value) {
-        return in(true, column, value);
-    }
-
-    /**
-     * NOT IN 条件语句，目前适配mysql及oracle
-     *
-     * @param condition 拼接的前置条件
-     * @param column 字段名称
-     * @param value  匹配值 object数组
-     * @return this
-     */
-    public Wrapper<T> notIn(boolean condition, String column, Object... value) {
-        if (condition && ArrayUtils.isNotEmpty(value))
-            sql.WHERE(formatSql(inExpression(column, Arrays.asList(value), true), value));
-        return this;
-    }
-
-    /**
-     * NOT IN 条件语句，目前适配mysql及oracle
-     *
-     * @param column 字段名称
-     * @param value  匹配值 object数组
-     * @return this
-     */
-    public Wrapper<T> notIn(String column, Object... value) {
-        return notIn(true, column, value);
-    }
-
-    /**
-     * 获取in表达式
-     *
-     * @param column 字段名称
-     * @param value  集合List
-     * @param isNot  是否为NOT IN操作
-     */
-    private String inExpression(String column, Collection<?> value, boolean isNot) {
-        if (StringUtils.isNotEmpty(column) && CollectionUtils.isNotEmpty(value)) {
-            StringBuilder inSql = new StringBuilder();
-            inSql.append(column);
-            if (isNot) {
-                inSql.append(" NOT");
-            }
-            inSql.append(" IN ");
-            inSql.append("(");
-            int size = value.size();
-            for (int i = 0; i < size; i++) {
-                inSql.append(String.format(PLACE_HOLDER, i));
-                if (i + 1 < size) {
-                    inSql.append(",");
-                }
-            }
-            inSql.append(")");
-            return inSql.toString();
-        }
-        return null;
-    }
-
-    /**
-     * betwwee 条件语句
-     *
-     * @param condition 拼接的前置条件
-     * @param column 字段名称
-     * @param val1
-     * @param val2
-     * @return this
-     */
-    public Wrapper<T> between(boolean condition, String column, Object val1, Object val2) {
-        if (condition)
-            sql.WHERE(formatSql(String.format("%s BETWEEN {0} AND {1}", column), val1, val2));
-        return this;
-    }
-
-    /**
-     * betwwee 条件语句
-     *
-     * @param column 字段名称
-     * @param val1
-     * @param val2
-     * @return this
-     */
-    public Wrapper<T> between(String column, Object val1, Object val2) {
-        return between(true, column, val1, val2);
-    }
-
-    /**
-     * NOT betwwee 条件语句
-     *
-     * @param condition 拼接的前置条件
-     * @param column 字段名称
-     * @param val1
-     * @param val2
-     * @return this
-     */
-    public Wrapper<T> notBetween(boolean condition, String column, Object val1, Object val2) {
-        if (condition)
-            sql.WHERE(formatSql(String.format("%s NOT BETWEEN {0} AND {1}", column), val1, val2));
-        return this;
-    }
-
-    /**
-     * NOT betwwee 条件语句
-     *
-     * @param column 字段名称
-     * @param val1
-     * @param val2
-     * @return this
-     */
-    public Wrapper<T> notBetween(String column, Object val1, Object val2) {
-        return notBetween(true, column, val1, val2);
-
-    }
-
-    /**
-     * 为了兼容之前的版本,可使用where()或and()替代
-     *
-     * @param sqlWhere where sql部分
-     * @param params   参数集
-     * @return this
-     */
-    public Wrapper<T> addFilter(String sqlWhere, Object... params) {
-        return and(sqlWhere, params);
-    }
+	/**
+	 * <p>
+	 * 等同于SQL的"field=value"表达式
+	 * </p>
+	 *
+	 * @param params
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Wrapper<T> allEq(Map<String, Object> params) {
+		return allEq(true, params);
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field>value"表达式
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> gt(boolean condition, String column, Object params) {
+		if (condition)
+			sql.WHERE(formatSql(String.format("%s > {0}", column), params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field>value"表达式
+	 * </p>
+	 *
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> gt(String column, Object params) {
+		return gt(true, column, params);
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field>=value"表达式
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> ge(boolean condition, String column, Object params) {
+		if (condition)
+			sql.WHERE(formatSql(String.format("%s >= {0}", column), params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field>=value"表达式
+	 * </p>
+	 *
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> ge(String column, Object params) {
+		return ge(true, column, params);
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field<value"表达式
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> lt(boolean condition, String column, Object params) {
+		if (condition)
+			sql.WHERE(formatSql(String.format("%s < {0}", column), params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field<value"表达式
+	 * </p>
+	 *
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> lt(String column, Object params) {
+		return lt(true, column, params);
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field<=value"表达式
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> le(boolean condition, String column, Object params) {
+		if (condition)
+			sql.WHERE(formatSql(String.format("%s <= {0}", column), params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field<=value"表达式
+	 * </p>
+	 *
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> le(String column, Object params) {
+		return le(true, column, params);
+	}
+
+	/**
+	 * <p>
+	 * AND 连接后续条件
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param sqlAnd
+	 *            and条件语句
+	 * @param params
+	 *            参数集
+	 * @return this
+	 */
+	public Wrapper<T> and(boolean condition, String sqlAnd, Object... params) {
+		if (condition)
+			sql.AND().WHERE(formatSql(sqlAnd, params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * AND 连接后续条件
+	 * </p>
+	 *
+	 * @param sqlAnd
+	 *            and条件语句
+	 * @param params
+	 *            参数集
+	 * @return this
+	 */
+	public Wrapper<T> and(String sqlAnd, Object... params) {
+		return and(true, sqlAnd, params);
+	}
+
+	/**
+	 * <p>
+	 * 使用AND连接并换行
+	 * </p>
+	 * <p>
+	 * eg: ew.where("name='zhangsan'").and("id=11").andNew("statu=1"); 输出： WHERE
+	 * (name='zhangsan' AND id=11) AND (statu=1)
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param sqlAnd
+	 *            AND 条件语句
+	 * @param params
+	 *            参数值
+	 * @return this
+	 */
+	public Wrapper<T> andNew(boolean condition, String sqlAnd, Object... params) {
+		if (condition)
+			sql.AND_NEW().WHERE(formatSql(sqlAnd, params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 使用AND连接并换行
+	 * </p>
+	 * <p>
+	 * eg: ew.where("name='zhangsan'").and("id=11").andNew("statu=1"); 输出： WHERE
+	 * (name='zhangsan' AND id=11) AND (statu=1)
+	 * </p>
+	 *
+	 * @return this
+	 */
+	public Wrapper<T> andNew() {
+		sql.AND_NEW();
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 使用AND连接并换行
+	 * </p>
+	 * <p>
+	 * eg: ew.where("name='zhangsan'").and("id=11").andNew("statu=1"); 输出： WHERE
+	 * (name='zhangsan' AND id=11) AND (statu=1)
+	 * </p>
+	 *
+	 * @param sqlAnd
+	 *            AND 条件语句
+	 * @param params
+	 *            参数值
+	 * @return this
+	 */
+	public Wrapper<T> andNew(String sqlAnd, Object... params) {
+		return andNew(true, sqlAnd, params);
+	}
+
+	/**
+	 * <p>
+	 * 使用AND连接并换行
+	 * </p>
+	 * <p>
+	 *
+	 * @return this
+	 */
+	public Wrapper<T> and() {
+		sql.AND();
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 使用OR连接并换行
+	 * </p>
+	 *
+	 * @return this
+	 */
+	public Wrapper<T> or() {
+		sql.OR();
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 添加OR条件
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param sqlOr
+	 *            or 条件语句
+	 * @param params
+	 *            参数集
+	 * @return this
+	 */
+	public Wrapper<T> or(boolean condition, String sqlOr, Object... params) {
+		if (condition) {
+			if (StringUtils.isEmpty(sql.toString())) {
+				AND_OR = "OR";
+			}
+			sql.OR().WHERE(formatSql(sqlOr, params));
+		}
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 添加OR条件
+	 * </p>
+	 *
+	 * @param sqlOr
+	 *            or 条件语句
+	 * @param params
+	 *            参数集
+	 * @return this
+	 */
+	public Wrapper<T> or(String sqlOr, Object... params) {
+		return or(true, sqlOr, params);
+	}
+
+	/**
+	 * <p>
+	 * 使用OR换行，并添加一个带()的新的条件
+	 * </p>
+	 * <p>
+	 * eg: ew.where("name='zhangsan'").and("id=11").orNew("statu=1"); 输出： WHERE
+	 * (name='zhangsan' AND id=11) OR (statu=1)
+	 * </p>
+	 *
+	 * @return this
+	 */
+	public Wrapper<T> orNew() {
+		sql.OR_NEW();
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 使用OR换行，并添加一个带()的新的条件
+	 * </p>
+	 * <p>
+	 * eg: ew.where("name='zhangsan'").and("id=11").orNew("statu=1"); 输出： WHERE
+	 * (name='zhangsan' AND id=11) OR (statu=1)
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param sqlOr
+	 *            AND 条件语句
+	 * @param params
+	 *            参数值
+	 * @return this
+	 */
+	public Wrapper<T> orNew(boolean condition, String sqlOr, Object... params) {
+		if (condition) {
+			if (StringUtils.isEmpty(sql.toString())) {
+				AND_OR = "OR";
+			}
+			sql.OR_NEW().WHERE(formatSql(sqlOr, params));
+		}
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 使用OR换行，并添加一个带()的新的条件
+	 * </p>
+	 * <p>
+	 * eg: ew.where("name='zhangsan'").and("id=11").orNew("statu=1"); 输出： WHERE
+	 * (name='zhangsan' AND id=11) OR (statu=1)
+	 * </p>
+	 *
+	 * @param sqlOr
+	 *            AND 条件语句
+	 * @param params
+	 *            参数值
+	 * @return this
+	 */
+	public Wrapper<T> orNew(String sqlOr, Object... params) {
+		return orNew(true, sqlOr, params);
+	}
+
+	/**
+	 * <p>
+	 * SQL中groupBy关键字跟的条件语句
+	 * </p>
+	 * <p>
+	 * eg: ew.where("name='zhangsan'").groupBy("id,name")
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param columns
+	 *            SQL 中的 Group by 语句，无需输入 Group By 关键字
+	 * @return this
+	 */
+	public Wrapper<T> groupBy(boolean condition, String columns) {
+		if (condition)
+			sql.GROUP_BY(columns);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * SQL中groupBy关键字跟的条件语句
+	 * </p>
+	 * <p>
+	 * eg: ew.where("name='zhangsan'").groupBy("id,name")
+	 * </p>
+	 *
+	 * @param columns
+	 *            SQL 中的 Group by 语句，无需输入 Group By 关键字
+	 * @return this
+	 */
+	public Wrapper<T> groupBy(String columns) {
+		return groupBy(true, columns);
+	}
+
+	/**
+	 * <p>
+	 * SQL中having关键字跟的条件语句
+	 * </p>
+	 * <p>
+	 * eg: ew.groupBy("id,name").having("id={0}",22).and("password is not null")
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param sqlHaving
+	 *            having关键字后面跟随的语句
+	 * @param params
+	 *            参数集
+	 * @return EntityWrapper<T>
+	 */
+	public Wrapper<T> having(boolean condition, String sqlHaving, Object... params) {
+		if (condition)
+			sql.HAVING(formatSql(sqlHaving, params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * SQL中having关键字跟的条件语句
+	 * </p>
+	 * <p>
+	 * eg: ew.groupBy("id,name").having("id={0}",22).and("password is not null")
+	 * </p>
+	 *
+	 * @param sqlHaving
+	 *            having关键字后面跟随的语句
+	 * @param params
+	 *            参数集
+	 * @return EntityWrapper<T>
+	 */
+	public Wrapper<T> having(String sqlHaving, Object... params) {
+		return having(true, sqlHaving, params);
+	}
+
+	/**
+	 * <p>
+	 * SQL中orderby关键字跟的条件语句
+	 * </p>
+	 * <p>
+	 * eg: ew.groupBy("id,name").having("id={0}",22).and("password is not null"
+	 * ).orderBy("id,name")
+	 * </p>
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param columns
+	 *            SQL 中的 order by 语句，无需输入 Order By 关键字
+	 * @return this
+	 */
+	public Wrapper<T> orderBy(boolean condition, String columns) {
+		if (condition)
+			sql.ORDER_BY(columns);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * SQL中orderby关键字跟的条件语句
+	 * </p>
+	 * <p>
+	 * eg: ew.groupBy("id,name").having("id={0}",22).and("password is not null"
+	 * ).orderBy("id,name")
+	 * </p>
+	 *
+	 * @param columns
+	 *            SQL 中的 order by 语句，无需输入 Order By 关键字
+	 * @return this
+	 */
+	public Wrapper<T> orderBy(String columns) {
+		return orderBy(true, columns);
+	}
+
+	/**
+	 * <p>
+	 * SQL中orderby关键字跟的条件语句，可根据变更动态排序
+	 * </p>
+	 * 
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param columns
+	 *            SQL 中的 order by 语句，无需输入 Order By 关键字
+	 * @param isAsc
+	 *            是否为升序
+	 * @return this
+	 */
+	public Wrapper<T> orderBy(boolean condition, String columns, boolean isAsc) {
+		if (condition && StringUtils.isNotEmpty(columns)) {
+			sql.ORDER_BY(columns + (isAsc ? " ASC" : " DESC"));
+		}
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * SQL中orderby关键字跟的条件语句，可根据变更动态排序
+	 * </p>
+	 *
+	 * @param columns
+	 *            SQL 中的 order by 语句，无需输入 Order By 关键字
+	 * @param isAsc
+	 *            是否为升序
+	 * @return this
+	 */
+	public Wrapper<T> orderBy(String columns, boolean isAsc) {
+		return orderBy(true, columns, isAsc);
+	}
+
+	/**
+	 * LIKE条件语句，value中无需前后%
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值
+	 * @return this
+	 */
+	public Wrapper<T> like(boolean condition, String column, String value) {
+		if (condition)
+			handerLike(column, value, SqlLike.DEFAULT, false);
+		return this;
+	}
+
+	/**
+	 * LIKE条件语句，value中无需前后%
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值
+	 * @return this
+	 */
+	public Wrapper<T> like(String column, String value) {
+		return like(true, column, value);
+	}
+
+	/**
+	 * NOT LIKE条件语句，value中无需前后%
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值
+	 * @return this
+	 */
+	public Wrapper<T> notLike(boolean condition, String column, String value) {
+		if (condition)
+			handerLike(column, value, SqlLike.DEFAULT, true);
+		return this;
+	}
+
+	/**
+	 * NOT LIKE条件语句，value中无需前后%
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值
+	 * @return this
+	 */
+	public Wrapper<T> notLike(String column, String value) {
+		return notLike(true, column, value);
+	}
+
+	/**
+	 * 处理LIKE操作
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            like匹配值
+	 * @param isNot
+	 *            是否为NOT LIKE操作
+	 */
+	private void handerLike(String column, String value, SqlLike type, boolean isNot) {
+		if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
+			StringBuilder inSql = new StringBuilder();
+			inSql.append(column);
+			if (isNot) {
+				inSql.append(" NOT");
+			}
+			inSql.append(" LIKE {0}");
+			sql.WHERE(formatSql(inSql.toString(), SqlUtils.concatLike(value, type)));
+		}
+	}
+
+	/**
+	 * LIKE条件语句，value中无需前后%
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值
+	 * @param type
+	 * @return this
+	 */
+	public Wrapper<T> like(boolean condition, String column, String value, SqlLike type) {
+		if (condition)
+			handerLike(column, value, type, false);
+		return this;
+	}
+
+	/**
+	 * LIKE条件语句，value中无需前后%
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值
+	 * @param type
+	 * @return this
+	 */
+	public Wrapper<T> like(String column, String value, SqlLike type) {
+		return like(true, column, value, type);
+	}
+
+	/**
+	 * NOT LIKE条件语句，value中无需前后%
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值
+	 * @param type
+	 * @return this
+	 */
+	public Wrapper<T> notLike(boolean condition, String column, String value, SqlLike type) {
+		if (condition)
+			handerLike(column, value, type, true);
+		return this;
+	}
+
+	/**
+	 * NOT LIKE条件语句，value中无需前后%
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值
+	 * @param type
+	 * @return this
+	 */
+	public Wrapper<T> notLike(String column, String value, SqlLike type) {
+		return notLike(true, column, value, type);
+	}
+
+	/**
+	 * is not null 条件
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param columns
+	 *            字段名称。多个字段以逗号分隔。
+	 * @return this
+	 */
+	public Wrapper<T> isNotNull(boolean condition, String columns) {
+		if (condition)
+			sql.IS_NOT_NULL(columns);
+		return this;
+	}
+
+	/**
+	 * is not null 条件
+	 *
+	 * @param columns
+	 *            字段名称。多个字段以逗号分隔。
+	 * @return this
+	 */
+	public Wrapper<T> isNotNull(String columns) {
+		return isNotNull(true, columns);
+	}
+
+	/**
+	 * is not null 条件
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param columns
+	 *            字段名称。多个字段以逗号分隔。
+	 * @return this
+	 */
+	public Wrapper<T> isNull(boolean condition, String columns) {
+		if (condition)
+			sql.IS_NULL(columns);
+		return this;
+	}
+
+	/**
+	 * is not null 条件
+	 *
+	 * @param columns
+	 *            字段名称。多个字段以逗号分隔。
+	 * @return this
+	 */
+	public Wrapper<T> isNull(String columns) {
+		return isNull(true, columns);
+	}
+
+	/**
+	 * EXISTS 条件语句，目前适配mysql及oracle
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param value
+	 *            匹配值
+	 * @return this
+	 */
+	public Wrapper<T> exists(boolean condition, String value) {
+		if (condition)
+			sql.EXISTS(value);
+		return this;
+	}
+
+	/**
+	 * EXISTS 条件语句，目前适配mysql及oracle
+	 *
+	 * @param value
+	 *            匹配值
+	 * @return this
+	 */
+	public Wrapper<T> exists(String value) {
+		return exists(true, value);
+	}
+
+	/**
+	 * NOT EXISTS条件语句
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param value
+	 *            匹配值
+	 * @return this
+	 */
+	public Wrapper<T> notExists(boolean condition, String value) {
+		if (condition)
+			sql.NOT_EXISTS(value);
+		return this;
+	}
+
+	/**
+	 * NOT EXISTS条件语句
+	 *
+	 * @param value
+	 *            匹配值
+	 * @return this
+	 */
+	public Wrapper<T> notExists(String value) {
+		return notExists(true, value);
+	}
+
+	/**
+	 * IN 条件语句，目前适配mysql及oracle
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            逗号拼接的字符串
+	 * @return this
+	 */
+	public Wrapper<T> in(boolean condition, String column, String value) {
+		if (condition && StringUtils.isNotEmpty(value)) {
+			in(column, StringUtils.splitWorker(value, ",", -1, false));
+		}
+		return this;
+	}
+
+	/**
+	 * IN 条件语句，目前适配mysql及oracle
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            逗号拼接的字符串
+	 * @return this
+	 */
+	public Wrapper<T> in(String column, String value) {
+		return in(true, column, value);
+	}
+
+	/**
+	 * NOT IN条件语句
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            逗号拼接的字符串
+	 * @return this
+	 */
+	public Wrapper<T> notIn(boolean condition, String column, String value) {
+		if (condition && StringUtils.isNotEmpty(value)) {
+			notIn(column, StringUtils.splitWorker(value, ",", -1, false));
+		}
+		return this;
+	}
+
+	/**
+	 * NOT IN条件语句
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            逗号拼接的字符串
+	 * @return this
+	 */
+	public Wrapper<T> notIn(String column, String value) {
+		return notIn(true, column, value);
+	}
+
+	/**
+	 * IN 条件语句，目前适配mysql及oracle
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值 List集合
+	 * @return this
+	 */
+	public Wrapper<T> in(boolean condition, String column, Collection<?> value) {
+		if (condition && CollectionUtils.isNotEmpty(value))
+			sql.WHERE(formatSql(inExpression(column, value, false), value.toArray()));
+		return this;
+	}
+
+	/**
+	 * IN 条件语句，目前适配mysql及oracle
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值 List集合
+	 * @return this
+	 */
+	public Wrapper<T> in(String column, Collection<?> value) {
+		return in(true, column, value);
+	}
+
+	/**
+	 * NOT IN 条件语句，目前适配mysql及oracle
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值 List集合
+	 * @return this
+	 */
+	public Wrapper<T> notIn(boolean condition, String column, Collection<?> value) {
+		if (condition && CollectionUtils.isNotEmpty(value))
+			sql.WHERE(formatSql(inExpression(column, value, true), value.toArray()));
+		return this;
+	}
+
+	/**
+	 * NOT IN 条件语句，目前适配mysql及oracle
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值 List集合
+	 * @return this
+	 */
+	public Wrapper<T> notIn(String column, Collection<?> value) {
+		return notIn(true, column, value);
+	}
+
+	/**
+	 * IN 条件语句，目前适配mysql及oracle
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值 object数组
+	 * @return this
+	 */
+	public Wrapper<T> in(boolean condition, String column, Object[] value) {
+		if (condition && ArrayUtils.isNotEmpty(value))
+			sql.WHERE(formatSql(inExpression(column, Arrays.asList(value), false), value));
+		return this;
+	}
+
+	/**
+	 * IN 条件语句，目前适配mysql及oracle
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值 object数组
+	 * @return this
+	 */
+	public Wrapper<T> in(String column, Object[] value) {
+		return in(true, column, value);
+	}
+
+	/**
+	 * NOT IN 条件语句，目前适配mysql及oracle
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值 object数组
+	 * @return this
+	 */
+	public Wrapper<T> notIn(boolean condition, String column, Object... value) {
+		if (condition && ArrayUtils.isNotEmpty(value))
+			sql.WHERE(formatSql(inExpression(column, Arrays.asList(value), true), value));
+		return this;
+	}
+
+	/**
+	 * NOT IN 条件语句，目前适配mysql及oracle
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值 object数组
+	 * @return this
+	 */
+	public Wrapper<T> notIn(String column, Object... value) {
+		return notIn(true, column, value);
+	}
+
+	/**
+	 * 获取in表达式
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            集合List
+	 * @param isNot
+	 *            是否为NOT IN操作
+	 */
+	private String inExpression(String column, Collection<?> value, boolean isNot) {
+		if (StringUtils.isNotEmpty(column) && CollectionUtils.isNotEmpty(value)) {
+			StringBuilder inSql = new StringBuilder();
+			inSql.append(column);
+			if (isNot) {
+				inSql.append(" NOT");
+			}
+			inSql.append(" IN ");
+			inSql.append("(");
+			int size = value.size();
+			for (int i = 0; i < size; i++) {
+				inSql.append(String.format(PLACE_HOLDER, i));
+				if (i + 1 < size) {
+					inSql.append(",");
+				}
+			}
+			inSql.append(")");
+			return inSql.toString();
+		}
+		return null;
+	}
+
+	/**
+	 * betwwee 条件语句
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 *            字段名称
+	 * @param val1
+	 * @param val2
+	 * @return this
+	 */
+	public Wrapper<T> between(boolean condition, String column, Object val1, Object val2) {
+		if (condition)
+			sql.WHERE(formatSql(String.format("%s BETWEEN {0} AND {1}", column), val1, val2));
+		return this;
+	}
+
+	/**
+	 * betwwee 条件语句
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param val1
+	 * @param val2
+	 * @return this
+	 */
+	public Wrapper<T> between(String column, Object val1, Object val2) {
+		return between(true, column, val1, val2);
+	}
+
+	/**
+	 * NOT betwwee 条件语句
+	 *
+	 * @param condition
+	 *            拼接的前置条件
+	 * @param column
+	 *            字段名称
+	 * @param val1
+	 * @param val2
+	 * @return this
+	 */
+	public Wrapper<T> notBetween(boolean condition, String column, Object val1, Object val2) {
+		if (condition)
+			sql.WHERE(formatSql(String.format("%s NOT BETWEEN {0} AND {1}", column), val1, val2));
+		return this;
+	}
+
+	/**
+	 * NOT betwwee 条件语句
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param val1
+	 * @param val2
+	 * @return this
+	 */
+	public Wrapper<T> notBetween(String column, Object val1, Object val2) {
+		return notBetween(true, column, val1, val2);
+
+	}
+
+	/**
+	 * 为了兼容之前的版本,可使用where()或and()替代
+	 *
+	 * @param sqlWhere
+	 *            where sql部分
+	 * @param params
+	 *            参数集
+	 * @return this
+	 */
+	public Wrapper<T> addFilter(String sqlWhere, Object... params) {
+		return and(sqlWhere, params);
+	}
 
 	/**
 	 * <p>

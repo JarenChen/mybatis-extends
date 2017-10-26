@@ -98,6 +98,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
 	 * @param modelClass
 	 * @param table
 	 */
+	@Override
 	protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		if (table.isLogicDelete()) {
 			SqlMethod sqlMethod = SqlMethod.LOGIC_SELECT_BY_ID;
@@ -108,11 +109,15 @@ public class LogicSqlInjector extends AutoSqlInjector {
 				ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
 				ids.append("#{item}");
 				ids.append("\n</foreach>");
-				sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
-								table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)), modelClass);
+				sqlSource = languageDriver.createSqlSource(
+						configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
+								table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)),
+						modelClass);
 			} else {
-				sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(),
-								table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)), Object.class);
+				sqlSource = new RawSqlSource(configuration,
+						String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(),
+								table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)),
+						Object.class);
 			}
 			this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
 		} else {
@@ -121,34 +126,30 @@ public class LogicSqlInjector extends AutoSqlInjector {
 		}
 	}
 
-    /**
-     * <p>
-     * 注入更新 SQL 语句
-     * </p>
-     *
-     * @param mapperClass
-     * @param modelClass
-     * @param table
-     */
-    protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-        if (table.isLogicDelete()) {
-            SqlMethod sqlMethod = selective ? SqlMethod.LOGIC_UPDATE_BY_ID : SqlMethod.LOGIC_UPDATE_ALL_COLUMN_BY_ID;
-            String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et."),
-                    table.getKeyColumn(),
-                    "et." + table.getKeyProperty(),
-                    "<if test=\"et instanceof java.util.Map\">" +
-                            "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
-                            + "and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
-                            + "</if>"
-                            + "</if>" +
-                            getLogicDeleteSql(table)
-            );
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-            this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
-        } else {
-            super.injectUpdateByIdSql(selective, mapperClass, modelClass, table);
-        }
-    }
+	/**
+	 * <p>
+	 * 注入更新 SQL 语句
+	 * </p>
+	 *
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	@Override
+	protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+		if (table.isLogicDelete()) {
+			SqlMethod sqlMethod = selective ? SqlMethod.LOGIC_UPDATE_BY_ID : SqlMethod.LOGIC_UPDATE_ALL_COLUMN_BY_ID;
+			String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et."),
+					table.getKeyColumn(), "et." + table.getKeyProperty(),
+					"<if test=\"et instanceof java.util.Map\">" + "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
+							+ "and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}" + "</if>"
+							+ "</if>" + getLogicDeleteSql(table));
+			SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+			this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
+		} else {
+			super.injectUpdateByIdSql(selective, mapperClass, modelClass, table);
+		}
+	}
 
 	/**
 	 * <p>
@@ -165,7 +166,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
 		for (TableFieldInfo fieldInfo : fieldList) {
 			if (fieldInfo.isLogicDelete()) {
 				sql.append(" AND ").append(fieldInfo.getColumn());
-                if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
+				if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
 					sql.append("='").append(fieldInfo.getLogicNotDeleteValue()).append("'");
 				} else {
 					sql.append("=").append(fieldInfo.getLogicNotDeleteValue());
@@ -194,7 +195,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
 					set.append(",");
 				}
 				set.append(fieldInfo.getColumn()).append("=");
-                if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
+				if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
 					set.append("'").append(fieldInfo.getLogicDeleteValue()).append("'");
 				} else {
 					set.append(fieldInfo.getLogicDeleteValue());
@@ -234,36 +235,36 @@ public class LogicSqlInjector extends AutoSqlInjector {
 		return super.sqlWhere(table);
 	}
 
-    @Override
-    protected String sqlWhereEntityWrapper(TableInfo table) {
-        if (table.isLogicDelete()) {
-            StringBuilder where = new StringBuilder(128);
-            where.append("\n<where>");
-            where.append("\n<if test=\"ew!=null\">");
-            where.append("\n<if test=\"ew.entity!=null\">");
-            if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-                where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
-                where.append(" AND ").append(table.getKeyColumn()).append("=#{ew.entity.");
-                where.append(table.getKeyProperty()).append("}");
-                where.append("</if>");
-            }
-            List<TableFieldInfo> fieldList = table.getFieldList();
-            for (TableFieldInfo fieldInfo : fieldList) {
-                where.append(convertIfTag(fieldInfo, "ew.entity.", false));
-                where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.entity.");
-                where.append(fieldInfo.getEl()).append("}");
-                where.append(convertIfTag(fieldInfo, true));
-            }
-            where.append("\n</if>");
-            where.append("\n").append(getLogicDeleteSql(table));
-            where.append("\n<if test=\"ew.sqlSegment!=null\">${ew.sqlSegment}\n</if>");
-            where.append("\n</if>");
-            where.append("\n</where>");
-            return where.toString();
-        }
-        // 正常逻辑
-        return super.sqlWhereEntityWrapper(table);
-    }
+	@Override
+	protected String sqlWhereEntityWrapper(TableInfo table) {
+		if (table.isLogicDelete()) {
+			StringBuilder where = new StringBuilder(128);
+			where.append("\n<where>");
+			where.append("\n<if test=\"ew!=null\">");
+			where.append("\n<if test=\"ew.entity!=null\">");
+			if (StringUtils.isNotEmpty(table.getKeyProperty())) {
+				where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
+				where.append(" AND ").append(table.getKeyColumn()).append("=#{ew.entity.");
+				where.append(table.getKeyProperty()).append("}");
+				where.append("</if>");
+			}
+			List<TableFieldInfo> fieldList = table.getFieldList();
+			for (TableFieldInfo fieldInfo : fieldList) {
+				where.append(convertIfTag(fieldInfo, "ew.entity.", false));
+				where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.entity.");
+				where.append(fieldInfo.getEl()).append("}");
+				where.append(convertIfTag(fieldInfo, true));
+			}
+			where.append("\n</if>");
+			where.append("\n").append(getLogicDeleteSql(table));
+			where.append("\n<if test=\"ew.sqlSegment!=null\">${ew.sqlSegment}\n</if>");
+			where.append("\n</if>");
+			where.append("\n</where>");
+			return where.toString();
+		}
+		// 正常逻辑
+		return super.sqlWhereEntityWrapper(table);
+	}
 
 	@Override
 	protected String sqlWhereByMap(TableInfo table) {

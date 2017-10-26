@@ -33,8 +33,8 @@ public class MybatisConfiguration extends Configuration {
 	 * 初始化调用
 	 */
 	public MybatisConfiguration() {
-        this.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
-		 logger.debug("mybatis-extends init success.");
+		this.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+		logger.debug("mybatis-extends init success.");
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class MybatisConfiguration extends Configuration {
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
 		logger.debug("addMappedStatement: " + ms.getId());
-        if (GlobalConfigUtils.isRefresh(ms.getConfiguration())) {
+		if (GlobalConfigUtils.isRefresh(ms.getConfiguration())) {
 			/*
 			 * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
 			 */

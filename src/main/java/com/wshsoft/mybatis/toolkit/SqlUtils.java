@@ -1,6 +1,5 @@
 package com.wshsoft.mybatis.toolkit;
 
-
 import com.wshsoft.mybatis.enums.SqlLike;
 import com.wshsoft.mybatis.plugins.parser.ISqlParser;
 import com.wshsoft.mybatis.plugins.parser.SqlInfo;
@@ -17,32 +16,34 @@ import com.wshsoft.mybatis.plugins.pagination.optimize.JsqlParserCountOptimize;
  */
 public class SqlUtils {
 
-    private final static SqlFormatter sqlFormatter = new SqlFormatter();
-    public final static String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s ) TOTAL";
-    public static ISqlParser COUNT_SQL_PARSER = null;
+	private final static SqlFormatter sqlFormatter = new SqlFormatter();
+	public final static String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s ) TOTAL";
+	public static ISqlParser COUNT_SQL_PARSER = null;
 
-    /**
-     * <p>
-     * 获取CountOptimize
-     * </p>
-     *
-     * @param sqlParser   Count SQL 解析类
-     * @param originalSql 需要计算Count SQL
-     * @return SqlInfo
-     */
-    public static SqlInfo getCountOptimize(ISqlParser sqlParser, String originalSql) {
-        // COUNT SQL 解析器
-        if (null == COUNT_SQL_PARSER) {
-            if (null != sqlParser) {
-                // 用户自定义 COUNT SQL 解析
-                COUNT_SQL_PARSER = sqlParser;
-            } else {
-                // 默认 JsqlParser 优化 COUNT
-                COUNT_SQL_PARSER = new JsqlParserCountOptimize();
-            }
-        }
-        return COUNT_SQL_PARSER.optimizeSql(null, originalSql);
-    }
+	/**
+	 * <p>
+	 * 获取CountOptimize
+	 * </p>
+	 *
+	 * @param sqlParser
+	 *            Count SQL 解析类
+	 * @param originalSql
+	 *            需要计算Count SQL
+	 * @return SqlInfo
+	 */
+	public static SqlInfo getCountOptimize(ISqlParser sqlParser, String originalSql) {
+		// COUNT SQL 解析器
+		if (null == COUNT_SQL_PARSER) {
+			if (null != sqlParser) {
+				// 用户自定义 COUNT SQL 解析
+				COUNT_SQL_PARSER = sqlParser;
+			} else {
+				// 默认 JsqlParser 优化 COUNT
+				COUNT_SQL_PARSER = new JsqlParserCountOptimize();
+			}
+		}
+		return COUNT_SQL_PARSER.optimizeSql(null, originalSql);
+	}
 
 	/**
 	 * 查询SQL拼接Order By

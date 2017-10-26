@@ -61,7 +61,8 @@ import com.wshsoft.mybatis.toolkit.PackageHelper;
  * @author Carry xie
  * @Date 2016-01-23
  */
-public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
+public class MybatisSqlSessionFactoryBean
+		implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
 
 	private static final Log LOGGER = LogFactory.getLog(SqlSessionFactoryBean.class);
 
@@ -96,10 +97,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private String typeAliasesPackage;
 
-    // TODO 自定义枚举包
-    private String typeEnumsPackage;
+	// TODO 自定义枚举包
+	private String typeEnumsPackage;
 
-    private Class<?> typeAliasesSuperType;
+	private Class<?> typeAliasesSuperType;
 
 	// issue #19. No default provider.
 	private DatabaseIdProvider databaseIdProvider;
@@ -112,7 +113,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private ObjectWrapperFactory objectWrapperFactory;
 
-    private GlobalConfiguration globalConfig = GlobalConfigUtils.defaults();
+	private GlobalConfiguration globalConfig = GlobalConfigUtils.defaults();
 
 	// TODO 注入全局配置
 	public void setGlobalConfig(GlobalConfiguration globalConfig) {
@@ -198,20 +199,21 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		this.typeAliasesPackage = typeAliasesPackage;
 	}
 
-    public void setTypeEnumsPackage(String typeEnumsPackage) {
-        this.typeEnumsPackage = typeEnumsPackage;
-    }
+	public void setTypeEnumsPackage(String typeEnumsPackage) {
+		this.typeEnumsPackage = typeEnumsPackage;
+	}
 
-    /**
-     * Super class which domain objects have to extend to have a type alias created.
-     * No effect if there is no package to scan configured.
-     *
-     * @param typeAliasesSuperType super class for domain objects
-     * @since 1.1.2
-     */
-    public void setTypeAliasesSuperType(Class<?> typeAliasesSuperType) {
-        this.typeAliasesSuperType = typeAliasesSuperType;
-    }
+	/**
+	 * Super class which domain objects have to extend to have a type alias
+	 * created. No effect if there is no package to scan configured.
+	 *
+	 * @param typeAliasesSuperType
+	 *            super class for domain objects
+	 * @since 1.1.2
+	 */
+	public void setTypeAliasesSuperType(Class<?> typeAliasesSuperType) {
+		this.typeAliasesSuperType = typeAliasesSuperType;
+	}
 
 	/**
 	 * Packages to search for type handlers.
@@ -394,32 +396,34 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	 * @throws IOException
 	 *             if loading the config file failed
 	 */
-    protected SqlSessionFactory buildSqlSessionFactory() throws Exception {
+	protected SqlSessionFactory buildSqlSessionFactory() throws Exception {
 
 		Configuration configuration;
 
-        // TODO 加载自定义 MybatisXmlConfigBuilder
-        MybatisXMLConfigBuilder xmlConfigBuilder = null;
-        if (this.configuration != null) {
-            configuration = this.configuration;
-            if (configuration.getVariables() == null) {
-                configuration.setVariables(this.configurationProperties);
-            } else if (this.configurationProperties != null) {
-                configuration.getVariables().putAll(this.configurationProperties);
-            }
-        } else if (this.configLocation != null) {
-            xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
-            configuration = xmlConfigBuilder.getConfiguration();
-        } else {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
-            }
-            // TODO 使用自定义配置
-            configuration = new MybatisConfiguration();
-            if (this.configurationProperties != null) {
-                configuration.setVariables(this.configurationProperties);
-            }
-        }
+		// TODO 加载自定义 MybatisXmlConfigBuilder
+		MybatisXMLConfigBuilder xmlConfigBuilder = null;
+		if (this.configuration != null) {
+			configuration = this.configuration;
+			if (configuration.getVariables() == null) {
+				configuration.setVariables(this.configurationProperties);
+			} else if (this.configurationProperties != null) {
+				configuration.getVariables().putAll(this.configurationProperties);
+			}
+		} else if (this.configLocation != null) {
+			xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null,
+					this.configurationProperties);
+			configuration = xmlConfigBuilder.getConfiguration();
+		} else {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(
+						"Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
+			}
+			// TODO 使用自定义配置
+			configuration = new MybatisConfiguration();
+			if (this.configurationProperties != null) {
+				configuration.setVariables(this.configurationProperties);
+			}
+		}
 
 		if (this.objectFactory != null) {
 			configuration.setObjectFactory(this.objectFactory);
@@ -434,10 +438,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		}
 
 		if (hasLength(this.typeAliasesPackage)) {
-            // TODO 支持自定义通配符
+			// TODO 支持自定义通配符
 			String[] typeAliasPackageArray;
-            if (typeAliasesPackage.contains("*") && !typeAliasesPackage.contains(",")
-                    && !typeAliasesPackage.contains(";")) {
+			if (typeAliasesPackage.contains("*") && !typeAliasesPackage.contains(",")
+					&& !typeAliasesPackage.contains(";")) {
 				typeAliasPackageArray = PackageHelper.convertTypeAliasesPackage(typeAliasesPackage);
 			} else {
 				typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage,
@@ -451,40 +455,39 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 						typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Scanned package: '" + packageToScan + "' for aliases");
-                }
-            }
-        }
+				}
+			}
+		}
 
-        // TODO 自定义枚举类扫描处理
-        if (hasLength(this.typeEnumsPackage)) {
-            Set<Class> classes = null;
-            if (typeEnumsPackage.contains("*") && !typeEnumsPackage.contains(",")
-                    && !typeEnumsPackage.contains(";")) {
-                classes = PackageHelper.scanTypePackage(typeEnumsPackage);
-            } else {
-                String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
-                        ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
-                if (typeEnumsPackageArray == null) {
-                    throw new MybatisExtendsException("not find typeEnumsPackage:" + typeEnumsPackage);
-                }
-                classes = new HashSet<Class>();
-                for (String typePackage : typeEnumsPackageArray) {
-                    classes.addAll(PackageHelper.scanTypePackage(typePackage));
-                }
-            }
-            // 取得类型转换注册器
-            TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-            for (Class cls : classes) {
-                if (cls.isEnum()) {
-                    if (IEnum.class.isAssignableFrom(cls)) {
-                        typeHandlerRegistry.register(cls.getName(), "com.baomidou.mybatisplus.enums.IEnumTypeHandler");
-                    } else {
-                        // 使用原生 EnumOrdinalTypeHandler
-                        typeHandlerRegistry.register(cls.getName(), "org.apache.ibatis.type.EnumOrdinalTypeHandler");
-                    }
-                }
-            }
-        }
+		// TODO 自定义枚举类扫描处理
+		if (hasLength(this.typeEnumsPackage)) {
+			Set<Class> classes = null;
+			if (typeEnumsPackage.contains("*") && !typeEnumsPackage.contains(",") && !typeEnumsPackage.contains(";")) {
+				classes = PackageHelper.scanTypePackage(typeEnumsPackage);
+			} else {
+				String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
+						ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+				if (typeEnumsPackageArray == null) {
+					throw new MybatisExtendsException("not find typeEnumsPackage:" + typeEnumsPackage);
+				}
+				classes = new HashSet<Class>();
+				for (String typePackage : typeEnumsPackageArray) {
+					classes.addAll(PackageHelper.scanTypePackage(typePackage));
+				}
+			}
+			// 取得类型转换注册器
+			TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+			for (Class cls : classes) {
+				if (cls.isEnum()) {
+					if (IEnum.class.isAssignableFrom(cls)) {
+						typeHandlerRegistry.register(cls.getName(), "com.baomidou.mybatisplus.enums.IEnumTypeHandler");
+					} else {
+						// 使用原生 EnumOrdinalTypeHandler
+						typeHandlerRegistry.register(cls.getName(), "org.apache.ibatis.type.EnumOrdinalTypeHandler");
+					}
+				}
+			}
+		}
 
 		if (!isEmpty(this.typeAliases)) {
 			for (Class<?> typeAlias : this.typeAliases) {
@@ -557,35 +560,34 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 		configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
 		// 设置元数据相关
-        GlobalConfigUtils.setMetaData(dataSource, globalConfig);
-        SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
-        // TODO SqlRunner
-        SqlRunner.FACTORY = sqlSessionFactory;
-        // TODO 缓存 sqlSessionFactory
-        globalConfig.setSqlSessionFactory(sqlSessionFactory);
-        // TODO 设置全局参数属性
-        globalConfig.signGlobalConfig(sqlSessionFactory);
-        if (!isEmpty(this.mapperLocations)) {
-            if (globalConfig.isRefresh()) {
-                //TODO 设置自动刷新配置 减少配置
-                new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2,
-                        2, true);
+		GlobalConfigUtils.setMetaData(dataSource, globalConfig);
+		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
+		// TODO SqlRunner
+		SqlRunner.FACTORY = sqlSessionFactory;
+		// TODO 缓存 sqlSessionFactory
+		globalConfig.setSqlSessionFactory(sqlSessionFactory);
+		// TODO 设置全局参数属性
+		globalConfig.signGlobalConfig(sqlSessionFactory);
+		if (!isEmpty(this.mapperLocations)) {
+			if (globalConfig.isRefresh()) {
+				// TODO 设置自动刷新配置 减少配置
+				new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2, 2, true);
 			}
 			for (Resource mapperLocation : this.mapperLocations) {
 				if (mapperLocation == null) {
 					continue;
 				}
 
-                try {
-                    // TODO
-                    XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
-                            configuration, mapperLocation.toString(), configuration.getSqlFragments());
-                    xmlMapperBuilder.parse();
-                } catch (Exception e) {
-                    throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
-                } finally {
-                    ErrorContext.instance().reset();
-                }
+				try {
+					// TODO
+					XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
+							configuration, mapperLocation.toString(), configuration.getSqlFragments());
+					xmlMapperBuilder.parse();
+				} catch (Exception e) {
+					throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
+				} finally {
+					ErrorContext.instance().reset();
+				}
 
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Parsed mapper file: '" + mapperLocation + "'");

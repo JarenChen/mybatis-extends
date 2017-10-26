@@ -42,16 +42,16 @@ public class Pagination extends RowBounds implements Serializable {
 	 **/
 	private boolean openSort = true;
 
-    /**
-     * <p>
-     * SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）
-     * </p>
-     * <p>
-     * DESC 表示按倒序排序(即：从大到小排序)<br>
-     * ASC 表示按正序排序(即：从小到大排序)
-     * </p>
-     */
-    private String orderByField;
+	/**
+	 * <p>
+	 * SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）
+	 * </p>
+	 * <p>
+	 * DESC 表示按倒序排序(即：从大到小排序)<br>
+	 * ASC 表示按正序排序(即：从小到大排序)
+	 * </p>
+	 */
+	private String orderByField;
 
 	/**
 	 * 是否为升序 ASC（ 默认： true ）
@@ -113,19 +113,19 @@ public class Pagination extends RowBounds implements Serializable {
 		return total;
 	}
 
-    public Pagination setTotal(int total) {
-        this.total = total;
-        return this;
-    }
+	public Pagination setTotal(int total) {
+		this.total = total;
+		return this;
+	}
 
 	public int getSize() {
 		return size;
 	}
 
-    public Pagination setSize(int size) {
-        this.size = size;
-        return this;
-    }
+	public Pagination setSize(int size) {
+		this.size = size;
+		return this;
+	}
 
 	public int getPages() {
 		if (this.size == 0) {
@@ -142,48 +142,48 @@ public class Pagination extends RowBounds implements Serializable {
 		return current;
 	}
 
-    public Pagination setCurrent(int current) {
-        this.current = current;
-        return this;
-    }
+	public Pagination setCurrent(int current) {
+		this.current = current;
+		return this;
+	}
 
 	public boolean isSearchCount() {
 		return searchCount;
 	}
 
-    public Pagination setSearchCount(boolean searchCount) {
-        this.searchCount = searchCount;
-        return this;
-    }
+	public Pagination setSearchCount(boolean searchCount) {
+		this.searchCount = searchCount;
+		return this;
+	}
 
-    public String getOrderByField() {
-        return orderByField;
-    }
+	public String getOrderByField() {
+		return orderByField;
+	}
 
-    public Pagination setOrderByField(String orderByField) {
-        if (StringUtils.isNotEmpty(orderByField)) {
-            this.orderByField = orderByField;
-        }
-        return this;
-    }
+	public Pagination setOrderByField(String orderByField) {
+		if (StringUtils.isNotEmpty(orderByField)) {
+			this.orderByField = orderByField;
+		}
+		return this;
+	}
 
 	public boolean isOpenSort() {
 		return openSort;
 	}
 
-    public Pagination setOpenSort(boolean openSort) {
-        this.openSort = openSort;
-        return this;
-    }
+	public Pagination setOpenSort(boolean openSort) {
+		this.openSort = openSort;
+		return this;
+	}
 
 	public boolean isAsc() {
 		return isAsc;
 	}
 
-    public Pagination setAsc(boolean isAsc) {
-        this.isAsc = isAsc;
-        return this;
-    }
+	public Pagination setAsc(boolean isAsc) {
+		this.isAsc = isAsc;
+		return this;
+	}
 
 	@Override
 	public String toString() {

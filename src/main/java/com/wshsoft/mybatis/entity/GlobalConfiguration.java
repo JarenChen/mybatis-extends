@@ -29,36 +29,36 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
  */
 public class GlobalConfiguration implements Serializable {
 
-    // 逻辑删除全局值
-    private String logicDeleteValue = null;
-    // 逻辑未删除全局值
-    private String logicNotDeleteValue = null;
-    // 数据库类型（默认 MySql）
-    private DBType dbType = DBType.MYSQL;
-    // 主键类型（默认 ID_WORKER）
-    private IdType idType = IdType.ID_WORKER;
-    // 表名、字段名、是否使用下划线命名（默认 false）
-    private boolean dbColumnUnderline = false;
-    // SQL注入器
-    private ISqlInjector sqlInjector;
-    // 表关键词 key 生成器
-    private IKeyGenerator keyGenerator;
-    // 元对象字段填充控制器
-    private MetaObjectHandler metaObjectHandler = new DefaultMetaObjectHandler();
-    // 字段验证策略
-    private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
-    // 是否刷新mapper
-    private boolean isRefresh = false;
-    // 是否大写命名
-    private boolean isCapitalMode = false;
-    // 标识符
-    private String identifierQuote;
-    // 缓存当前Configuration的SqlSessionFactory
-    private SqlSessionFactory sqlSessionFactory;
-    // 缓存已注入CRUD的Mapper信息
-    private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<>();
-    // 单例重用SqlSession
-    private SqlSession sqlSession;
+	// 逻辑删除全局值
+	private String logicDeleteValue = null;
+	// 逻辑未删除全局值
+	private String logicNotDeleteValue = null;
+	// 数据库类型（默认 MySql）
+	private DBType dbType = DBType.MYSQL;
+	// 主键类型（默认 ID_WORKER）
+	private IdType idType = IdType.ID_WORKER;
+	// 表名、字段名、是否使用下划线命名（默认 false）
+	private boolean dbColumnUnderline = false;
+	// SQL注入器
+	private ISqlInjector sqlInjector;
+	// 表关键词 key 生成器
+	private IKeyGenerator keyGenerator;
+	// 元对象字段填充控制器
+	private MetaObjectHandler metaObjectHandler = new DefaultMetaObjectHandler();
+	// 字段验证策略
+	private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
+	// 是否刷新mapper
+	private boolean isRefresh = false;
+	// 是否大写命名
+	private boolean isCapitalMode = false;
+	// 标识符
+	private String identifierQuote;
+	// 缓存当前Configuration的SqlSessionFactory
+	private SqlSessionFactory sqlSessionFactory;
+	// 缓存已注入CRUD的Mapper信息
+	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<>();
+	// 单例重用SqlSession
+	private SqlSession sqlSession;
 
 	public GlobalConfiguration() {
 		// 构造方法
@@ -68,15 +68,13 @@ public class GlobalConfiguration implements Serializable {
 		this.sqlInjector = sqlInjector;
 	}
 
+	public IKeyGenerator getKeyGenerator() {
+		return keyGenerator;
+	}
 
-    public IKeyGenerator getKeyGenerator() {
-        return keyGenerator;
-    }
-
-    public void setKeyGenerator(IKeyGenerator keyGenerator) {
-        this.keyGenerator = keyGenerator;
-    }
-
+	public void setKeyGenerator(IKeyGenerator keyGenerator) {
+		this.keyGenerator = keyGenerator;
+	}
 
 	public String getLogicDeleteValue() {
 		return logicDeleteValue;
@@ -98,17 +96,18 @@ public class GlobalConfiguration implements Serializable {
 		return dbType;
 	}
 
-    /**
-     * 根据jdbcUrl设置数据库类型
-     *
-     * @param jdbcUrl
-     */
-    public void setDbTypeOfJdbcUrl(String jdbcUrl) {
-        this.dbType = JdbcUtils.getDbType(jdbcUrl);
-    }
-    public void setDbType(String dbType) {
-        this.dbType = DBType.getDBType(dbType);
-    }
+	/**
+	 * 根据jdbcUrl设置数据库类型
+	 *
+	 * @param jdbcUrl
+	 */
+	public void setDbTypeOfJdbcUrl(String jdbcUrl) {
+		this.dbType = JdbcUtils.getDbType(jdbcUrl);
+	}
+
+	public void setDbType(String dbType) {
+		this.dbType = DBType.getDBType(dbType);
+	}
 
 	public IdType getIdType() {
 		return idType;
@@ -154,9 +153,9 @@ public class GlobalConfiguration implements Serializable {
 		return isRefresh;
 	}
 
-    public void setRefresh(boolean refresh) {
-        this.isRefresh = refresh;
-    }
+	public void setRefresh(boolean refresh) {
+		this.isRefresh = refresh;
+	}
 
 	public Set<String> getMapperRegistryCache() {
 		return mapperRegistryCache;
@@ -204,19 +203,18 @@ public class GlobalConfiguration implements Serializable {
 		return sqlSession;
 	}
 
-
-    /**
-     * <p>
-     * 标记全局设置 (统一所有入口)
-     * </p>
-     *
-     * @param sqlSessionFactory
-     * @return
-     */
-    public SqlSessionFactory signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
-        if (null != sqlSessionFactory) {
-            GlobalConfigUtils.setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
-        }
-        return sqlSessionFactory;
-    }
+	/**
+	 * <p>
+	 * 标记全局设置 (统一所有入口)
+	 * </p>
+	 *
+	 * @param sqlSessionFactory
+	 * @return
+	 */
+	public SqlSessionFactory signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
+		if (null != sqlSessionFactory) {
+			GlobalConfigUtils.setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
+		}
+		return sqlSessionFactory;
+	}
 }

@@ -54,6 +54,7 @@ public interface UserMapper extends MyBaseMapper<User> {
 	 * @return
 	 */
 	List<User> forSelect(RowBounds pagination, @Param("ids") List<String> ids);
-    // 测试跨 xml resultMap
-    List<Role> selectRoleList();
+
+	// 测试跨 xml resultMap
+	List<Role> selectRoleList();
 }

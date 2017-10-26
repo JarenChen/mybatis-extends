@@ -30,10 +30,10 @@ public class TableInfo {
 	private String serviceImplName;
 	private String controllerName;
 
-    private List<TableField> fields;
-    private List<TableField> commonFields;// 公共字段
-    private List<String> importPackages = new ArrayList<>();
-    private String fieldNames;
+	private List<TableField> fields;
+	private List<TableField> commonFields;// 公共字段
+	private List<String> importPackages = new ArrayList<>();
+	private String fieldNames;
 
 	public boolean isConvert() {
 		return convert;
@@ -161,66 +161,66 @@ public class TableInfo {
 					// 普通字段
 					pkgSet.add("com.wshsoft.mybatis.annotations.TableField");
 				}
-                if (null != field.getFill()) {
-                    // 填充字段
-                    pkgSet.add("com.wshsoft.mybatis.annotations.TableField");
-                    pkgSet.add("com.wshsoft.mybatis.enums.FieldFill");
-                }
-            }
+				if (null != field.getFill()) {
+					// 填充字段
+					pkgSet.add("com.wshsoft.mybatis.annotations.TableField");
+					pkgSet.add("com.wshsoft.mybatis.enums.FieldFill");
+				}
+			}
 			if (!pkgSet.isEmpty()) {
 				this.importPackages = new ArrayList<String>(Arrays.asList(pkgSet.toArray(new String[] {})));
 			}
 		}
 	}
 
-    public List<TableField> getCommonFields() {
-        return commonFields;
-    }
+	public List<TableField> getCommonFields() {
+		return commonFields;
+	}
 
-    public void setCommonFields(List<TableField> commonFields) {
-        this.commonFields = commonFields;
-    }
+	public void setCommonFields(List<TableField> commonFields) {
+		this.commonFields = commonFields;
+	}
 
-    public List<String> getImportPackages() {
-        return importPackages;
-    }
+	public List<String> getImportPackages() {
+		return importPackages;
+	}
 
 	public void setImportPackages(String pkg) {
 		importPackages.add(pkg);
 	}
 
-    /**
-     * 逻辑删除
-     */
-    public boolean isLogicDelete(String logicDeletePropertyName) {
-        for (TableField tableField : fields) {
-            if (tableField.getName().equals(logicDeletePropertyName)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/**
+	 * 逻辑删除
+	 */
+	public boolean isLogicDelete(String logicDeletePropertyName) {
+		for (TableField tableField : fields) {
+			if (tableField.getName().equals(logicDeletePropertyName)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    /**
-     * 转换filed实体为xmlmapper中的basecolumn字符串信息
-     *
-     * @return
-     */
-    public String getFieldNames() {
-        if (StringUtils.isEmpty(fieldNames)) {
-            StringBuilder names = new StringBuilder();
-            for (int i = 0; i < fields.size(); i++) {
-                TableField fd = fields.get(i);
-                if (i == fields.size() - 1) {
-                    names.append(cov2col(fd));
-                } else {
-                    names.append(cov2col(fd)).append(", ");
-                }
-            }
-            fieldNames = names.toString();
-        }
-        return fieldNames;
-    }
+	/**
+	 * 转换filed实体为xmlmapper中的basecolumn字符串信息
+	 *
+	 * @return
+	 */
+	public String getFieldNames() {
+		if (StringUtils.isEmpty(fieldNames)) {
+			StringBuilder names = new StringBuilder();
+			for (int i = 0; i < fields.size(); i++) {
+				TableField fd = fields.get(i);
+				if (i == fields.size() - 1) {
+					names.append(cov2col(fd));
+				} else {
+					names.append(cov2col(fd)).append(", ");
+				}
+			}
+			fieldNames = names.toString();
+		}
+		return fieldNames;
+	}
 
 	/**
 	 * mapper xml中的字字段添加as

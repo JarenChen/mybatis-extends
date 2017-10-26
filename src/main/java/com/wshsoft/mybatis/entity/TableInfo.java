@@ -189,7 +189,7 @@ public class TableInfo {
 		return logicDelete;
 	}
 
-    public void setLogicDelete(boolean logicDelete) {
-        this.logicDelete = logicDelete;
-    }
+	public void setLogicDelete(boolean logicDelete) {
+		this.logicDelete = logicDelete;
+	}
 }

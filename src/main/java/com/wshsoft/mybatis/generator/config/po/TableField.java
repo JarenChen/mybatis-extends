@@ -22,7 +22,7 @@ public class TableField {
 	private String propertyName;
 	private DbColumnType columnType;
 	private String comment;
-    private String fill;
+	private String fill;
 
 	public boolean isConvert() {
 		return convert;
@@ -112,31 +112,31 @@ public class TableField {
 		this.comment = comment;
 	}
 
-    /**
-     * 按JavaBean规则来生成get和set方法
-     */
-    public String getCapitalName() {
-        if (propertyName.length() <= 1) {
-            return propertyName.toUpperCase();
-        }
-        String setGetName = propertyName;
-        if (DbColumnType.BASE_BOOLEAN.getType().equalsIgnoreCase(columnType.getType())) {
-            setGetName = StringUtils.removeIsPrefixIfBoolean(setGetName, Boolean.class);
-        }
-        // 第一个字母 小写、 第二个字母 大写 ，特殊处理
-        String firstChar = setGetName.substring(0, 1);
-        if (Character.isLowerCase(firstChar.toCharArray()[0])
-                && Character.isUpperCase(setGetName.substring(1, 2).toCharArray()[0])) {
-            return firstChar.toLowerCase() + setGetName.substring(1);
-        }
-        return firstChar.toUpperCase() + setGetName.substring(1);
-    }
+	/**
+	 * 按JavaBean规则来生成get和set方法
+	 */
+	public String getCapitalName() {
+		if (propertyName.length() <= 1) {
+			return propertyName.toUpperCase();
+		}
+		String setGetName = propertyName;
+		if (DbColumnType.BASE_BOOLEAN.getType().equalsIgnoreCase(columnType.getType())) {
+			setGetName = StringUtils.removeIsPrefixIfBoolean(setGetName, Boolean.class);
+		}
+		// 第一个字母 小写、 第二个字母 大写 ，特殊处理
+		String firstChar = setGetName.substring(0, 1);
+		if (Character.isLowerCase(firstChar.toCharArray()[0])
+				&& Character.isUpperCase(setGetName.substring(1, 2).toCharArray()[0])) {
+			return firstChar.toLowerCase() + setGetName.substring(1);
+		}
+		return firstChar.toUpperCase() + setGetName.substring(1);
+	}
 
-    public String getFill() {
-        return fill;
-    }
+	public String getFill() {
+		return fill;
+	}
 
-    public void setFill(String fill) {
-        this.fill = fill;
-    }
+	public void setFill(String fill) {
+		this.fill = fill;
+	}
 }

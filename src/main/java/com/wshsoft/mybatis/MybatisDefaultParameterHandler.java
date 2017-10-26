@@ -89,54 +89,57 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	 * @return
 	 */
 	protected static Object processBatch(MappedStatement ms, Object parameterObject) {
-	//检查parameterObject
-	if (null == parameterObject) return null;
+		// 检查parameterObject
+		if (null == parameterObject)
+			return null;
 		boolean isFill = false;
 		// 全局配置是否配置填充器
-        MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
-        /* 只处理插入或更新操作 */
-        if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
-            isFill = true;
-        } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE
-                && metaObjectHandler.openUpdateFill()) {
-            isFill = true;
-        }
-        if (isFill) {
-            Collection<Object> parameters = getParameters(parameterObject);
-            if (null != parameters) {
-                List<Object> objList = new ArrayList<>();
-                for (Object parameter : parameters) {
-                    TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
-                    if (null != tableInfo) {
-                        objList.add(populateKeys(metaObjectHandler, tableInfo, ms, parameter));
-                    } else {
-                        /*
-                         * 非表映射类不处理
+		MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
+		/* 只处理插入或更新操作 */
+		if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
+			isFill = true;
+		} else if (ms.getSqlCommandType() == SqlCommandType.UPDATE && metaObjectHandler.openUpdateFill()) {
+			isFill = true;
+		}
+		if (isFill) {
+			Collection<Object> parameters = getParameters(parameterObject);
+			if (null != parameters) {
+				List<Object> objList = new ArrayList<>();
+				for (Object parameter : parameters) {
+					TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
+					if (null != tableInfo) {
+						objList.add(populateKeys(metaObjectHandler, tableInfo, ms, parameter));
+					} else {
+						/*
+						 * 非表映射类不处理
 						 */
-                        objList.add(parameter);
-                    }
-                }
-                return objList;
-            } else {
-                TableInfo tableInfo = null;
-                if (parameterObject instanceof Map) {
-                    Map map = (Map) parameterObject;
-                    if (map.containsKey("et")) {
-                        Object et = map.get("et");
-                        if (et != null) {
-                            if(et instanceof Map){
-                                Map realEtMap = (Map) et;
-                                if(realEtMap.containsKey("MP_OPTLOCK_ET_ORIGINAL")){//refer to OptimisticLockerInterceptor.MP_OPTLOCK_ET_ORIGINAL
-                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get("MP_OPTLOCK_ET_ORIGINAL").getClass());
-                                }
-                            }else {
-                                tableInfo = TableInfoHelper.getTableInfo(et.getClass());
-                            }
-                        }
-                    }
-                }else{
-                    tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
-                }
+						objList.add(parameter);
+					}
+				}
+				return objList;
+			} else {
+				TableInfo tableInfo = null;
+				if (parameterObject instanceof Map) {
+					Map map = (Map) parameterObject;
+					if (map.containsKey("et")) {
+						Object et = map.get("et");
+						if (et != null) {
+							if (et instanceof Map) {
+								Map realEtMap = (Map) et;
+								if (realEtMap.containsKey("MP_OPTLOCK_ET_ORIGINAL")) {// refer
+																						// to
+																						// OptimisticLockerInterceptor.MP_OPTLOCK_ET_ORIGINAL
+									tableInfo = TableInfoHelper
+											.getTableInfo(realEtMap.get("MP_OPTLOCK_ET_ORIGINAL").getClass());
+								}
+							} else {
+								tableInfo = TableInfoHelper.getTableInfo(et.getClass());
+							}
+						}
+					}
+				} else {
+					tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
+				}
 				return populateKeys(metaObjectHandler, tableInfo, ms, parameterObject);
 			}
 		}

@@ -20,13 +20,13 @@ import lombok.experimental.Accessors;
 @KeySequence("SEQ_TEST")
 public abstract class BaseSequenceEntity {
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+	@TableField(exist = false)
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键ID
-     */
-    @TableId(value = "TEST_ID", type = IdType.INPUT)
-    private Long id;
+	/**
+	 * 主键ID
+	 */
+	@TableId(value = "TEST_ID", type = IdType.INPUT)
+	private Long id;
 
 }

@@ -16,9 +16,6 @@
 package com.wshsoft.mybatis.test.h2.entity.persistent;
 
 import java.io.Serializable;
-import java.util.Date;
-
-import com.wshsoft.mybatis.annotations.TableField;
 import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.enums.IdType;
@@ -39,7 +36,7 @@ import lombok.experimental.Accessors;
 @TableName("h2uuid")
 public class H2uuid implements Serializable {
 
-    public String getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -56,22 +53,22 @@ public class H2uuid implements Serializable {
 	}
 
 	// 静态属性会自动忽略
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键
-     */
-    @TableId(type = IdType.UUID)
-    private String id;
+	/**
+	 * 主键
+	 */
+	@TableId(type = IdType.UUID)
+	private String id;
 
-    private String type;
+	private String type;
 
-    public H2uuid() {
+	public H2uuid() {
 
-    }
+	}
 
-    public H2uuid(String type) {
-        this.type = type;
-    }
+	public H2uuid(String type) {
+		this.type = type;
+	}
 
 }

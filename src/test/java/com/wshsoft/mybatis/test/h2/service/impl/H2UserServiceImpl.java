@@ -22,49 +22,49 @@ import com.wshsoft.mybatis.test.h2.service.IH2UserService;
 @Service
 public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> implements IH2UserService {
 
-    @Autowired
-    H2UserMapper userMapper;
+	@Autowired
+	H2UserMapper userMapper;
 
-    @Override
-    public int myInsert(String name, int version) {
-        return userMapper.myInsertWithNameVersion(name, version);
-    }
+	@Override
+	public int myInsert(String name, int version) {
+		return userMapper.myInsertWithNameVersion(name, version);
+	}
 
-    @Override
-    public int myInsertWithParam(String name, int version) {
-        H2User user = new H2User();
-        user.setName(name);
-        user.setVersion(version);
-        return userMapper.myInsertWithParam(user);
-    }
+	@Override
+	public int myInsertWithParam(String name, int version) {
+		H2User user = new H2User();
+		user.setName(name);
+		user.setVersion(version);
+		return userMapper.myInsertWithParam(user);
+	}
 
-    @Override
-    public int myInsertWithoutParam(String name, int version) {
-        H2User user = new H2User();
-        user.setName(name);
-        user.setVersion(version);
-        return userMapper.myInsertWithoutParam(user);
-    }
+	@Override
+	public int myInsertWithoutParam(String name, int version) {
+		H2User user = new H2User();
+		user.setName(name);
+		user.setVersion(version);
+		return userMapper.myInsertWithoutParam(user);
+	}
 
-    @Override
-    public int myUpdate(Long id, String name) {
-        return userMapper.myUpdateWithNameId(id, name);
-    }
+	@Override
+	public int myUpdate(Long id, String name) {
+		return userMapper.myUpdateWithNameId(id, name);
+	}
 
-    @Override
-    public List<H2User> queryWithParamInSelectStatememt(Map<String, Object> param) {
-        return userMapper.selectUserWithParamInSelectStatememt(param);
-    }
+	@Override
+	public List<H2User> queryWithParamInSelectStatememt(Map<String, Object> param) {
+		return userMapper.selectUserWithParamInSelectStatememt(param);
+	}
 
-    @Override
-    public Page<H2User> queryWithParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page) {
-        page.setSearchCount(true);
-        userMapper.selectUserWithParamInSelectStatememt4Page(param, page);
-        return page;
-    }
+	@Override
+	public Page<H2User> queryWithParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page) {
+		page.setSearchCount(true);
+		userMapper.selectUserWithParamInSelectStatememt4Page(param, page);
+		return page;
+	}
 
-    @Override
-    public int selectCountWithParamInSelectItems(Map<String, Object> param) {
-        return userMapper.selectCountWithParamInSelectItems(param);
-    }
+	@Override
+	public int selectCountWithParamInSelectItems(Map<String, Object> param) {
+		return userMapper.selectCountWithParamInSelectItems(param);
+	}
 }

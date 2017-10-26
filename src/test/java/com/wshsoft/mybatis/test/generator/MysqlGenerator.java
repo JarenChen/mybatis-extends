@@ -1,24 +1,19 @@
 package com.wshsoft.mybatis.test.generator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Arrays;
 import java.util.Map;
 
 import com.wshsoft.mybatis.enums.FieldFill;
 import com.wshsoft.mybatis.generator.AutoGenerator;
 import com.wshsoft.mybatis.generator.InjectionConfig;
 import com.wshsoft.mybatis.generator.config.DataSourceConfig;
-import com.wshsoft.mybatis.generator.config.FileOutConfig;
 import com.wshsoft.mybatis.generator.config.GlobalConfig;
 import com.wshsoft.mybatis.generator.config.PackageConfig;
 import com.wshsoft.mybatis.generator.config.StrategyConfig;
-import com.wshsoft.mybatis.generator.config.TemplateConfig;
 import com.wshsoft.mybatis.generator.config.converts.MySqlTypeConvert;
 import com.wshsoft.mybatis.generator.config.po.TableFill;
-import com.wshsoft.mybatis.generator.config.po.TableInfo;
 import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
@@ -39,16 +34,16 @@ public class MysqlGenerator {
 	 * </p>
 	 */
 	public static void main(String[] args) {
-        // 自定义需要填充的字段
-        List<TableFill> tableFillList = new ArrayList<>();
-        tableFillList.add(new TableFill("ASDD_SS", FieldFill.INSERT_UPDATE));
+		// 自定义需要填充的字段
+		List<TableFill> tableFillList = new ArrayList<>();
+		tableFillList.add(new TableFill("ASDD_SS", FieldFill.INSERT_UPDATE));
 
-        // 代码生成器
+		// 代码生成器
 		AutoGenerator mpg = new AutoGenerator();
 
 		// 全局配置
 		GlobalConfig gc = new GlobalConfig();
-		gc.setOutputDir("D://mybatis-extends");//输出目录
+		gc.setOutputDir("D://mybatis-extends");// 输出目录
 		gc.setFileOverride(true);// 是否覆盖文件
 		gc.setActiveRecord(true);// 开启 activeRecord 模式
 		gc.setEnableCache(false);// XML 二级缓存
@@ -96,7 +91,7 @@ public class MysqlGenerator {
 		// strategy.setSuperEntityClass("com.wshsoft.demo.TestEntity");
 		// 自定义实体，公共字段
 		// strategy.setSuperEntityColumns(new String[] { "test_id", "age" });
-	    // strategy.setTableFillList(tableFillList);
+		// strategy.setTableFillList(tableFillList);
 		// 自定义 mapper 父类
 		// strategy.setSuperMapperClass("com.wshsoft.demo.TestMapper");
 		// 自定义 service 父类
@@ -111,14 +106,15 @@ public class MysqlGenerator {
 		// 【实体】是否为构建者模型（默认 false）
 		// public User setName(String name) {this.name = name; return this;}
 		// strategy.setEntityBuliderModel(true);
-	
-        // 【实体】是否为lombok模型（默认 false）<a href="https://projectlombok.org/">document</a>
-        // strategy.setEntityLombokModel(true)
-        // Boolean类型字段是否移除is前缀处理
-        // strategy.setEntityBooleanColumnRemoveIsPrefix(true)
-        // strategy.setRestControllerStyle(true)
-        // strategy.setControllerMappingHyphenStyle(true)
-	mpg.setStrategy(strategy);
+
+		// 【实体】是否为lombok模型（默认 false）<a
+		// href="https://projectlombok.org/">document</a>
+		// strategy.setEntityLombokModel(true)
+		// Boolean类型字段是否移除is前缀处理
+		// strategy.setEntityBooleanColumnRemoveIsPrefix(true)
+		// strategy.setRestControllerStyle(true)
+		// strategy.setControllerMappingHyphenStyle(true)
+		mpg.setStrategy(strategy);
 		// 包配置
 		PackageConfig pc = new PackageConfig();
 		pc.setModuleName("demo");
@@ -148,8 +144,7 @@ public class MysqlGenerator {
 
 		// 关闭默认 xml 生成，调整生成 至 根目录 --start
 		/*
-		 * TemplateConfig tc = new TemplateConfig();
-		 * tc.setXml(null);
+		 * TemplateConfig tc = new TemplateConfig(); tc.setXml(null);
 		 * mpg.setTemplate(tc);
 		 */
 		// 自定义模板配置，模板可以参考源码 /mybatis-extends/src/main/resources/template 使用 copy
@@ -166,8 +161,8 @@ public class MysqlGenerator {
 		// 执行生成
 		mpg.execute();
 
-        // 打印注入设置，这里演示模板里面怎么获取注入内容【可无】
-        System.err.println(mpg.getCfg().getMap().get("abc"));
-    }
+		// 打印注入设置，这里演示模板里面怎么获取注入内容【可无】
+		System.err.println(mpg.getCfg().getMap().get("abc"));
+	}
 
 }

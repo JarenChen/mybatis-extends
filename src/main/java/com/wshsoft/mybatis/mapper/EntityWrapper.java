@@ -31,9 +31,10 @@ public class EntityWrapper<T> extends Wrapper<T> {
 		this.sqlSelect = sqlSelect;
 	}
 
-    public T getEntity() {
-        return entity;
-    }
+	@Override
+	public T getEntity() {
+		return entity;
+	}
 
 	public void setEntity(T entity) {
 		this.entity = entity;
@@ -55,7 +56,8 @@ public class EntityWrapper<T> extends Wrapper<T> {
 		/*
 		 * 根据当前实体判断是否需要将WHERE替换成 AND 增加实体不为空但所有属性为空的情况
 		 */
-        return isWhere != null ? (isWhere ? sqlWhere : sqlWhere.replaceFirst("WHERE", AND_OR)) : sqlWhere.replaceFirst("WHERE", AND_OR);
-    }
+		return isWhere != null ? (isWhere ? sqlWhere : sqlWhere.replaceFirst("WHERE", AND_OR))
+				: sqlWhere.replaceFirst("WHERE", AND_OR);
+	}
 
 }

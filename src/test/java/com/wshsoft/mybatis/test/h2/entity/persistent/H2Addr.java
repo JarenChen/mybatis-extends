@@ -20,13 +20,13 @@ import lombok.experimental.Accessors;
 @TableName("h2address")
 public class H2Addr {
 
-    @TableId("addr_id")
-    private Long addrId;
+	@TableId("addr_id")
+	private Long addrId;
 
-    @TableField("addr_name")
-    private String addrName;
+	@TableField("addr_name")
+	private String addrName;
 
-    @TableField("test_id")
-    private Long testId;
+	@TableField("test_id")
+	private Long testId;
 
 }

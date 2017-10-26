@@ -3,10 +3,7 @@ package com.wshsoft.mybatis.test.oracle.entity;
 import java.io.Serializable;
 
 import com.wshsoft.mybatis.annotations.TableField;
-import com.wshsoft.mybatis.annotations.TableId;
 import com.wshsoft.mybatis.annotations.TableName;
-import com.wshsoft.mybatis.enums.IdType;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -22,35 +19,34 @@ public class TestSequser extends BaseTestEntity implements Serializable {
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键ID
-     */
-//    @TableId(value = "TEST_ID", type = IdType.INPUT)
-//    private Long id;
-    /**
-     * 主键ID
-     */
-    // @TableId(value = "ID")
-    // private Long id;
+	/**
+	 * 主键ID
+	 */
+	// @TableId(value = "TEST_ID", type = IdType.INPUT)
+	// private Long id;
+	/**
+	 * 主键ID
+	 */
+	// @TableId(value = "ID")
+	// private Long id;
 
+	/**
+	 * 名称
+	 */
+	@TableField(value = "NAME")
+	private String name;
 
-    /**
-     * 名称
-     */
-    @TableField(value = "NAME")
-    private String name;
+	/**
+	 * 年龄
+	 */
+	@TableField(value = "age")
+	private Integer age;
 
-    /**
-     * 年龄
-     */
-    @TableField(value = "age")
-    private Integer age;
-
-    /**
-     * 测试下划线字段命名类型
-     */
-    @TableField(value = "TEST_TYPE")
-    private Integer testType;
+	/**
+	 * 测试下划线字段命名类型
+	 */
+	@TableField(value = "TEST_TYPE")
+	private Integer testType;
 
 	public TestSequser() {
 
@@ -86,12 +82,12 @@ public class TestSequser extends BaseTestEntity implements Serializable {
 		this.testType = testType;
 	}
 
-    //public Long getId() {
-    //	return id;
-    //}
+	// public Long getId() {
+	// return id;
+	// }
 
-    //public void setId(Long id) {
-    //	this.id = id;
-    //}
+	// public void setId(Long id) {
+	// this.id = id;
+	// }
 
 }

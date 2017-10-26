@@ -33,69 +33,69 @@ import net.sf.jsqlparser.statement.select.SelectItem;
  */
 public class JsqlParserCountOptimize implements ISqlParser {
 
-    // 日志
-    private final Log logger = LogFactory.getLog(JsqlParserCountOptimize.class);
-    private static final List<SelectItem> countSelectItem = countSelectItem();
+	// 日志
+	private final Log logger = LogFactory.getLog(JsqlParserCountOptimize.class);
+	private static final List<SelectItem> countSelectItem = countSelectItem();
 
-    @Override
-    public SqlInfo optimizeSql(MetaObject metaObject, String sql) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(" JsqlParserCountOptimize sql=" + sql);
-        }
-        SqlInfo sqlInfo = SqlInfo.newInstance();
-        try {
-            Select selectStatement = (Select) CCJSqlParserUtil.parse(sql);
-            PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
-            Distinct distinct = plainSelect.getDistinct();
-            List<Expression> groupBy = plainSelect.getGroupByColumnReferences();
-            List<OrderByElement> orderBy = plainSelect.getOrderByElements();
+	@Override
+	public SqlInfo optimizeSql(MetaObject metaObject, String sql) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(" JsqlParserCountOptimize sql=" + sql);
+		}
+		SqlInfo sqlInfo = SqlInfo.newInstance();
+		try {
+			Select selectStatement = (Select) CCJSqlParserUtil.parse(sql);
+			PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
+			Distinct distinct = plainSelect.getDistinct();
+			List<Expression> groupBy = plainSelect.getGroupByColumnReferences();
+			List<OrderByElement> orderBy = plainSelect.getOrderByElements();
 
-            // 添加包含groupBy 不去除orderBy
-            if (CollectionUtils.isEmpty(groupBy) && CollectionUtils.isNotEmpty(orderBy)) {
-                plainSelect.setOrderByElements(null);
-                sqlInfo.setOrderBy(false);
-            }
-            //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
-            for (SelectItem item : plainSelect.getSelectItems()) {
-                if (item.toString().contains("?")) {
-                    sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
-                    return sqlInfo;
-                }
-            }
-            // 包含 distinct、groupBy不优化
-            if (distinct != null || CollectionUtils.isNotEmpty(groupBy)) {
-                sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
-                return sqlInfo;
-            }
-            // 优化 SQL
-            plainSelect.setSelectItems(countSelectItem);
-            sqlInfo.setSql(selectStatement.toString());
-            return sqlInfo;
-        } catch (Throwable e) {
-            // 无法优化使用原 SQL
-            sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, sql));
-            return sqlInfo;
-        }
-    }
+			// 添加包含groupBy 不去除orderBy
+			if (CollectionUtils.isEmpty(groupBy) && CollectionUtils.isNotEmpty(orderBy)) {
+				plainSelect.setOrderByElements(null);
+				sqlInfo.setOrderBy(false);
+			}
+			// #95 Github, selectItems contains #{} ${}, which will be
+			// translated to ?, and it may be in a function: power(#{myInt},2)
+			for (SelectItem item : plainSelect.getSelectItems()) {
+				if (item.toString().contains("?")) {
+					sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
+					return sqlInfo;
+				}
+			}
+			// 包含 distinct、groupBy不优化
+			if (distinct != null || CollectionUtils.isNotEmpty(groupBy)) {
+				sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
+				return sqlInfo;
+			}
+			// 优化 SQL
+			plainSelect.setSelectItems(countSelectItem);
+			sqlInfo.setSql(selectStatement.toString());
+			return sqlInfo;
+		} catch (Throwable e) {
+			// 无法优化使用原 SQL
+			sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, sql));
+			return sqlInfo;
+		}
+	}
 
-
-    /**
-     * <p>
-     * 获取jsqlparser中count的SelectItem
-     * </p>
-     */
-    private static List<SelectItem> countSelectItem() {
-        Function function = new Function();
-        function.setName("COUNT");
-        List<Expression> expressions = new ArrayList<>();
-        LongValue longValue = new LongValue(1);
-        ExpressionList expressionList = new ExpressionList();
-        expressions.add(longValue);
-        expressionList.setExpressions(expressions);
-        function.setParameters(expressionList);
-        List<SelectItem> selectItems = new ArrayList<>();
-        SelectExpressionItem selectExpressionItem = new SelectExpressionItem(function);
-        selectItems.add(selectExpressionItem);
-        return selectItems;
-    }
+	/**
+	 * <p>
+	 * 获取jsqlparser中count的SelectItem
+	 * </p>
+	 */
+	private static List<SelectItem> countSelectItem() {
+		Function function = new Function();
+		function.setName("COUNT");
+		List<Expression> expressions = new ArrayList<>();
+		LongValue longValue = new LongValue(1);
+		ExpressionList expressionList = new ExpressionList();
+		expressions.add(longValue);
+		expressionList.setExpressions(expressions);
+		function.setParameters(expressionList);
+		List<SelectItem> selectItems = new ArrayList<>();
+		SelectExpressionItem selectExpressionItem = new SelectExpressionItem(function);
+		selectItems.add(selectExpressionItem);
+		return selectItems;
+	}
 }

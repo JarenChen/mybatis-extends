@@ -80,18 +80,18 @@ public class SqlRunner {
 		return SqlHelper.retBool(sqlSession().delete(DELETE, sqlMap(sql, args)));
 	}
 
-    /**
-     * 获取sqlMap参数
-     *
-     * @param sql
-     * @param args
-     * @return
-     */
-    private Map<String, String> sqlMap(String sql, Object... args) {
-        Map<String, String> sqlMap = new HashMap<>();
-        sqlMap.put(SQL, StringUtils.sqlArgsFill(sql, args));
-        return sqlMap;
-    }
+	/**
+	 * 获取sqlMap参数
+	 *
+	 * @param sql
+	 * @param args
+	 * @return
+	 */
+	private Map<String, String> sqlMap(String sql, Object... args) {
+		Map<String, String> sqlMap = new HashMap<>();
+		sqlMap.put(SQL, StringUtils.sqlArgsFill(sql, args));
+		return sqlMap;
+	}
 
 	@Transactional
 	public boolean update(String sql, Object... args) {
@@ -127,13 +127,14 @@ public class SqlRunner {
 		return page;
 	}
 
-    /**
-     * <p>
-     * 获取Session 默认自动提交
-     * <p/>
-     */
-    private SqlSession sqlSession() {
-        return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfigUtils.getSqlSession(FACTORY.getConfiguration());
-    }
+	/**
+	 * <p>
+	 * 获取Session 默认自动提交
+	 * <p/>
+	 */
+	private SqlSession sqlSession() {
+		return (clazz != null) ? SqlHelper.sqlSession(clazz)
+				: GlobalConfigUtils.getSqlSession(FACTORY.getConfiguration());
+	}
 
 }

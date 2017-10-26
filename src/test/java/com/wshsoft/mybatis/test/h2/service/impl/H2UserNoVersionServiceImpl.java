@@ -16,6 +16,7 @@ import com.wshsoft.mybatis.test.h2.service.IH2UserNoVersionService;
  * @date 2017-01-30
  */
 @Service
-public class H2UserNoVersionServiceImpl extends ServiceImpl<H2UserNoVersionMapper, H2UserNoVersion> implements IH2UserNoVersionService {
+public class H2UserNoVersionServiceImpl extends ServiceImpl<H2UserNoVersionMapper, H2UserNoVersion>
+		implements IH2UserNoVersionService {
 
 }

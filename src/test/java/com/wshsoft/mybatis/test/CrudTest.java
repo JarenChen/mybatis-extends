@@ -19,33 +19,32 @@ import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
  */
 public class CrudTest {
 
-    public GlobalConfiguration globalConfiguration() {
-        GlobalConfiguration global = GlobalConfigUtils.defaults();
-        // global.setAutoSetDbType(true);
-        // 设置全局校验机制为FieldStrategy.Empty
-        global.setFieldStrategy(2);
-        return global;
-    }
+	public GlobalConfiguration globalConfiguration() {
+		GlobalConfiguration global = GlobalConfigUtils.defaults();
+		// global.setAutoSetDbType(true);
+		// 设置全局校验机制为FieldStrategy.Empty
+		global.setFieldStrategy(2);
+		return global;
+	}
 
-    public SqlSessionFactory sqlSessionFactory() {
-        return sqlSessionFactory("mysql-config.xml");
-    }
+	public SqlSessionFactory sqlSessionFactory() {
+		return sqlSessionFactory("mysql-config.xml");
+	}
 
-    public SqlSessionFactory sqlSessionFactory(String configXml) {
-        GlobalConfiguration global = this.globalConfiguration();
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/mybatis-extends?characterEncoding=UTF-8");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
-        dataSource.setMaxTotal(1000);
-        GlobalConfigUtils.setMetaData(dataSource, global);
-        // 加载配置文件
-        InputStream inputStream = CrudTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder factoryBuilder = new MybatisSessionFactoryBuilder();
-        factoryBuilder.setGlobalConfig(global);
-        return factoryBuilder.build(inputStream);
-    }
-
+	public SqlSessionFactory sqlSessionFactory(String configXml) {
+		GlobalConfiguration global = this.globalConfiguration();
+		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/mybatis-extends?characterEncoding=UTF-8");
+		dataSource.setUsername("root");
+		dataSource.setPassword("root");
+		dataSource.setMaxTotal(1000);
+		GlobalConfigUtils.setMetaData(dataSource, global);
+		// 加载配置文件
+		InputStream inputStream = CrudTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
+		MybatisSessionFactoryBuilder factoryBuilder = new MybatisSessionFactoryBuilder();
+		factoryBuilder.setGlobalConfig(global);
+		return factoryBuilder.build(inputStream);
+	}
 
 }

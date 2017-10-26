@@ -88,33 +88,35 @@ public class Sequence {
 		return (mpid.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
 	}
 
-    /**
-     * <p>
-     * 数据标识id部分
-     * </p>
-     */
-    protected static long getDatacenterId(long maxDatacenterId) {
-        long id = 0L;
-        try {
-            InetAddress ip = InetAddress.getLocalHost();
-            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
-            if (network == null) {
-                id = 1L;
-            } else {
-                byte[] mac = network.getHardwareAddress();
-                if (null != mac) {
-                    id = ((0x000000FF & (long) mac[mac.length - 1]) | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
-                    id = id % (maxDatacenterId + 1);
-                }
-            }
-        } catch (Exception e) {
-            logger.warn(" getDatacenterId: " + e.getMessage());
-        }
-        return id;
-    }
+	/**
+	 * <p>
+	 * 数据标识id部分
+	 * </p>
+	 */
+	protected static long getDatacenterId(long maxDatacenterId) {
+		long id = 0L;
+		try {
+			InetAddress ip = InetAddress.getLocalHost();
+			NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+			if (network == null) {
+				id = 1L;
+			} else {
+				byte[] mac = network.getHardwareAddress();
+				if (null != mac) {
+					id = ((0x000000FF & (long) mac[mac.length - 1])
+							| (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
+					id = id % (maxDatacenterId + 1);
+				}
+			}
+		} catch (Exception e) {
+			logger.warn(" getDatacenterId: " + e.getMessage());
+		}
+		return id;
+	}
 
 	/**
 	 * 获取下一个ID
+	 * 
 	 * @return
 	 */
 	public synchronized long nextId() {
@@ -126,35 +128,37 @@ public class Sequence {
 					wait(offset << 1);
 					timestamp = timeGen();
 					if (timestamp < lastTimestamp) {
-                        throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
-            }
-        }
+						throw new RuntimeException(String
+								.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+					}
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			} else {
+				throw new RuntimeException(
+						String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+			}
+		}
 
-        if (lastTimestamp == timestamp) {
-            // 相同毫秒内，序列号自增
-            sequence = (sequence + 1) & sequenceMask;
-            if (sequence == 0) {
-                // 同一毫秒的序列数已经达到最大
-                timestamp = tilNextMillis(lastTimestamp);
-            }
-        } else {
-            // 不同毫秒内，序列号置为 1 - 3 随机数
-            sequence = ThreadLocalRandom.current().nextLong(1, 3);
-        }
+		if (lastTimestamp == timestamp) {
+			// 相同毫秒内，序列号自增
+			sequence = (sequence + 1) & sequenceMask;
+			if (sequence == 0) {
+				// 同一毫秒的序列数已经达到最大
+				timestamp = tilNextMillis(lastTimestamp);
+			}
+		} else {
+			// 不同毫秒内，序列号置为 1 - 3 随机数
+			sequence = ThreadLocalRandom.current().nextLong(1, 3);
+		}
 
-        lastTimestamp = timestamp;
+		lastTimestamp = timestamp;
 
-        return ((timestamp - twepoch) << timestampLeftShift)    // 时间戳部分
-                | (datacenterId << datacenterIdShift)           // 数据中心部分
-                | (workerId << workerIdShift)                   // 机器标识部分
-                | sequence;                                     // 序列号部分
-    }
+		return ((timestamp - twepoch) << timestampLeftShift) // 时间戳部分
+				| (datacenterId << datacenterIdShift) // 数据中心部分
+				| (workerId << workerIdShift) // 机器标识部分
+				| sequence; // 序列号部分
+	}
 
 	protected long tilNextMillis(long lastTimestamp) {
 		long timestamp = timeGen();

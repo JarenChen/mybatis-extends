@@ -12,9 +12,9 @@ import net.sf.jsqlparser.expression.Expression;
  */
 public interface TenantHandler {
 
-    Expression getTenantId();
+	Expression getTenantId();
 
-    String getTenantIdColumn();
+	String getTenantIdColumn();
 
-    boolean doTableFilter(String tableName);
+	boolean doTableFilter(String tableName);
 }

@@ -25,11 +25,11 @@ public class DataSourceConfig {
 	 * 数据库类型
 	 */
 	private DbType dbType;
-    /**
-     * PostgreSQL schemaname
-     */
-    private String schemaname = "public";
-    /**
+	/**
+	 * PostgreSQL schemaname
+	 */
+	private String schemaname = "public";
+	/**
 	 * 类型转换
 	 */
 	private ITypeConvert typeConvert;
@@ -70,18 +70,18 @@ public class DataSourceConfig {
 		return dbType;
 	}
 
-    public DataSourceConfig setDbType(DbType dbType) {
-        this.dbType = dbType;
-        return this;
-    }
+	public DataSourceConfig setDbType(DbType dbType) {
+		this.dbType = dbType;
+		return this;
+	}
 
-    public String getSchemaname() {
-        return schemaname;
-    }
+	public String getSchemaname() {
+		return schemaname;
+	}
 
-    public void setSchemaname(String schemaname) {
-        this.schemaname = schemaname;
-    }
+	public void setSchemaname(String schemaname) {
+		this.schemaname = schemaname;
+	}
 
 	public ITypeConvert getTypeConvert() {
 		if (null == typeConvert) {
@@ -104,10 +104,10 @@ public class DataSourceConfig {
 		return typeConvert;
 	}
 
-    public DataSourceConfig setTypeConvert(ITypeConvert typeConvert) {
-        this.typeConvert = typeConvert;
-        return this;
-    }
+	public DataSourceConfig setTypeConvert(ITypeConvert typeConvert) {
+		this.typeConvert = typeConvert;
+		return this;
+	}
 
 	/**
 	 * 创建数据库连接对象
@@ -129,36 +129,36 @@ public class DataSourceConfig {
 		return url;
 	}
 
-    public DataSourceConfig setUrl(String url) {
-        this.url = url;
-        return this;
-    }
+	public DataSourceConfig setUrl(String url) {
+		this.url = url;
+		return this;
+	}
 
 	public String getDriverName() {
 		return driverName;
 	}
 
-    public DataSourceConfig setDriverName(String driverName) {
-        this.driverName = driverName;
-        return this;
-    }
+	public DataSourceConfig setDriverName(String driverName) {
+		this.driverName = driverName;
+		return this;
+	}
 
 	public String getUsername() {
 		return username;
 	}
 
-    public DataSourceConfig setUsername(String username) {
-        this.username = username;
-        return this;
-    }
+	public DataSourceConfig setUsername(String username) {
+		this.username = username;
+		return this;
+	}
 
 	public String getPassword() {
 		return password;
 	}
 
-    public DataSourceConfig setPassword(String password) {
-        this.password = password;
-        return this;
-    }
+	public DataSourceConfig setPassword(String password) {
+		this.password = password;
+		return this;
+	}
 
 }

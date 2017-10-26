@@ -12,9 +12,8 @@ import org.springframework.context.annotation.Import;
  * @date 2017/6/15
  */
 @Configuration
-@Import(value = {DBConfig.class, MybatisPlusConfig.class})
+@Import(value = { DBConfig.class, MybatisPlusConfig.class })
 @ComponentScan("com.wshsoft.mybatis.test.h2.service")
 public class ServiceConfig {
-
 
 }

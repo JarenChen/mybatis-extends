@@ -33,9 +33,9 @@ public abstract class FileOutConfig {
 		return templatePath;
 	}
 
-    public FileOutConfig setTemplatePath(String templatePath) {
-        this.templatePath = templatePath;
-        return this;
-    }
+	public FileOutConfig setTemplatePath(String templatePath) {
+		this.templatePath = templatePath;
+		return this;
+	}
 
 }

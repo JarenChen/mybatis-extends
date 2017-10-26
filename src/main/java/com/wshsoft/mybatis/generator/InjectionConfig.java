@@ -40,27 +40,27 @@ public abstract class InjectionConfig {
 		return config;
 	}
 
-    public InjectionConfig setConfig(ConfigBuilder config) {
-        this.config = config;
-        return this;
-    }
+	public InjectionConfig setConfig(ConfigBuilder config) {
+		this.config = config;
+		return this;
+	}
 
 	public Map<String, Object> getMap() {
 		return map;
 	}
 
-    public InjectionConfig setMap(Map<String, Object> map) {
-        this.map = map;
-        return this;
-    }
+	public InjectionConfig setMap(Map<String, Object> map) {
+		this.map = map;
+		return this;
+	}
 
 	public List<FileOutConfig> getFileOutConfigList() {
 		return fileOutConfigList;
 	}
 
-    public InjectionConfig setFileOutConfigList(List<FileOutConfig> fileOutConfigList) {
-        this.fileOutConfigList = fileOutConfigList;
-        return this;
-    }
+	public InjectionConfig setFileOutConfigList(List<FileOutConfig> fileOutConfigList) {
+		this.fileOutConfigList = fileOutConfigList;
+		return this;
+	}
 
 }

@@ -46,19 +46,19 @@ public class Page<T> extends Pagination {
 		return records;
 	}
 
-    public Page<T> setRecords(List<T> records) {
-        this.records = records;
-        return this;
-    }
+	public Page<T> setRecords(List<T> records) {
+		this.records = records;
+		return this;
+	}
 
 	public Map<String, Object> getCondition() {
 		return condition;
 	}
 
-    public Page<T> setCondition(Map<String, Object> condition) {
-        this.condition = condition;
-        return this;
-    }
+	public Page<T> setCondition(Map<String, Object> condition) {
+		this.condition = condition;
+		return this;
+	}
 
 	@Override
 	public String toString() {

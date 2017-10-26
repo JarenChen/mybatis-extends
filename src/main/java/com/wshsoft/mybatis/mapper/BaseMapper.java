@@ -86,27 +86,27 @@ public interface BaseMapper<T> {
 	 */
 	Integer deleteBatchIds(List<? extends Serializable> idList);
 
-    /**
-     * <p>
-     * 根据 ID 修改
-     * </p>
-     *
-     * @param entity
-     *            实体对象
-     * @return int
-     */
-    Integer updateById(@Param("et") T entity);
+	/**
+	 * <p>
+	 * 根据 ID 修改
+	 * </p>
+	 *
+	 * @param entity
+	 *            实体对象
+	 * @return int
+	 */
+	Integer updateById(@Param("et") T entity);
 
-    /**
-     * <p>
-     * 根据 ID 修改
-     * </p>
-     *
-     * @param entity
-     *            实体对象
-     * @return int
-     */
-    Integer updateAllColumnById(@Param("et") T entity);
+	/**
+	 * <p>
+	 * 根据 ID 修改
+	 * </p>
+	 *
+	 * @param entity
+	 *            实体对象
+	 * @return int
+	 */
+	Integer updateAllColumnById(@Param("et") T entity);
 
 	/**
 	 * <p>

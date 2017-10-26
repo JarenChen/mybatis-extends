@@ -16,8 +16,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
 
 import com.wshsoft.mybatis.generator.config.ConstVal;
 import com.wshsoft.mybatis.generator.config.DataSourceConfig;
@@ -42,32 +42,32 @@ public class AutoGenerator {
 
 	private static final Log logger = LogFactory.getLog(AutoGenerator.class);
 
-    protected ConfigBuilder config;
-    protected InjectionConfig injectionConfig;
-    /**
-     * 数据源配置
-     */
-    private DataSourceConfig dataSource;
-    /**
-     * 数据库表配置
-     */
-    private StrategyConfig strategy;
-    /**
-     * 包 相关配置
-     */
-    private PackageConfig packageInfo;
-    /**
-     * 模板 相关配置
-     */
-    private TemplateConfig template;
-    /**
-     * 全局 相关配置
-     */
-    private GlobalConfig globalConfig;
-    /**
-     * velocity引擎
-     */
-    private VelocityEngine engine;
+	protected ConfigBuilder config;
+	protected InjectionConfig injectionConfig;
+	/**
+	 * 数据源配置
+	 */
+	private DataSourceConfig dataSource;
+	/**
+	 * 数据库表配置
+	 */
+	private StrategyConfig strategy;
+	/**
+	 * 包 相关配置
+	 */
+	private PackageConfig packageInfo;
+	/**
+	 * 模板 相关配置
+	 */
+	private TemplateConfig template;
+	/**
+	 * 全局 相关配置
+	 */
+	private GlobalConfig globalConfig;
+	/**
+	 * velocity引擎
+	 */
+	private VelocityEngine engine;
 
 	/**
 	 * 生成代码
@@ -153,42 +153,42 @@ public class AutoGenerator {
 				// 表注解
 				tableInfo.setImportPackages("com.wshsoft.mybatis.annotations.TableName");
 			}
-            if (tableInfo.isLogicDelete(config.getStrategyConfig().getLogicDeleteFieldName())) {
-                // 逻辑删除注解
-                tableInfo.setImportPackages("com.wshsoft.mybatis.annotations.TableLogic");
-            }
-            if (StringUtils.isNotEmpty(config.getStrategyConfig().getVersionFieldName())) {
-                // 乐观锁注解
-                tableInfo.setImportPackages("com.wshsoft.mybatis.annotations.Version");
-            }
-            if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
-                // 父实体
-                tableInfo.setImportPackages(config.getSuperEntityClass());
-            } else {
-                tableInfo.setImportPackages("java.io.Serializable");
-            }
-            // Boolean类型is前缀处理
-            if ( config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix() ) {
-                for (TableField field : tableInfo.getFields()) {
-                    if (field.getPropertyType().equalsIgnoreCase("boolean")) {
-                        if (field.getPropertyName().startsWith("is")) {
-                            field.setPropertyName(config.getStrategyConfig(),
-                                    StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
-                        }
-                    }
-                }
-            }
-            // RequestMapping 连字符风格 user-info
-            if ( config.getStrategyConfig().isControllerMappingHyphenStyle() ) {
-                ctx.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
-                ctx.put("controllerMappingHyphen", StringUtils.camelToHyphen(tableInfo.getEntityPath()));
-            }
-            
-            ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
+			if (tableInfo.isLogicDelete(config.getStrategyConfig().getLogicDeleteFieldName())) {
+				// 逻辑删除注解
+				tableInfo.setImportPackages("com.wshsoft.mybatis.annotations.TableLogic");
+			}
+			if (StringUtils.isNotEmpty(config.getStrategyConfig().getVersionFieldName())) {
+				// 乐观锁注解
+				tableInfo.setImportPackages("com.wshsoft.mybatis.annotations.Version");
+			}
+			if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
+				// 父实体
+				tableInfo.setImportPackages(config.getSuperEntityClass());
+			} else {
+				tableInfo.setImportPackages("java.io.Serializable");
+			}
+			// Boolean类型is前缀处理
+			if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()) {
+				for (TableField field : tableInfo.getFields()) {
+					if (field.getPropertyType().equalsIgnoreCase("boolean")) {
+						if (field.getPropertyName().startsWith("is")) {
+							field.setPropertyName(config.getStrategyConfig(),
+									StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
+						}
+					}
+				}
+			}
+			// RequestMapping 连字符风格 user-info
+			if (config.getStrategyConfig().isControllerMappingHyphenStyle()) {
+				ctx.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
+				ctx.put("controllerMappingHyphen", StringUtils.camelToHyphen(tableInfo.getEntityPath()));
+			}
+
+			ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
 			ctx.put("package", packageInfo);
 			ctx.put("author", config.getGlobalConfig().getAuthor());
-            ctx.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
-            ctx.put("versionFieldName", config.getStrategyConfig().getVersionFieldName());
+			ctx.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
+			ctx.put("versionFieldName", config.getStrategyConfig().getVersionFieldName());
 			ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
 			ctx.put("date", date);
 			ctx.put("table", tableInfo);
@@ -198,8 +198,9 @@ public class AutoGenerator {
 			ctx.put("entity", tableInfo.getEntityName());
 			ctx.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
 			ctx.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
-            ctx.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
-            ctx.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
+			ctx.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
+			ctx.put("entityBooleanColumnRemoveIsPrefix",
+					config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
 			ctx.put("superEntityClass", superEntityClass);
 			ctx.put("superMapperClassPackage", config.getSuperMapperClass());
 			ctx.put("superMapperClass", superMapperClass);
@@ -214,17 +215,17 @@ public class AutoGenerator {
 		return ctxData;
 	}
 
-    /**
-     * 获取类名
-     *
-     * @param classPath
-     * @return
-     */
-    private String getSuperClassName(String classPath) {
-        if (StringUtils.isEmpty(classPath))
-            return null;
-        return classPath.substring(classPath.lastIndexOf(".") + 1);
-    }
+	/**
+	 * 获取类名
+	 *
+	 * @param classPath
+	 * @return
+	 */
+	private String getSuperClassName(String classPath) {
+		if (StringUtils.isEmpty(classPath))
+			return null;
+		return classPath.substring(classPath.lastIndexOf(".") + 1);
+	}
 
 	/**
 	 * 处理输出目录
@@ -244,21 +245,28 @@ public class AutoGenerator {
 		}
 	}
 
-    /**
-     * 合成上下文与模板
-     *
-     * @param context vm上下文
-     */
-    private void batchOutput(String entityName, VelocityContext context) {
-        try {
-            TableInfo tableInfo = (TableInfo) context.get("table");
-            Map<String, String> pathInfo = config.getPathInfo();
-            String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + ConstVal.ENTITY_NAME), entityName);
-            String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator + tableInfo.getMapperName() + ConstVal.JAVA_SUFFIX), entityName);
-            String xmlFile = String.format((pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX), entityName);
-            String serviceFile = String.format((pathInfo.get(ConstVal.SERIVCE_PATH) + File.separator + tableInfo.getServiceName() + ConstVal.JAVA_SUFFIX), entityName);
-            String implFile = String.format((pathInfo.get(ConstVal.SERVICEIMPL_PATH) + File.separator + tableInfo.getServiceImplName() + ConstVal.JAVA_SUFFIX), entityName);
-            String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + ConstVal.JAVA_SUFFIX), entityName);
+	/**
+	 * 合成上下文与模板
+	 *
+	 * @param context
+	 *            vm上下文
+	 */
+	private void batchOutput(String entityName, VelocityContext context) {
+		try {
+			TableInfo tableInfo = (TableInfo) context.get("table");
+			Map<String, String> pathInfo = config.getPathInfo();
+			String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + ConstVal.ENTITY_NAME), entityName);
+			String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator
+					+ tableInfo.getMapperName() + ConstVal.JAVA_SUFFIX), entityName);
+			String xmlFile = String.format(
+					(pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX),
+					entityName);
+			String serviceFile = String.format((pathInfo.get(ConstVal.SERIVCE_PATH) + File.separator
+					+ tableInfo.getServiceName() + ConstVal.JAVA_SUFFIX), entityName);
+			String implFile = String.format((pathInfo.get(ConstVal.SERVICEIMPL_PATH) + File.separator
+					+ tableInfo.getServiceImplName() + ConstVal.JAVA_SUFFIX), entityName);
+			String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator
+					+ tableInfo.getControllerName() + ConstVal.JAVA_SUFFIX), entityName);
 
 			TemplateConfig template = config.getTemplate();
 
@@ -288,13 +296,13 @@ public class AutoGenerator {
 				List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
 				if (CollectionUtils.isNotEmpty(focList)) {
 					for (FileOutConfig foc : focList) {
-                        // 判断自定义文件是否存在
-                        if (isCreate(foc.outputFile(tableInfo))) {
-                            vmToFile(context, foc.getTemplatePath(), foc.outputFile(tableInfo));
-                        }
-                    }
-                }
-            }
+						// 判断自定义文件是否存在
+						if (isCreate(foc.outputFile(tableInfo))) {
+							vmToFile(context, foc.getTemplatePath(), foc.outputFile(tableInfo));
+						}
+					}
+				}
+			}
 
 		} catch (IOException e) {
 			logger.error("无法创建文件，请检查配置信息！", e);
@@ -332,21 +340,21 @@ public class AutoGenerator {
 		logger.debug("模板:" + templatePath + ";  文件:" + outputFile);
 	}
 
-    /**
-     * 设置模版引擎，主要指向获取模版路径
-     */
-    private VelocityEngine getVelocityEngine() {
-        if (engine == null) {
-            Properties p = new Properties();
-            p.setProperty(ConstVal.VM_LOADPATH_KEY, ConstVal.VM_LOADPATH_VALUE);
-            p.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "");
-            p.setProperty(Velocity.ENCODING_DEFAULT, ConstVal.UTF8);
-            p.setProperty(Velocity.INPUT_ENCODING, ConstVal.UTF8);
-            p.setProperty("file.resource.loader.unicode", "true");
-            engine = new VelocityEngine(p);
-        }
-        return engine;
-    }
+	/**
+	 * 设置模版引擎，主要指向获取模版路径
+	 */
+	private VelocityEngine getVelocityEngine() {
+		if (engine == null) {
+			Properties p = new Properties();
+			p.setProperty(ConstVal.VM_LOADPATH_KEY, ConstVal.VM_LOADPATH_VALUE);
+			p.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, "");
+			p.setProperty(RuntimeConstants.ENCODING_DEFAULT, ConstVal.UTF8);
+			p.setProperty(RuntimeConstants.INPUT_ENCODING, ConstVal.UTF8);
+			p.setProperty("file.resource.loader.unicode", "true");
+			engine = new VelocityEngine(p);
+		}
+		return engine;
+	}
 
 	/**
 	 * 检测文件是否存在
@@ -358,80 +366,80 @@ public class AutoGenerator {
 		return !file.exists() || config.getGlobalConfig().isFileOverride();
 	}
 
+	// ================================== 相关配置
+	// ==================================
+	/**
+	 * 初始化配置
+	 */
+	protected void initConfig() {
+		if (null == config) {
+			config = new ConfigBuilder(packageInfo, dataSource, strategy, template, globalConfig);
+			if (null != injectionConfig) {
+				injectionConfig.setConfig(config);
+			}
+		}
+	}
 
-    // ==================================  相关配置  ==================================
-    /**
-     * 初始化配置
-     */
-    protected void initConfig() {
-        if (null == config) {
-            config = new ConfigBuilder(packageInfo, dataSource, strategy, template, globalConfig);
-            if (null != injectionConfig) {
-                injectionConfig.setConfig(config);
-            }
-        }
-    }
+	public DataSourceConfig getDataSource() {
+		return dataSource;
+	}
 
-    public DataSourceConfig getDataSource() {
-        return dataSource;
-    }
+	public AutoGenerator setDataSource(DataSourceConfig dataSource) {
+		this.dataSource = dataSource;
+		return this;
+	}
 
-    public AutoGenerator setDataSource(DataSourceConfig dataSource) {
-        this.dataSource = dataSource;
-        return this;
-    }
+	public StrategyConfig getStrategy() {
+		return strategy;
+	}
 
-    public StrategyConfig getStrategy() {
-        return strategy;
-    }
+	public AutoGenerator setStrategy(StrategyConfig strategy) {
+		this.strategy = strategy;
+		return this;
+	}
 
-    public AutoGenerator setStrategy(StrategyConfig strategy) {
-        this.strategy = strategy;
-        return this;
-    }
+	public PackageConfig getPackageInfo() {
+		return packageInfo;
+	}
 
-    public PackageConfig getPackageInfo() {
-        return packageInfo;
-    }
+	public AutoGenerator setPackageInfo(PackageConfig packageInfo) {
+		this.packageInfo = packageInfo;
+		return this;
+	}
 
-    public AutoGenerator setPackageInfo(PackageConfig packageInfo) {
-        this.packageInfo = packageInfo;
-        return this;
-    }
+	public TemplateConfig getTemplate() {
+		return template;
+	}
 
-    public TemplateConfig getTemplate() {
-        return template;
-    }
+	public AutoGenerator setTemplate(TemplateConfig template) {
+		this.template = template;
+		return this;
+	}
 
-    public AutoGenerator setTemplate(TemplateConfig template) {
-        this.template = template;
-        return this;
-    }
+	public ConfigBuilder getConfig() {
+		return config;
+	}
 
-    public ConfigBuilder getConfig() {
-        return config;
-    }
+	public AutoGenerator setConfig(ConfigBuilder config) {
+		this.config = config;
+		return this;
+	}
 
-    public AutoGenerator setConfig(ConfigBuilder config) {
-        this.config = config;
-        return this;
-    }
+	public GlobalConfig getGlobalConfig() {
+		return globalConfig;
+	}
 
-    public GlobalConfig getGlobalConfig() {
-        return globalConfig;
-    }
+	public AutoGenerator setGlobalConfig(GlobalConfig globalConfig) {
+		this.globalConfig = globalConfig;
+		return this;
+	}
 
-    public AutoGenerator setGlobalConfig(GlobalConfig globalConfig) {
-        this.globalConfig = globalConfig;
-        return this;
-    }
+	public InjectionConfig getCfg() {
+		return injectionConfig;
+	}
 
-    public InjectionConfig getCfg() {
-        return injectionConfig;
-    }
-
-    public AutoGenerator setCfg(InjectionConfig injectionConfig) {
-        this.injectionConfig = injectionConfig;
-        return this;
-    }
+	public AutoGenerator setCfg(InjectionConfig injectionConfig) {
+		this.injectionConfig = injectionConfig;
+		return this;
+	}
 }

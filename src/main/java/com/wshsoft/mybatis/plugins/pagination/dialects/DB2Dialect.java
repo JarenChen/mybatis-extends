@@ -41,13 +41,13 @@ public class DB2Dialect implements IDialect {
 		}
 		pagingSelect.append(" ) as temp_ where rownumber_ ");
 
-        // add the restriction to the outer select
-        if (offset > 0) {
-            String endString = offset + "+" + limit;
-            pagingSelect.append("between ").append(offset).append("+1 and ").append(endString);
-        } else {
-            pagingSelect.append("<= ").append(limit);
-        }
-        return pagingSelect.toString();
-    }
+		// add the restriction to the outer select
+		if (offset > 0) {
+			String endString = offset + "+" + limit;
+			pagingSelect.append("between ").append(offset).append("+1 and ").append(endString);
+		} else {
+			pagingSelect.append("<= ").append(limit);
+		}
+		return pagingSelect.toString();
+	}
 }

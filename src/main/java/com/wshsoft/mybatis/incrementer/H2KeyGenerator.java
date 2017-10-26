@@ -10,12 +10,12 @@ package com.wshsoft.mybatis.incrementer;
  */
 public class H2KeyGenerator implements IKeyGenerator {
 
-    @Override
-    public String executeSql(String incrementerName) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("select ");
-        sql.append(incrementerName);
-        sql.append(".nextval");
-        return sql.toString();
-    }
+	@Override
+	public String executeSql(String incrementerName) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select ");
+		sql.append(incrementerName);
+		sql.append(".nextval");
+		return sql.toString();
+	}
 }

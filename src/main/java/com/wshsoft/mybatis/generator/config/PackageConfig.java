@@ -58,64 +58,64 @@ public class PackageConfig {
 		return parent;
 	}
 
-    public PackageConfig setParent(String parent) {
-        this.parent = parent;
-        return this;
-    }
+	public PackageConfig setParent(String parent) {
+		this.parent = parent;
+		return this;
+	}
 
 	public String getModuleName() {
 		return moduleName;
 	}
 
-    public PackageConfig setModuleName(String moduleName) {
-        this.moduleName = moduleName;
-        return this;
-    }
+	public PackageConfig setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+		return this;
+	}
 
 	public String getEntity() {
 		return entity;
 	}
 
-    public PackageConfig setEntity(String entity) {
-        this.entity = entity;
-        return this;
-    }
+	public PackageConfig setEntity(String entity) {
+		this.entity = entity;
+		return this;
+	}
 
 	public String getService() {
 		return service;
 	}
 
-    public PackageConfig setService(String service) {
-        this.service = service;
-        return this;
-    }
+	public PackageConfig setService(String service) {
+		this.service = service;
+		return this;
+	}
 
 	public String getServiceImpl() {
 		return serviceImpl;
 	}
 
-    public PackageConfig setServiceImpl(String serviceImpl) {
-        this.serviceImpl = serviceImpl;
-        return this;
-    }
+	public PackageConfig setServiceImpl(String serviceImpl) {
+		this.serviceImpl = serviceImpl;
+		return this;
+	}
 
 	public String getMapper() {
 		return mapper;
 	}
 
-    public PackageConfig setMapper(String mapper) {
-        this.mapper = mapper;
-        return this;
-    }
+	public PackageConfig setMapper(String mapper) {
+		this.mapper = mapper;
+		return this;
+	}
 
 	public String getXml() {
 		return xml;
 	}
 
-    public PackageConfig setXml(String xml) {
-        this.xml = xml;
-        return this;
-    }
+	public PackageConfig setXml(String xml) {
+		this.xml = xml;
+		return this;
+	}
 
 	public String getController() {
 		if (StringUtils.isEmpty(controller)) {
@@ -124,9 +124,9 @@ public class PackageConfig {
 		return controller;
 	}
 
-    public PackageConfig setController(String controller) {
-        this.controller = controller;
-        return this;
-    }
+	public PackageConfig setController(String controller) {
+		this.controller = controller;
+		return this;
+	}
 
 }

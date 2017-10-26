@@ -15,6 +15,7 @@ import com.wshsoft.mybatis.plugins.Page;
 import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.GlobalConfigUtils;
 import com.wshsoft.mybatis.toolkit.MapUtils;
+import com.wshsoft.mybatis.toolkit.StringUtils;
 import com.wshsoft.mybatis.toolkit.TableInfoHelper;
 
 /**
@@ -30,65 +31,78 @@ public class SqlHelper {
 	private static final Log logger = LogFactory.getLog(SqlHelper.class);
 
 	/**
+	 * <p>
 	 * 获取Session 默认自动提交
+	 * </p>
 	 * <p>
 	 * 特别说明:这里获取SqlSession时这里虽然设置了自动提交但是如果事务托管了的话 是不起作用的 切记!!
 	 * <p/>
-	 * 
+	 *
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSession(Class<?> clazz) {
 		return sqlSession(clazz, true);
 	}
 
-    /**
-     * <p>
-     * 批量操作 SqlSession
-     * </p>
-     *
-     * @param clazz 实体类
-     * @return SqlSession
-     */
-    public static SqlSession sqlSessionBatch(Class<?> clazz) {
-        return GlobalConfigUtils.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
-    }
-
-    /**
-     * 获取sqlSessionå
-     *
-     * @param clazz
-     * @return
-     */
-    private static SqlSession getSqlSession(Class<?> clazz) {
-        SqlSession session = null;
-        try {
-            SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
-            Configuration configuration = sqlSessionFactory.getConfiguration();
-            session = GlobalConfigUtils.getGlobalConfig(configuration).getSqlSession();
-        } catch (Exception e) {
-            // ignored
-        }
-        return session;
-    }
-
-    /**
-     * <p>
-     * 获取Session
-     * </p>
-     *
-     * @param clazz      实体类
-     * @param autoCommit true自动提交false则相反
-     * @return SqlSession
-     */
-    public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
-        SqlSession sqlSession = getSqlSession(clazz);
-        return (sqlSession != null) ? sqlSession : GlobalConfigUtils.currentSessionFactory(clazz).openSession(autoCommit);
-    }
+	/**
+	 * <p>
+	 * 批量操作 SqlSession
+	 * </p>
+	 *
+	 * @param clazz
+	 *            实体类
+	 * @return SqlSession
+	 */
+	public static SqlSession sqlSessionBatch(Class<?> clazz) {
+		return GlobalConfigUtils.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
+	}
 
 	/**
+	 * <p>
+	 * 获取sqlSession
+	 * </p>
+	 *
+	 * @param clazz
+	 *            对象类
+	 * @return
+	 */
+	private static SqlSession getSqlSession(Class<?> clazz) {
+		SqlSession session = null;
+		try {
+			SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
+			Configuration configuration = sqlSessionFactory.getConfiguration();
+			session = GlobalConfigUtils.getGlobalConfig(configuration).getSqlSession();
+		} catch (Exception e) {
+			// ignored
+		}
+		return session;
+	}
+
+	/**
+	 * <p>
+	 * 获取Session
+	 * </p>
+	 *
+	 * @param clazz
+	 *            实体类
+	 * @param autoCommit
+	 *            true自动提交false则相反
+	 * @return SqlSession
+	 */
+	public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
+		SqlSession sqlSession = getSqlSession(clazz);
+		return (sqlSession != null) ? sqlSession
+				: GlobalConfigUtils.currentSessionFactory(clazz).openSession(autoCommit);
+	}
+
+	/**
+	 * <p>
 	 * 获取TableInfo
-	 * 
-	 * @return TableInfo
+	 * </p>
+	 *
+	 * @param clazz
+	 *            对象类
+	 * @return TableInfo 对象表信息
 	 */
 	public static TableInfo table(Class<?> clazz) {
 		TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
@@ -143,34 +157,41 @@ public class SqlHelper {
 		return null;
 	}
 
-    /**
-     * <p>
-     * 填充Wrapper
-     * </p>
-     *
-     * @param page    分页对象
-     * @param wrapper SQL包装对象
-     */
-    public static void fillWrapper(Page<?> page, Wrapper<?> wrapper) {
-        if (null == page) {
-            return;
-        }
-        //处理Wrapper为空,但是page.getCondition()不为空的情况
-        if (MapUtils.isNotEmpty(page.getCondition()) && isEmptyOfWrapper(wrapper)) {
-            wrapper = Condition.create();
-        }
-        if (isNotEmptyOfWrapper(wrapper)) {
-            if (page.isOpenSort()) {
-                wrapper.orderBy(page.getOrderByField(), page.isAsc());
-            }
-            wrapper.allEq(page.getCondition());
-        }
-    }
+	/**
+	 * <p>
+	 * 填充Wrapper
+	 * </p>
+	 *
+	 * @param page
+	 *            分页对象
+	 * @param wrapper
+	 *            SQL包装对象
+	 */
+	public static void fillWrapper(Page<?> page, Wrapper<?> wrapper) {
+		if (null == page) {
+			return;
+		}
+		// wrapper 不存创建一个 Condition
+		if (isEmptyOfWrapper(wrapper)) {
+			wrapper = Condition.create();
+		}
+		// 排序
+		if (page.isOpenSort() && StringUtils.isNotEmpty(page.getOrderByField())) {
+			wrapper.orderBy(page.getOrderByField(), page.isAsc());
+		}
+		// MAP 参数查询
+		if (MapUtils.isNotEmpty(page.getCondition())) {
+			wrapper.allEq(page.getCondition());
+		}
+	}
 
 	/**
+	 * <p>
 	 * 判断Wrapper为空
+	 * </p>
 	 *
 	 * @param wrapper
+	 *            SQL包装对象
 	 * @return
 	 */
 	public static boolean isEmptyOfWrapper(Wrapper<?> wrapper) {
@@ -178,9 +199,12 @@ public class SqlHelper {
 	}
 
 	/**
+	 * <p>
 	 * 判断Wrapper不为空
+	 * </p>
 	 *
 	 * @param wrapper
+	 *            SQL包装对象
 	 * @return
 	 */
 	public static boolean isNotEmptyOfWrapper(Wrapper<?> wrapper) {

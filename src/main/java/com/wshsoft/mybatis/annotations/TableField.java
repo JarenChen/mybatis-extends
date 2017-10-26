@@ -49,20 +49,20 @@ public @interface TableField {
 	 */
 	boolean exist() default true;
 
-    /**
-     * <p>
-     * 字段验证策略
-     * </p>
-     * <p>
-     * 默认 非 null 判断
-     * </p>
-     */
-    FieldStrategy strategy() default FieldStrategy.NOT_NULL;
+	/**
+	 * <p>
+	 * 字段验证策略
+	 * </p>
+	 * <p>
+	 * 默认 非 null 判断
+	 * </p>
+	 */
+	FieldStrategy strategy() default FieldStrategy.NOT_NULL;
 
-    /**
-     * <p>
-     * 字段自动填充策略
-     * </p>
-     */
-    FieldFill fill() default FieldFill.DEFAULT;
+	/**
+	 * <p>
+	 * 字段自动填充策略
+	 * </p>
+	 */
+	FieldFill fill() default FieldFill.DEFAULT;
 }

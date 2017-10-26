@@ -15,6 +15,7 @@ import com.wshsoft.mybatis.test.h2.service.IH2UserSequenceExtendsService;
  * @date 2017/6/26
  */
 @Service
-public class H2UserSequenceExtendsServiceImpl extends ServiceImpl<H2UserSequenceExtendsMapper, H2UserSequenceExtendTO> implements IH2UserSequenceExtendsService {
+public class H2UserSequenceExtendsServiceImpl extends ServiceImpl<H2UserSequenceExtendsMapper, H2UserSequenceExtendTO>
+		implements IH2UserSequenceExtendsService {
 
 }

@@ -28,123 +28,131 @@ import java.util.Properties;
  * @author Carry xie
  * @Date 2016-07-07
  */
-@Intercepts({@Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
-        @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
-        @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
+@Intercepts({
+		@Signature(type = StatementHandler.class, method = "query", args = { Statement.class, ResultHandler.class }),
+		@Signature(type = StatementHandler.class, method = "update", args = { Statement.class }),
+		@Signature(type = StatementHandler.class, method = "batch", args = { Statement.class }) })
 public class PerformanceInterceptor implements Interceptor {
-    private static final Log logger = LogFactory.getLog(PerformanceInterceptor.class);
+	private static final Log logger = LogFactory.getLog(PerformanceInterceptor.class);
 
-    private static final String DruidPooledPreparedStatement = "com.alibaba.druid.pool.DruidPooledPreparedStatement";
-    private static final String T4CPreparedStatement = "oracle.jdbc.driver.T4CPreparedStatement";
-    private static final String OraclePreparedStatementWrapper = "oracle.jdbc.driver.OraclePreparedStatementWrapper";
-    /**
-     * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
-     */
-    private long maxTime = 0;
+	private static final String DruidPooledPreparedStatement = "com.alibaba.druid.pool.DruidPooledPreparedStatement";
+	private static final String T4CPreparedStatement = "oracle.jdbc.driver.T4CPreparedStatement";
+	private static final String OraclePreparedStatementWrapper = "oracle.jdbc.driver.OraclePreparedStatementWrapper";
+	/**
+	 * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
+	 */
+	private long maxTime = 0;
 
-    /**
-     * SQL 是否格式化
-     */
-    private boolean format = false;
+	/**
+	 * SQL 是否格式化
+	 */
+	private boolean format = false;
 
-    /**
-     * 是否写入日志文件<br>
-     * true 写入日志文件，不阻断程序执行！<br>
-     * 超过设定的最大执行时长异常提示！
-     */
-    private boolean writeInLog = false;
+	/**
+	 * 是否写入日志文件<br>
+	 * true 写入日志文件，不阻断程序执行！<br>
+	 * 超过设定的最大执行时长异常提示！
+	 */
+	private boolean writeInLog = false;
 
-    private Method oracleGetOriginalSqlMethod;
-    private Method druidGetSQLMethod;
+	private Method oracleGetOriginalSqlMethod;
+	private Method druidGetSQLMethod;
 
-    public Object intercept(Invocation invocation) throws Throwable {
-        Statement statement;
-        Object firstArg = invocation.getArgs()[0];
-        if (Proxy.isProxyClass(firstArg.getClass())) {
-            statement = (Statement) SystemMetaObject.forObject(firstArg).getValue("h.statement");
-        } else {
-            statement = (Statement) firstArg;
-        }
-        try {
-            statement = (Statement) SystemMetaObject.forObject(statement).getValue("stmt.statement");
-        } catch (Exception e) {
-            // do nothing
-        }
+	@Override
+	public Object intercept(Invocation invocation) throws Throwable {
+		Statement statement;
+		Object firstArg = invocation.getArgs()[0];
+		if (Proxy.isProxyClass(firstArg.getClass())) {
+			statement = (Statement) SystemMetaObject.forObject(firstArg).getValue("h.statement");
+		} else {
+			statement = (Statement) firstArg;
+		}
+		try {
+			statement = (Statement) SystemMetaObject.forObject(statement).getValue("stmt.statement");
+		} catch (Exception e) {
+			// do nothing
+		}
 
-        String originalSql = null;
-        String stmtClassName = statement.getClass().getName();
-        if(DruidPooledPreparedStatement.equals(stmtClassName)){
-            try {
-                if (druidGetSQLMethod == null) {
-                    Class<?> clazz = Class.forName(DruidPooledPreparedStatement);
-                    druidGetSQLMethod = clazz.getMethod("getSql");
-                }
-                Object stmtSql = druidGetSQLMethod.invoke(statement);
-                if (stmtSql != null && stmtSql instanceof String) {
-                    originalSql = (String) stmtSql;
-                }
-            } catch (Exception ignored) {
-            }
-        } else if (T4CPreparedStatement.equals(stmtClassName)
-                || OraclePreparedStatementWrapper.equals(stmtClassName)) {
-            try {
-                if (oracleGetOriginalSqlMethod != null) {
-                    Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
-                    if (stmtSql != null && stmtSql instanceof String) {
-                        originalSql = (String) stmtSql;
-                    }
-                } else {
-                    Class<?> clazz = Class.forName(stmtClassName);
-                    oracleGetOriginalSqlMethod = getMethodRegular(clazz, "getOriginalSql");
-                    if(oracleGetOriginalSqlMethod!=null) {
-                        oracleGetOriginalSqlMethod.setAccessible(true);//OraclePreparedStatementWrapper is not a public class, need set this.
-                        if (oracleGetOriginalSqlMethod != null) {
-                            Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
-                            if (stmtSql != null && stmtSql instanceof String) {
-                                originalSql = (String) stmtSql;
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {//ignore
-            }
-        }
-        if (originalSql == null) {
-            originalSql = statement.toString();
-        }
+		String originalSql = null;
+		String stmtClassName = statement.getClass().getName();
+		if (DruidPooledPreparedStatement.equals(stmtClassName)) {
+			try {
+				if (druidGetSQLMethod == null) {
+					Class<?> clazz = Class.forName(DruidPooledPreparedStatement);
+					druidGetSQLMethod = clazz.getMethod("getSql");
+				}
+				Object stmtSql = druidGetSQLMethod.invoke(statement);
+				if (stmtSql != null && stmtSql instanceof String) {
+					originalSql = (String) stmtSql;
+				}
+			} catch (Exception ignored) {
+			}
+		} else if (T4CPreparedStatement.equals(stmtClassName) || OraclePreparedStatementWrapper.equals(stmtClassName)) {
+			try {
+				if (oracleGetOriginalSqlMethod != null) {
+					Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
+					if (stmtSql != null && stmtSql instanceof String) {
+						originalSql = (String) stmtSql;
+					}
+				} else {
+					Class<?> clazz = Class.forName(stmtClassName);
+					oracleGetOriginalSqlMethod = getMethodRegular(clazz, "getOriginalSql");
+					if (oracleGetOriginalSqlMethod != null) {
+						oracleGetOriginalSqlMethod.setAccessible(true);// OraclePreparedStatementWrapper
+																		// is
+																		// not a
+																		// public
+																		// class,
+																		// need
+																		// set
+																		// this.
+						if (oracleGetOriginalSqlMethod != null) {
+							Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
+							if (stmtSql != null && stmtSql instanceof String) {
+								originalSql = (String) stmtSql;
+							}
+						}
+					}
+				}
+			} catch (Exception e) {// ignore
+			}
+		}
+		if (originalSql == null) {
+			originalSql = statement.toString();
+		}
 
-        int index = originalSql.indexOf(':');
-        if (index > 0) {
-            originalSql = originalSql.substring(index + 1, originalSql.length());
-        }
+		int index = originalSql.indexOf(':');
+		if (index > 0) {
+			originalSql = originalSql.substring(index + 1, originalSql.length());
+		}
 
-        // 计算执行 SQL 耗时
-        long start = SystemClock.now();
-        Object result = invocation.proceed();
-        long timing = SystemClock.now() - start;
+		// 计算执行 SQL 耗时
+		long start = SystemClock.now();
+		Object result = invocation.proceed();
+		long timing = SystemClock.now() - start;
 
-        // 格式化 SQL 打印执行结果
-        Object target = PluginUtils.realTarget(invocation.getTarget());
-        MetaObject metaObject = SystemMetaObject.forObject(target);
-        MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
-        StringBuilder formatSql = new StringBuilder();
-        formatSql.append(" Time：").append(timing);
-        formatSql.append(" ms - ID：").append(ms.getId());
-        formatSql.append("\n Execute SQL：").append(SqlUtils.sqlFormat(originalSql, format)).append("\n");
-        if (this.isWriteInLog()) {
-            if (this.getMaxTime() >= 1 && timing > this.getMaxTime()) {
-                logger.error(formatSql.toString());
-            } else {
-                logger.debug(formatSql.toString());
-            }
-        } else {
-            System.err.println(formatSql.toString());
-            if (this.getMaxTime() >= 1 && timing > this.getMaxTime()) {
-                throw new MybatisExtendsException(" The SQL execution time is too large, please optimize ! ");
-            }
-        }
-        return result;
-    }
+		// 格式化 SQL 打印执行结果
+		Object target = PluginUtils.realTarget(invocation.getTarget());
+		MetaObject metaObject = SystemMetaObject.forObject(target);
+		MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
+		StringBuilder formatSql = new StringBuilder();
+		formatSql.append(" Time：").append(timing);
+		formatSql.append(" ms - ID：").append(ms.getId());
+		formatSql.append("\n Execute SQL：").append(SqlUtils.sqlFormat(originalSql, format)).append("\n");
+		if (this.isWriteInLog()) {
+			if (this.getMaxTime() >= 1 && timing > this.getMaxTime()) {
+				logger.error(formatSql.toString());
+			} else {
+				logger.debug(formatSql.toString());
+			}
+		} else {
+			System.err.println(formatSql.toString());
+			if (this.getMaxTime() >= 1 && timing > this.getMaxTime()) {
+				throw new MybatisExtendsException(" The SQL execution time is too large, please optimize ! ");
+			}
+		}
+		return result;
+	}
 
 	@Override
 	public Object plugin(Object target) {
@@ -170,38 +178,38 @@ public class PerformanceInterceptor implements Interceptor {
 		return maxTime;
 	}
 
-    public PerformanceInterceptor setMaxTime(long maxTime) {
-        this.maxTime = maxTime;
-        return this;
-    }
+	public PerformanceInterceptor setMaxTime(long maxTime) {
+		this.maxTime = maxTime;
+		return this;
+	}
 
 	public boolean isFormat() {
 		return format;
 	}
 
-    public PerformanceInterceptor setFormat(boolean format) {
-        this.format = format;
-        return this;
-    }
+	public PerformanceInterceptor setFormat(boolean format) {
+		this.format = format;
+		return this;
+	}
 
-    public boolean isWriteInLog() {
-        return writeInLog;
-    }
+	public boolean isWriteInLog() {
+		return writeInLog;
+	}
 
-    public PerformanceInterceptor setWriteInLog(boolean writeInLog) {
-        this.writeInLog = writeInLog;
-        return this;
-    }
+	public PerformanceInterceptor setWriteInLog(boolean writeInLog) {
+		this.writeInLog = writeInLog;
+		return this;
+	}
 
-    public Method getMethodRegular(Class<?> clazz, String methodName) {
-        if (Object.class.equals(clazz)) {
-            return null;
-        }
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.getName().equals(methodName)) {
-                return method;
-            }
-        }
-        return getMethodRegular(clazz.getSuperclass(), methodName);
-    }
+	public Method getMethodRegular(Class<?> clazz, String methodName) {
+		if (Object.class.equals(clazz)) {
+			return null;
+		}
+		for (Method method : clazz.getDeclaredMethods()) {
+			if (method.getName().equals(methodName)) {
+				return method;
+			}
+		}
+		return getMethodRegular(clazz.getSuperclass(), methodName);
+	}
 }

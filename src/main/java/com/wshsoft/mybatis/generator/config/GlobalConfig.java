@@ -57,120 +57,120 @@ public class GlobalConfig {
 	private String serviceImplName;
 	private String controllerName;
 
-    public String getOutputDir() {
-        return outputDir;
-    }
+	public String getOutputDir() {
+		return outputDir;
+	}
 
-    public GlobalConfig setOutputDir(String outputDir) {
-        this.outputDir = outputDir;
-        return this;
-    }
+	public GlobalConfig setOutputDir(String outputDir) {
+		this.outputDir = outputDir;
+		return this;
+	}
 
 	public boolean isFileOverride() {
 		return fileOverride;
 	}
 
-    public GlobalConfig setFileOverride(boolean fileOverride) {
-        this.fileOverride = fileOverride;
-        return this;
-    }
+	public GlobalConfig setFileOverride(boolean fileOverride) {
+		this.fileOverride = fileOverride;
+		return this;
+	}
 
 	public boolean isOpen() {
 		return open;
 	}
 
-    public GlobalConfig setOpen(boolean open) {
-        this.open = open;
-        return this;
-    }
+	public GlobalConfig setOpen(boolean open) {
+		this.open = open;
+		return this;
+	}
 
 	public boolean isEnableCache() {
 		return enableCache;
 	}
 
-    public GlobalConfig setEnableCache(boolean enableCache) {
-        this.enableCache = enableCache;
-        return this;
-    }
+	public GlobalConfig setEnableCache(boolean enableCache) {
+		this.enableCache = enableCache;
+		return this;
+	}
 
 	public String getAuthor() {
 		return author;
 	}
 
-    public GlobalConfig setAuthor(String author) {
-        this.author = author;
-        return this;
-    }
+	public GlobalConfig setAuthor(String author) {
+		this.author = author;
+		return this;
+	}
 
 	public boolean isActiveRecord() {
 		return activeRecord;
 	}
 
-    public GlobalConfig setActiveRecord(boolean activeRecord) {
-        this.activeRecord = activeRecord;
-        return this;
-    }
+	public GlobalConfig setActiveRecord(boolean activeRecord) {
+		this.activeRecord = activeRecord;
+		return this;
+	}
 
 	public boolean isBaseResultMap() {
 		return baseResultMap;
 	}
 
-    public GlobalConfig setBaseResultMap(boolean baseResultMap) {
-        this.baseResultMap = baseResultMap;
-        return this;
-    }
+	public GlobalConfig setBaseResultMap(boolean baseResultMap) {
+		this.baseResultMap = baseResultMap;
+		return this;
+	}
 
 	public boolean isBaseColumnList() {
 		return baseColumnList;
 	}
 
-    public GlobalConfig setBaseColumnList(boolean baseColumnList) {
-        this.baseColumnList = baseColumnList;
-        return this;
-    }
+	public GlobalConfig setBaseColumnList(boolean baseColumnList) {
+		this.baseColumnList = baseColumnList;
+		return this;
+	}
 
 	public String getMapperName() {
 		return mapperName;
 	}
 
-    public GlobalConfig setMapperName(String mapperName) {
-        this.mapperName = mapperName;
-        return this;
-    }
+	public GlobalConfig setMapperName(String mapperName) {
+		this.mapperName = mapperName;
+		return this;
+	}
 
 	public String getXmlName() {
 		return xmlName;
 	}
 
-    public GlobalConfig setXmlName(String xmlName) {
-        this.xmlName = xmlName;
-        return this;
-    }
+	public GlobalConfig setXmlName(String xmlName) {
+		this.xmlName = xmlName;
+		return this;
+	}
 
 	public String getServiceName() {
 		return serviceName;
 	}
 
-    public GlobalConfig setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-        return this;
-    }
+	public GlobalConfig setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+		return this;
+	}
 
 	public String getServiceImplName() {
 		return serviceImplName;
 	}
 
-    public GlobalConfig setServiceImplName(String serviceImplName) {
-        this.serviceImplName = serviceImplName;
-        return this;
-    }
+	public GlobalConfig setServiceImplName(String serviceImplName) {
+		this.serviceImplName = serviceImplName;
+		return this;
+	}
 
 	public String getControllerName() {
 		return controllerName;
 	}
 
-    public GlobalConfig setControllerName(String controllerName) {
-        this.controllerName = controllerName;
-        return this;
-    }
+	public GlobalConfig setControllerName(String controllerName) {
+		this.controllerName = controllerName;
+		return this;
+	}
 }

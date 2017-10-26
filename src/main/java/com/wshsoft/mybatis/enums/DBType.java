@@ -22,7 +22,7 @@ public enum DBType {
 	/**
 	 * DB2
 	 */
-    DB2("db2", null, "DB2数据库"),
+	DB2("db2", null, "DB2数据库"),
 	/**
 	 * H2
 	 */
@@ -42,11 +42,11 @@ public enum DBType {
 	/**
 	 * SQLSERVER2005
 	 */
-    SQLSERVER2005("sqlserver2005", null, "SQLServer2005数据库"),
+	SQLSERVER2005("sqlserver2005", null, "SQLServer2005数据库"),
 	/**
 	 * SQLSERVER
 	 */
-    SQLSERVER("sqlserver", null, "SQLServer数据库"),
+	SQLSERVER("sqlserver", null, "SQLServer数据库"),
 	/**
 	 * UNKONWN DB
 	 */
@@ -80,7 +80,7 @@ public enum DBType {
 				return dt;
 			}
 		}
-        throw new MybatisExtendsException("Error: Unknown database type, or do not support changing database!\n");
+		throw new MybatisExtendsException("Error: Unknown database type, or do not support changing database!\n");
 	}
 
 	public String getDb() {

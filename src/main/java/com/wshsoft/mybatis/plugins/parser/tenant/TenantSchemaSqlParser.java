@@ -17,33 +17,33 @@ import net.sf.jsqlparser.statement.update.Update;
  */
 public class TenantSchemaSqlParser extends AbstractJsqlParser {
 
-    private TenantSchemaHandler tenantSchemaHandler;
+	private TenantSchemaHandler tenantSchemaHandler;
 
-    @Override
-    public void processInsert(Insert insert) {
+	@Override
+	public void processInsert(Insert insert) {
 
-    }
+	}
 
-    @Override
-    public void processDelete(Delete delete) {
+	@Override
+	public void processDelete(Delete delete) {
 
-    }
+	}
 
-    @Override
-    public void processUpdate(Update update) {
+	@Override
+	public void processUpdate(Update update) {
 
-    }
+	}
 
-    @Override
-    public void processSelectBody(SelectBody selectBody) {
+	@Override
+	public void processSelectBody(SelectBody selectBody) {
 
-    }
+	}
 
-    public TenantSchemaHandler getTenantSchemaHandler() {
-        return tenantSchemaHandler;
-    }
+	public TenantSchemaHandler getTenantSchemaHandler() {
+		return tenantSchemaHandler;
+	}
 
-    public void setTenantSchemaHandler(TenantSchemaHandler tenantSchemaHandler) {
-        this.tenantSchemaHandler = tenantSchemaHandler;
-    }
+	public void setTenantSchemaHandler(TenantSchemaHandler tenantSchemaHandler) {
+		this.tenantSchemaHandler = tenantSchemaHandler;
+	}
 }

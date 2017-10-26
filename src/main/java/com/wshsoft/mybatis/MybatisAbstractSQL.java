@@ -94,22 +94,22 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
 		return sb.toString();
 	}
 
-    /**
-     * 查看构造器where是否为空
-     *
-     * @return
-     */
-    public boolean isEmptyOfWhere() {
-        return CollectionUtils.isEmpty(sql().where);
-    }
+	/**
+	 * 查看构造器where是否为空
+	 *
+	 * @return
+	 */
+	public boolean isEmptyOfWhere() {
+		return CollectionUtils.isEmpty(sql().where);
+	}
 
-    /**
-     * SQL连接器
-     */
-    private static class SafeAppendable implements Serializable {
+	/**
+	 * SQL连接器
+	 */
+	private static class SafeAppendable implements Serializable {
 
-        private final Appendable appendable;
-        private boolean empty = true;
+		private final Appendable appendable;
+		private boolean empty = true;
 
 		public SafeAppendable(Appendable appendable) {
 			super();

@@ -26,79 +26,84 @@ import net.sf.jsqlparser.statement.update.Update;
  */
 public abstract class AbstractJsqlParser implements ISqlParser {
 
-    // 日志
-    protected final Log logger = LogFactory.getLog(this.getClass());
+	// 日志
+	protected final Log logger = LogFactory.getLog(this.getClass());
 
-    /**
-     * <p>
-     * 获取优化 SQL 方法
-     * </p>
-     *
-     * @param metaObject 元对象
-     * @param sql        SQL 语句
-     * @return SQL 信息
-     */
+	/**
+	 * <p>
+	 * 获取优化 SQL 方法
+	 * </p>
+	 *
+	 * @param metaObject
+	 *            元对象
+	 * @param sql
+	 *            SQL 语句
+	 * @return SQL 信息
+	 */
 
-    @Override
-    public SqlInfo optimizeSql(MetaObject metaObject, String sql) {
-        if (this.allowProcess(metaObject)) {
-            try {
-                Statement statement = CCJSqlParserUtil.parse(sql);
-                logger.debug("Original SQL: " + sql);
-                if (null != statement) {
-                    return this.processParser(statement);
-                }
-            } catch (JSQLParserException e) {
-                throw new MybatisExtendsException("Failed to process, please exclude the tableName or statementId.\n Error SQL: " + sql, e);
-            }
-        }
-        return null;
-    }
+	@Override
+	public SqlInfo optimizeSql(MetaObject metaObject, String sql) {
+		if (this.allowProcess(metaObject)) {
+			try {
+				Statement statement = CCJSqlParserUtil.parse(sql);
+				logger.debug("Original SQL: " + sql);
+				if (null != statement) {
+					return this.processParser(statement);
+				}
+			} catch (JSQLParserException e) {
+				throw new MybatisExtendsException(
+						"Failed to process, please exclude the tableName or statementId.\n Error SQL: " + sql, e);
+			}
+		}
+		return null;
+	}
 
-    /**
-     * <p>
-     * 执行 SQL 解析
-     * </p>
-     *
-     * @param statement JsqlParser Statement
-     * @return
-     */
-    public SqlInfo processParser(Statement statement) {
-        if (statement instanceof Insert) {
-            this.processInsert((Insert) statement);
-        } else if (statement instanceof Select) {
-            this.processSelectBody(((Select) statement).getSelectBody());
-        } else if (statement instanceof Update) {
-            this.processUpdate((Update) statement);
-        } else if (statement instanceof Delete) {
-            this.processDelete((Delete) statement);
-        }
-        logger.debug("parser sql: " + statement.toString());
-        return SqlInfo.newInstance().setSql(statement.toString());
-    }
+	/**
+	 * <p>
+	 * 执行 SQL 解析
+	 * </p>
+	 *
+	 * @param statement
+	 *            JsqlParser Statement
+	 * @return
+	 */
+	public SqlInfo processParser(Statement statement) {
+		if (statement instanceof Insert) {
+			this.processInsert((Insert) statement);
+		} else if (statement instanceof Select) {
+			this.processSelectBody(((Select) statement).getSelectBody());
+		} else if (statement instanceof Update) {
+			this.processUpdate((Update) statement);
+		} else if (statement instanceof Delete) {
+			this.processDelete((Delete) statement);
+		}
+		logger.debug("parser sql: " + statement.toString());
+		return SqlInfo.newInstance().setSql(statement.toString());
+	}
 
-    // 新增
-    public abstract void processInsert(Insert insert);
+	// 新增
+	public abstract void processInsert(Insert insert);
 
-    // 删除
-    public abstract void processDelete(Delete delete);
+	// 删除
+	public abstract void processDelete(Delete delete);
 
-    // 更新
-    public abstract void processUpdate(Update update);
+	// 更新
+	public abstract void processUpdate(Update update);
 
-    // 查询
-    public abstract void processSelectBody(SelectBody selectBody);
+	// 查询
+	public abstract void processSelectBody(SelectBody selectBody);
 
-    /**
-     * <p>
-     * 判断是否允许执行<br>
-     * 例如：逻辑删除只解析 delete , update 操作
-     * </p>
-     *
-     * @param metaObject 元对象
-     * @return true
-     */
-    public boolean allowProcess(MetaObject metaObject) {
-        return true;
-    }
+	/**
+	 * <p>
+	 * 判断是否允许执行<br>
+	 * 例如：逻辑删除只解析 delete , update 操作
+	 * </p>
+	 *
+	 * @param metaObject
+	 *            元对象
+	 * @return true
+	 */
+	public boolean allowProcess(MetaObject metaObject) {
+		return true;
+	}
 }

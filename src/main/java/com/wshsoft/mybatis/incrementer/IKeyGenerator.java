@@ -1,6 +1,5 @@
 package com.wshsoft.mybatis.incrementer;
 
-
 /**
  * <p>
  * 表关键词 key 生成器接口
@@ -11,14 +10,15 @@ package com.wshsoft.mybatis.incrementer;
  */
 public interface IKeyGenerator {
 
-    /**
-     * <p>
-     * 执行 key 生成 SQL
-     * </p>
-     *
-     * @param incrementerName 序列名称
-     * @return
-     */
-    String executeSql(String incrementerName);
+	/**
+	 * <p>
+	 * 执行 key 生成 SQL
+	 * </p>
+	 *
+	 * @param incrementerName
+	 *            序列名称
+	 * @return
+	 */
+	String executeSql(String incrementerName);
 
 }

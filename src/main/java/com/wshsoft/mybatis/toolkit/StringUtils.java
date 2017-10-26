@@ -23,11 +23,11 @@ public class StringUtils {
 	 */
 	public static final String EMPTY = "";
 
-    /**
-     * 空字符
-     */
-    public static final String IS = "is";
-    
+	/**
+	 * 空字符
+	 */
+	public static final String IS = "is";
+
 	/**
 	 * 下划线字符
 	 */
@@ -38,12 +38,11 @@ public class StringUtils {
 	 */
 	public static final String PLACE_HOLDER = "{%s}";
 
-    private static boolean separatorBeforeDigit = false;
-    private static boolean separatorAfterDigit  = true;
+	private static boolean separatorBeforeDigit = false;
+	private static boolean separatorAfterDigit = true;
 
-
-    private StringUtils() {
-    }
+	private StringUtils() {
+	}
 
 	/**
 	 * <p>
@@ -611,183 +610,192 @@ public class StringUtils {
 		return cls != null && CharSequence.class.isAssignableFrom(cls);
 	}
 
-    /**
-     * <p>
-     * 去除boolean类型is开头的字符串
-     * </p>
-     *
-     * @param propertyName 字段名
-     * @param propertyType 字段类型
-     * @return
-     */
-    public static String removeIsPrefixIfBoolean(String propertyName, Class<?> propertyType) {
-        if (isBoolean(propertyType) && propertyName.startsWith(IS)) {
-            String property = propertyName.replaceFirst(IS, EMPTY);
-            if (isEmpty(property)) {
-                return propertyName;
-            } else {
-                String firstCharToLowerStr = firstCharToLower(property);
-                return property.equals(firstCharToLowerStr) ? propertyName : firstCharToLowerStr;
-            }
-        }
-        return propertyName;
-    }
+	/**
+	 * <p>
+	 * 去除boolean类型is开头的字符串
+	 * </p>
+	 *
+	 * @param propertyName
+	 *            字段名
+	 * @param propertyType
+	 *            字段类型
+	 * @return
+	 */
+	public static String removeIsPrefixIfBoolean(String propertyName, Class<?> propertyType) {
+		if (isBoolean(propertyType) && propertyName.startsWith(IS)) {
+			String property = propertyName.replaceFirst(IS, EMPTY);
+			if (isEmpty(property)) {
+				return propertyName;
+			} else {
+				String firstCharToLowerStr = firstCharToLower(property);
+				return property.equals(firstCharToLowerStr) ? propertyName : firstCharToLowerStr;
+			}
+		}
+		return propertyName;
+	}
 
-    /**
-     * <p>
-     * 是否为CharSequence类型
-     *
-     * @param propertyType
-     * @return
-     */
-    public static Boolean isCharSequence(String propertyType) {
-        try {
-            return isCharSequence(Class.forName(propertyType));
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
+	/**
+	 * <p>
+	 * 是否为CharSequence类型
+	 *
+	 * @param propertyType
+	 * @return
+	 */
+	public static Boolean isCharSequence(String propertyType) {
+		try {
+			return isCharSequence(Class.forName(propertyType));
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+	}
 
-    /**
-     * <p>
-     * 是否为Boolean类型(包含普通类型)
-     * </p>
-     *
-     * @param propertyCls
-     * @return
-     */
-    public static Boolean isBoolean(Class<?> propertyCls) {
-        return propertyCls != null && (boolean.class.isAssignableFrom(propertyCls) || Boolean.class.isAssignableFrom(propertyCls));
-    }
+	/**
+	 * <p>
+	 * 是否为Boolean类型(包含普通类型)
+	 * </p>
+	 *
+	 * @param propertyCls
+	 * @return
+	 */
+	public static Boolean isBoolean(Class<?> propertyCls) {
+		return propertyCls != null
+				&& (boolean.class.isAssignableFrom(propertyCls) || Boolean.class.isAssignableFrom(propertyCls));
+	}
 
-    /**
-     * <p>
-     * 第一个首字母小写,之后字符大小写的不变<br>
-     * StringUtils.firstCharToLower( "UserService" )     = userService
-     * StringUtils.firstCharToLower( "UserServiceImpl" ) = userServiceImpl
-     * </p>
-     *
-     * @param rawString 需要处理的字符串
-     * @return
-     */
-    public static String firstCharToLower(String rawString) {
-        return prefixToLower(rawString, 1);
-    }
+	/**
+	 * <p>
+	 * 第一个首字母小写,之后字符大小写的不变<br>
+	 * StringUtils.firstCharToLower( "UserService" ) = userService
+	 * StringUtils.firstCharToLower( "UserServiceImpl" ) = userServiceImpl
+	 * </p>
+	 *
+	 * @param rawString
+	 *            需要处理的字符串
+	 * @return
+	 */
+	public static String firstCharToLower(String rawString) {
+		return prefixToLower(rawString, 1);
+	}
 
-    /**
-     * <p>
-     * 前n个首字母小写,之后字符大小写的不变
-     * </p>
-     *
-     * @param rawString 需要处理的字符串
-     * @param index     多少个字符(从左至右)
-     * @return
-     */
-    public static String prefixToLower(String rawString, int index) {
-        String beforeChar = rawString.substring(0, index).toLowerCase();
-        String afterChar = rawString.substring(index, rawString.length());
-        return beforeChar + afterChar;
-    }
+	/**
+	 * <p>
+	 * 前n个首字母小写,之后字符大小写的不变
+	 * </p>
+	 *
+	 * @param rawString
+	 *            需要处理的字符串
+	 * @param index
+	 *            多少个字符(从左至右)
+	 * @return
+	 */
+	public static String prefixToLower(String rawString, int index) {
+		String beforeChar = rawString.substring(0, index).toLowerCase();
+		String afterChar = rawString.substring(index, rawString.length());
+		return beforeChar + afterChar;
+	}
 
-    /**
-     * <p>
-     * 删除字符前缀之后,首字母小写,之后字符大小写的不变<br>
-     * StringUtils.removePrefixAfterPrefixToLower( "isUser", 2 )     = user
-     * StringUtils.removePrefixAfterPrefixToLower( "isUserInfo", 2 ) = userInfo
-     * </p>
-     *
-     * @param rawString 需要处理的字符串
-     * @param index     删除多少个字符(从左至右)
-     * @return
-     */
-    public static String removePrefixAfterPrefixToLower(String rawString, int index) {
-        return prefixToLower(rawString.substring(index, rawString.length()), 1);
-    }
+	/**
+	 * <p>
+	 * 删除字符前缀之后,首字母小写,之后字符大小写的不变<br>
+	 * StringUtils.removePrefixAfterPrefixToLower( "isUser", 2 ) = user
+	 * StringUtils.removePrefixAfterPrefixToLower( "isUserInfo", 2 ) = userInfo
+	 * </p>
+	 *
+	 * @param rawString
+	 *            需要处理的字符串
+	 * @param index
+	 *            删除多少个字符(从左至右)
+	 * @return
+	 */
+	public static String removePrefixAfterPrefixToLower(String rawString, int index) {
+		return prefixToLower(rawString.substring(index, rawString.length()), 1);
+	}
 
-    /**
-     * <p>
-     * 驼峰转连字符<br>
-     * StringUtils.camelToHyphen( "managerAdminUserService" ) = manager-admin-user-service
-     * </p>
-     *
-     * @param input
-     * @return 以'-'分隔
-     * @see <a href="https://github.com/krasa/StringManipulation">document</a>
-     */
-    public static String camelToHyphen(String input) {
-        return wordsToHyphenCase(wordsAndHyphenAndCamelToConstantCase( input ));
-    }
-    
-    private static String wordsAndHyphenAndCamelToConstantCase ( String input ) {
-        boolean _betweenUpperCases = false;
-        boolean containsLowerCase  = containsLowerCase( input );
+	/**
+	 * <p>
+	 * 驼峰转连字符<br>
+	 * StringUtils.camelToHyphen( "managerAdminUserService" ) =
+	 * manager-admin-user-service
+	 * </p>
+	 *
+	 * @param input
+	 * @return 以'-'分隔
+	 * @see <a href="https://github.com/krasa/StringManipulation">document</a>
+	 */
+	public static String camelToHyphen(String input) {
+		return wordsToHyphenCase(wordsAndHyphenAndCamelToConstantCase(input));
+	}
 
-        StringBuilder buf = new StringBuilder();
-        char previousChar = ' ';
-        char[] chars = input.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
-            boolean isUpperCaseAndPreviousIsUpperCase = (Character.isUpperCase(previousChar)) && (Character.isUpperCase(c));
-            boolean isUpperCaseAndPreviousIsLowerCase = (Character.isLowerCase(previousChar)) && (Character.isUpperCase(c));
+	private static String wordsAndHyphenAndCamelToConstantCase(String input) {
+		boolean _betweenUpperCases = false;
+		boolean containsLowerCase = containsLowerCase(input);
 
-            boolean previousIsWhitespace = Character.isWhitespace(previousChar);
-            boolean lastOneIsNotUnderscore = (buf.length() > 0) && (buf.charAt(buf.length() - 1) != '_');
-            boolean isNotUnderscore = c != '_';
-            if ((lastOneIsNotUnderscore) && ((isUpperCaseAndPreviousIsLowerCase) || (previousIsWhitespace) || ((_betweenUpperCases)
-                    && (containsLowerCase) && (isUpperCaseAndPreviousIsUpperCase)))) {
-                buf.append("_");
-            } else if (((separatorAfterDigit) && (Character.isDigit(previousChar))
-                    && (Character.isLetter(c))) || ((separatorBeforeDigit) && (Character
-                    .isDigit(c)) && (Character.isLetter(previousChar)))) {
-                buf.append('_');
-            }
-            if ( ( shouldReplace( c ) ) && ( lastOneIsNotUnderscore ) ) {
-                buf.append( '_' );
-            } else if ( ( ! Character.isWhitespace( c ) ) && ( ( isNotUnderscore ) || ( lastOneIsNotUnderscore ) ) ) {
-                buf.append( Character.toUpperCase( c ) );
-            }
-            previousChar = c;
-        }
-        if ( Character.isWhitespace( previousChar ) ) {
-            buf.append( "_" );
-        }
-        return buf.toString();
-    }
+		StringBuilder buf = new StringBuilder();
+		char previousChar = ' ';
+		char[] chars = input.toCharArray();
+		for (int i = 0; i < chars.length; i++) {
+			char c = chars[i];
+			boolean isUpperCaseAndPreviousIsUpperCase = (Character.isUpperCase(previousChar))
+					&& (Character.isUpperCase(c));
+			boolean isUpperCaseAndPreviousIsLowerCase = (Character.isLowerCase(previousChar))
+					&& (Character.isUpperCase(c));
 
-    public static boolean containsLowerCase ( String s ) {
-        for ( char c : s.toCharArray() ) {
-            if ( Character.isLowerCase( c ) ) {
-                return true;
-            }
-        }
-        return false;
-    }
+			boolean previousIsWhitespace = Character.isWhitespace(previousChar);
+			boolean lastOneIsNotUnderscore = (buf.length() > 0) && (buf.charAt(buf.length() - 1) != '_');
+			boolean isNotUnderscore = c != '_';
+			if ((lastOneIsNotUnderscore) && ((isUpperCaseAndPreviousIsLowerCase) || (previousIsWhitespace)
+					|| ((_betweenUpperCases) && (containsLowerCase) && (isUpperCaseAndPreviousIsUpperCase)))) {
+				buf.append("_");
+			} else if (((separatorAfterDigit) && (Character.isDigit(previousChar)) && (Character.isLetter(c)))
+					|| ((separatorBeforeDigit) && (Character.isDigit(c)) && (Character.isLetter(previousChar)))) {
+				buf.append('_');
+			}
+			if ((shouldReplace(c)) && (lastOneIsNotUnderscore)) {
+				buf.append('_');
+			} else if ((!Character.isWhitespace(c)) && ((isNotUnderscore) || (lastOneIsNotUnderscore))) {
+				buf.append(Character.toUpperCase(c));
+			}
+			previousChar = c;
+		}
+		if (Character.isWhitespace(previousChar)) {
+			buf.append("_");
+		}
+		return buf.toString();
+	}
 
-    private static boolean shouldReplace ( char c ) {
-        return ( c == '.' ) || ( c == '_' ) || ( c == '-' );
-    }
+	public static boolean containsLowerCase(String s) {
+		for (char c : s.toCharArray()) {
+			if (Character.isLowerCase(c)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    private static String wordsToHyphenCase ( String s ) {
-        StringBuilder buf = new StringBuilder();
-        char lastChar = 'a';
-        for (char c : s.toCharArray()) {
-            if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c))
-                    && ('-' != c) && (buf.length() > 0)
-                    && (buf.charAt(buf.length() - 1) != '-')) {
-                buf.append("-");
-            }
-            if ( '_' == c ) {
-                buf.append( '-' );
-            } else if ( '.' == c ) {
-                buf.append( '-' );
-            } else if ( ! Character.isWhitespace( c ) ) {
-                buf.append( Character.toLowerCase( c ) );
-            }
-            lastChar = c;
-        }
-        if ( Character.isWhitespace( lastChar ) ) {
-            buf.append( "-" );
-        }
-        return buf.toString();
-    }
+	private static boolean shouldReplace(char c) {
+		return (c == '.') || (c == '_') || (c == '-');
+	}
+
+	private static String wordsToHyphenCase(String s) {
+		StringBuilder buf = new StringBuilder();
+		char lastChar = 'a';
+		for (char c : s.toCharArray()) {
+			if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c)) && ('-' != c) && (buf.length() > 0)
+					&& (buf.charAt(buf.length() - 1) != '-')) {
+				buf.append("-");
+			}
+			if ('_' == c) {
+				buf.append('-');
+			} else if ('.' == c) {
+				buf.append('-');
+			} else if (!Character.isWhitespace(c)) {
+				buf.append(Character.toLowerCase(c));
+			}
+			lastChar = c;
+		}
+		if (Character.isWhitespace(lastChar)) {
+			buf.append("-");
+		}
+		return buf.toString();
+	}
 }

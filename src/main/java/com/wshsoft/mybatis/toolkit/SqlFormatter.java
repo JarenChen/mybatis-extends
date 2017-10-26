@@ -68,35 +68,31 @@ public class SqlFormatter {
 		return new FormatProcess(source).perform();
 	}
 
-    private static class FormatProcess {
+	private static class FormatProcess {
 
-        boolean beginLine = true;
-        boolean afterBeginBeforeEnd;
-        boolean afterByOrSetOrFromOrSelect;
-        boolean afterValues;
-        boolean afterOn;
-        boolean afterBetween;
-        boolean afterInsert;
-        int inFunction;
-        int parensSinceSelect;
-        private LinkedList<Integer> parenCounts = new LinkedList<>();
-        private LinkedList<Boolean> afterByOrFromOrSelects = new LinkedList<>();
+		boolean beginLine = true;
+		boolean afterBeginBeforeEnd;
+		boolean afterByOrSetOrFromOrSelect;
+		boolean afterValues;
+		boolean afterOn;
+		boolean afterBetween;
+		boolean afterInsert;
+		int inFunction;
+		int parensSinceSelect;
+		private LinkedList<Integer> parenCounts = new LinkedList<>();
+		private LinkedList<Boolean> afterByOrFromOrSelects = new LinkedList<>();
 
-        int indent = 1;
+		int indent = 1;
 
-        StringBuilder result = new StringBuilder();
-        StringTokenizer tokens;
-        String lastToken;
-        String token;
-        String lcToken;
+		StringBuilder result = new StringBuilder();
+		StringTokenizer tokens;
+		String lastToken;
+		String token;
+		String lcToken;
 
-        public FormatProcess(String sql) {
-            tokens = new StringTokenizer(
-                    sql,
-                    "()+*/-=<>'`\"[]," + WHITESPACE,
-                    true
-            );
-        }
+		public FormatProcess(String sql) {
+			tokens = new StringTokenizer(sql, "()+*/-=<>'`\"[]," + WHITESPACE, true);
+		}
 
 		public String perform() {
 
@@ -106,25 +102,24 @@ public class SqlFormatter {
 				token = tokens.nextToken();
 				lcToken = token.toLowerCase(Locale.ROOT);
 
-                if ("'".equals(token)) {
-                    String t = StringUtils.EMPTY;
-                    do {
-                        try {
-                            t = tokens.nextToken();
-                        } catch (Exception ignored) {
-                        }
-                        token += t;
-                    }
-                    // cannot handle single quotes
-                    while (!"'".equals(t) && tokens.hasMoreTokens());
-                } else if ("\"".equals(token)) {
-                    String t;
-                    do {
-                        t = tokens.nextToken();
-                        token += t;
-                    }
-                    while (!"\"".equals(t));
-                }
+				if ("'".equals(token)) {
+					String t = StringUtils.EMPTY;
+					do {
+						try {
+							t = tokens.nextToken();
+						} catch (Exception ignored) {
+						}
+						token += t;
+					}
+					// cannot handle single quotes
+					while (!"'".equals(t) && tokens.hasMoreTokens());
+				} else if ("\"".equals(token)) {
+					String t;
+					do {
+						t = tokens.nextToken();
+						token += t;
+					} while (!"\"".equals(t));
+				}
 
 				if (afterByOrSetOrFromOrSelect && ",".equals(token)) {
 					commaAfterByOrFromOrSelect();
@@ -243,25 +238,23 @@ public class SqlFormatter {
 			result.append(token);
 		}
 
-        private void endNewClause() {
-            if (!afterBeginBeforeEnd) {
-                indent--;
-                if (afterOn) {
-                    indent--;
-                    afterOn = false;
-                }
-                newline();
-            }
-            out();
-            if (!"union".equals(lcToken)) {
-                indent++;
-            }
-            newline();
-            afterBeginBeforeEnd = false;
-            afterByOrSetOrFromOrSelect = "by".equals(lcToken)
-                    || "set".equals(lcToken)
-                    || "from".equals(lcToken);
-        }
+		private void endNewClause() {
+			if (!afterBeginBeforeEnd) {
+				indent--;
+				if (afterOn) {
+					indent--;
+					afterOn = false;
+				}
+				newline();
+			}
+			out();
+			if (!"union".equals(lcToken)) {
+				indent++;
+			}
+			newline();
+			afterBeginBeforeEnd = false;
+			afterByOrSetOrFromOrSelect = "by".equals(lcToken) || "set".equals(lcToken) || "from".equals(lcToken);
+		}
 
 		private void beginNewClause() {
 			if (!afterBeginBeforeEnd) {
@@ -277,14 +270,14 @@ public class SqlFormatter {
 			afterBeginBeforeEnd = true;
 		}
 
-        private void values() {
-            indent--;
-            newline();
-            out();
-            indent++;
-            newline();
-            afterValues = true;
-        }
+		private void values() {
+			indent--;
+			newline();
+			out();
+			indent++;
+			newline();
+			afterValues = true;
+		}
 
 		private void closeParen() {
 			parensSinceSelect--;
@@ -324,28 +317,24 @@ public class SqlFormatter {
 			parensSinceSelect++;
 		}
 
-        private static boolean isFunctionName(String tok) {
-            final char begin = tok.charAt(0);
-            final boolean isIdentifier = Character.isJavaIdentifierStart(begin) || '"' == begin;
-            return isIdentifier &&
-                    !LOGICAL.contains(tok) &&
-                    !END_CLAUSES.contains(tok) &&
-                    !QUANTIFIERS.contains(tok) &&
-                    !DML.contains(tok) &&
-                    !MISC.contains(tok);
-        }
+		private static boolean isFunctionName(String tok) {
+			final char begin = tok.charAt(0);
+			final boolean isIdentifier = Character.isJavaIdentifierStart(begin) || '"' == begin;
+			return isIdentifier && !LOGICAL.contains(tok) && !END_CLAUSES.contains(tok) && !QUANTIFIERS.contains(tok)
+					&& !DML.contains(tok) && !MISC.contains(tok);
+		}
 
-        private static boolean isWhitespace(String token) {
-            return WHITESPACE.contains(token);
-        }
+		private static boolean isWhitespace(String token) {
+			return WHITESPACE.contains(token);
+		}
 
-        private void newline() {
-            result.append("\n");
-            for (int i = 0; i < indent; i++) {
-                result.append(INDENT_STRING);
-            }
-            beginLine = true;
-        }
-    }
+		private void newline() {
+			result.append("\n");
+			for (int i = 0; i < indent; i++) {
+				result.append(INDENT_STRING);
+			}
+			beginLine = true;
+		}
+	}
 
 }

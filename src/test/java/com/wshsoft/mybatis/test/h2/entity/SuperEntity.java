@@ -14,16 +14,15 @@ import com.wshsoft.mybatis.annotations.TableId;
  */
 public class SuperEntity implements Serializable {
 
-    /* 主键ID 注解，value 字段名，type 用户输入ID */
-    @TableId(value = "test_id")
-    private Long id;
+	/* 主键ID 注解，value 字段名，type 用户输入ID */
+	@TableId(value = "test_id")
+	private Long id;
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 }
-

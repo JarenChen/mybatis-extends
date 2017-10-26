@@ -26,23 +26,24 @@ import com.wshsoft.mybatis.toolkit.IdWorker;
  */
 public class IdWorkerTest {
 
-    public static void main(String[] args) throws Exception {
-        IdWorkerTest test = new IdWorkerTest();
-        test.test();
-        test.test1();
-        test.test2();
-    }
+	public static void main(String[] args) throws Exception {
+		IdWorkerTest test = new IdWorkerTest();
+		test.test();
+		test.test1();
+		test.test2();
+	}
 
-    //@Test
-    public void test() throws Exception {
-        int count = 1000;
-        System.err.println("共有" + count + "个数参与测试");
+	// @Test
+	public void test() throws Exception {
+		int count = 1000;
+		System.err.println("共有" + count + "个数参与测试");
 
 		ExecutorService executorService = Executors.newFixedThreadPool(20);
 		final List<Long> results = new ArrayList<>();
 		CompletionService<Long> cs = new ExecutorCompletionService<Long>(executorService);
 		for (int i = 1; i < count; i++) {
 			cs.submit(new Callable<Long>() {
+				@Override
 				public Long call() throws Exception {
 					Thread.sleep(RandomUtils.nextInt(1, 2000));
 					return IdWorker.getId();
@@ -82,7 +83,6 @@ public class IdWorkerTest {
 			System.out.println(IdWorker.getId());
 		}
 	}
-
 
 	@Test
 	public void test2() throws Exception {

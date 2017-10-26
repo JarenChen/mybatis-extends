@@ -18,21 +18,21 @@ import com.wshsoft.mybatis.toolkit.IdWorker;
  */
 public class TransactionalTest extends CrudTest {
 
-    /**
-     * <p>
-     * 事务测试
-     * </p>
-     */
-    @Test
-    public void test() {
-        SqlSession sqlSession = this.sqlSessionFactory().openSession();
+	/**
+	 * <p>
+	 * 事务测试
+	 * </p>
+	 */
+	@Test
+	public void test() {
+		SqlSession sqlSession = this.sqlSessionFactory().openSession();
 
-        /**
-         * 插入
-         */
-        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-        int rlt = userMapper.insert(new User(IdWorker.getId(), "1", 1, 1));
-        System.err.println("--------- insertInjector --------- " + rlt);
+		/**
+		 * 插入
+		 */
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		int rlt = userMapper.insert(new User(IdWorker.getId(), "1", 1, 1));
+		System.err.println("--------- insertInjector --------- " + rlt);
 
 		// session.commit();
 		sqlSession.rollback();

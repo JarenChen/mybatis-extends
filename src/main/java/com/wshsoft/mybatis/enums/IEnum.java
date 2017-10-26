@@ -12,9 +12,9 @@ import java.io.Serializable;
  */
 public interface IEnum {
 
-    /**
-     * 枚举数据库存储值
-     */
-    Serializable getValue();
+	/**
+	 * 枚举数据库存储值
+	 */
+	Serializable getValue();
 
 }

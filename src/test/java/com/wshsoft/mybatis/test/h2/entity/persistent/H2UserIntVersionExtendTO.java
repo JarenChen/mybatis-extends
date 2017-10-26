@@ -22,25 +22,25 @@ import lombok.experimental.Accessors;
 @TableName("h2user")
 public class H2UserIntVersionExtendTO extends BaseIntVersionEntity {
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+	@TableField(exist = false)
+	private static final long serialVersionUID = 1L;
 
-    /* 测试忽略验证 */
-    private String name;
+	/* 测试忽略验证 */
+	private String name;
 
-    private Integer age;
+	private Integer age;
 
-    /*BigDecimal 测试*/
-    private BigDecimal price;
+	/* BigDecimal 测试 */
+	private BigDecimal price;
 
-    /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
-    private Integer testType;
+	/* 测试下划线字段命名类型, 字段填充 */
+	@TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
+	private Integer testType;
 
-    private String desc;
-    
+	private String desc;
+
 	@TableField("last_updated_dt")
-    private Date lastUpdatedDt;
+	private Date lastUpdatedDt;
 
 	public Date getLastUpdatedDt() {
 		return lastUpdatedDt;

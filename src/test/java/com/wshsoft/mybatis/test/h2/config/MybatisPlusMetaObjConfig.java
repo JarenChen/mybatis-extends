@@ -17,7 +17,6 @@ import com.wshsoft.mybatis.plugins.PaginationInterceptor;
 import com.wshsoft.mybatis.plugins.PerformanceInterceptor;
 import com.wshsoft.mybatis.spring.MybatisSqlSessionFactoryBean;
 import com.wshsoft.mybatis.test.h2.H2MetaObjectHandler;
-import com.wshsoft.mybatis.test.mysql.MyMetaObjectHandler;
 
 /**
  * <p>
@@ -31,30 +30,28 @@ import com.wshsoft.mybatis.test.mysql.MyMetaObjectHandler;
 @MapperScan("com.wshsoft.mybatis.test.h2.entity.mapper")
 public class MybatisPlusMetaObjConfig {
 
-    @Bean("mybatisSqlSession")
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
-        MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
-        sqlSessionFactory.setDataSource(dataSource);
-//        sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
-        sqlSessionFactory.setTypeAliasesPackage("com.wshsoft.mybatis.test.h2.entity.persistent");
-        MybatisConfiguration configuration = new MybatisConfiguration();
-        configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
-        configuration.setJdbcTypeForNull(JdbcType.NULL);
-        sqlSessionFactory.setConfiguration(configuration);
-        PaginationInterceptor pagination = new PaginationInterceptor();
-        sqlSessionFactory.setPlugins(new Interceptor[]{
-                pagination,
-                new PerformanceInterceptor()
-        });
-        sqlSessionFactory.setGlobalConfig(globalConfiguration);
-        return sqlSessionFactory.getObject();
-    }
+	@Bean("mybatisSqlSession")
+	public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader,
+			GlobalConfiguration globalConfiguration) throws Exception {
+		MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
+		sqlSessionFactory.setDataSource(dataSource);
+		// sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
+		sqlSessionFactory.setTypeAliasesPackage("com.wshsoft.mybatis.test.h2.entity.persistent");
+		MybatisConfiguration configuration = new MybatisConfiguration();
+		configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+		configuration.setJdbcTypeForNull(JdbcType.NULL);
+		sqlSessionFactory.setConfiguration(configuration);
+		PaginationInterceptor pagination = new PaginationInterceptor();
+		sqlSessionFactory.setPlugins(new Interceptor[] { pagination, new PerformanceInterceptor() });
+		sqlSessionFactory.setGlobalConfig(globalConfiguration);
+		return sqlSessionFactory.getObject();
+	}
 
-    @Bean
-    public GlobalConfiguration globalConfiguration() {
-        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
-        globalConfiguration.setIdType(2);
-        globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
-        return globalConfiguration;
-    }
+	@Bean
+	public GlobalConfiguration globalConfiguration() {
+		GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+		globalConfiguration.setIdType(2);
+		globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
+		return globalConfiguration;
+	}
 }

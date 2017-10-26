@@ -25,25 +25,25 @@ import com.wshsoft.mybatis.toolkit.IdWorker;
  */
 public class URPTest extends CrudTest {
 
-    @Test
-    public void crossResultMapTest() {
-        // 加载配置文件
-        SqlSession session = this.sqlSessionFactory().openSession();
-        RoleMapper roleMapper = session.getMapper(RoleMapper.class);
-        Role role = new Role();
-        role.setName("K 神");
-        role.setDescription("无敌战神 K");
-        role.setSort(2);
-        roleMapper.insert(role);
-        UserMapper userMapper = session.getMapper(UserMapper.class);
-        List<Role> roles = userMapper.selectRoleList();
-        Assert.assertTrue(roles.size() >= 1);
-    }
+	@Test
+	public void crossResultMapTest() {
+		// 加载配置文件
+		SqlSession session = this.sqlSessionFactory().openSession();
+		RoleMapper roleMapper = session.getMapper(RoleMapper.class);
+		Role role = new Role();
+		role.setName("K 神");
+		role.setDescription("无敌战神 K");
+		role.setSort(2);
+		roleMapper.insert(role);
+		UserMapper userMapper = session.getMapper(UserMapper.class);
+		List<Role> roles = userMapper.selectRoleList();
+		Assert.assertTrue(roles.size() >= 1);
+	}
 
-    @Test
-    public void urpTest() {
-        // 加载配置文件
-        SqlSession session = this.sqlSessionFactory().openSession();
+	@Test
+	public void urpTest() {
+		// 加载配置文件
+		SqlSession session = this.sqlSessionFactory().openSession();
 
 		UserMapper userMapper = session.getMapper(UserMapper.class);
 		RoleMapper roleMapper = session.getMapper(RoleMapper.class);

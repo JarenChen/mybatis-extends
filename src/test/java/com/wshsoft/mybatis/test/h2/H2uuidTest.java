@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
-
 import javax.sql.DataSource;
 
 import org.junit.Assert;
@@ -18,10 +16,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.wshsoft.mybatis.plugins.Page;
-import com.wshsoft.mybatis.test.h2.entity.mapper.H2UserMapper;
 import com.wshsoft.mybatis.test.h2.entity.mapper.H2uuidMapper;
-import com.wshsoft.mybatis.test.h2.entity.persistent.H2Addr;
 import com.wshsoft.mybatis.test.h2.entity.persistent.H2uuid;
 
 /**
@@ -33,30 +28,30 @@ import com.wshsoft.mybatis.test.h2.entity.persistent.H2uuid;
  * @date 2017/4/1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
+@ContextConfiguration(locations = { "classpath:h2/spring-test-h2.xml" })
 public class H2uuidTest extends H2Test {
 
-    @Autowired
-    private H2uuidMapper uuidMapper;
+	@Autowired
+	private H2uuidMapper uuidMapper;
 
-    @BeforeClass
-    public static void initDB() throws SQLException, IOException {
-        @SuppressWarnings("resource")
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
-        DataSource ds = (DataSource) context.getBean("dataSource");
-        try (Connection conn = ds.getConnection()) {
-            Statement stmt = conn.createStatement();
-            stmt.execute(readFile("uuid.sql"));
-            stmt.execute("truncate table h2uuid");
-            conn.commit();
-        }
-    }
+	@BeforeClass
+	public static void initDB() throws SQLException, IOException {
+		@SuppressWarnings("resource")
+		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
+		DataSource ds = (DataSource) context.getBean("dataSource");
+		try (Connection conn = ds.getConnection()) {
+			Statement stmt = conn.createStatement();
+			stmt.execute(readFile("uuid.sql"));
+			stmt.execute("truncate table h2uuid");
+			conn.commit();
+		}
+	}
 
-    @Test
-    public void testUuid() {
-        H2uuid h2uuid = new H2uuid("3");
-        Assert.assertEquals(1, uuidMapper.insert(h2uuid).intValue());
-        Assert.assertTrue(h2uuid.getId().length() == 32);
-    }
+	@Test
+	public void testUuid() {
+		H2uuid h2uuid = new H2uuid("3");
+		Assert.assertEquals(1, uuidMapper.insert(h2uuid).intValue());
+		Assert.assertTrue(h2uuid.getId().length() == 32);
+	}
 
 }

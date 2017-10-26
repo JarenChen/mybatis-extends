@@ -46,40 +46,39 @@ import lombok.experimental.Accessors;
 @TableName("h2user")
 public class H2UserVersionAndLogicDeleteEntity implements Serializable {
 
-    /* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+	/* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */
+	@TableField(exist = false)
+	private static final long serialVersionUID = 1L;
 
-    /* 主键ID 注解，value 字段名，type 用户输入ID */
-    @TableId(value = "test_id")
-    private Long id;
+	/* 主键ID 注解，value 字段名，type 用户输入ID */
+	@TableId(value = "test_id")
+	private Long id;
 
-    /* 测试忽略验证 */
-    private String name;
+	/* 测试忽略验证 */
+	private String name;
 
-    private Integer age;
+	private Integer age;
 
-    /*BigDecimal 测试*/
-    private BigDecimal price;
+	/* BigDecimal 测试 */
+	private BigDecimal price;
 
-    /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
-    private Integer testType;
+	/* 测试下划线字段命名类型, 字段填充 */
+	@TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
+	private Integer testType;
 
-    private String desc;
+	private String desc;
 
-    @TableLogic
-    private Integer version;
+	@TableLogic
+	private Integer version;
 
-    @TableField(value = "test_date")
-    @Version
-    private Date testDate;
-    
-    @TableField("last_updated_dt")
-    private Date lastUpdatedDt;
-    
+	@TableField(value = "test_date")
+	@Version
+	private Date testDate;
 
-    public Long getId() {
+	@TableField("last_updated_dt")
+	private Date lastUpdatedDt;
+
+	public Long getId() {
 		return id;
 	}
 
@@ -143,7 +142,6 @@ public class H2UserVersionAndLogicDeleteEntity implements Serializable {
 		this.testDate = testDate;
 	}
 
-    
 	public Date getLastUpdatedDt() {
 		return lastUpdatedDt;
 	}
@@ -154,42 +152,42 @@ public class H2UserVersionAndLogicDeleteEntity implements Serializable {
 
 	public H2UserVersionAndLogicDeleteEntity() {
 
-    }
+	}
 
-    public H2UserVersionAndLogicDeleteEntity(String name) {
-        this.name = name;
-    }
+	public H2UserVersionAndLogicDeleteEntity(String name) {
+		this.name = name;
+	}
 
-    public H2UserVersionAndLogicDeleteEntity(Integer testType) {
-        this.testType = testType;
-    }
+	public H2UserVersionAndLogicDeleteEntity(Integer testType) {
+		this.testType = testType;
+	}
 
-    public H2UserVersionAndLogicDeleteEntity(String name, Integer age) {
-        this.name = name;
-        this.age = age;
-    }
+	public H2UserVersionAndLogicDeleteEntity(String name, Integer age) {
+		this.name = name;
+		this.age = age;
+	}
 
-    public H2UserVersionAndLogicDeleteEntity(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+	public H2UserVersionAndLogicDeleteEntity(Long id, String name) {
+		this.id = id;
+		this.name = name;
+	}
 
-    public H2UserVersionAndLogicDeleteEntity(Long id, Integer age) {
-        this.id = id;
-        this.age = age;
-    }
+	public H2UserVersionAndLogicDeleteEntity(Long id, Integer age) {
+		this.id = id;
+		this.age = age;
+	}
 
-    public H2UserVersionAndLogicDeleteEntity(Long id, String name, Integer age, Integer testType) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-        this.testType = testType;
-    }
+	public H2UserVersionAndLogicDeleteEntity(Long id, String name, Integer age, Integer testType) {
+		this.id = id;
+		this.name = name;
+		this.age = age;
+		this.testType = testType;
+	}
 
-    public H2UserVersionAndLogicDeleteEntity(String name, Integer age, Integer testType) {
-        this.name = name;
-        this.age = age;
-        this.testType = testType;
-    }
+	public H2UserVersionAndLogicDeleteEntity(String name, Integer age, Integer testType) {
+		this.name = name;
+		this.age = age;
+		this.testType = testType;
+	}
 
 }

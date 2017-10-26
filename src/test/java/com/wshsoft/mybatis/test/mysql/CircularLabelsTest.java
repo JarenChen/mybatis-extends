@@ -23,26 +23,26 @@ import com.wshsoft.mybatis.test.mysql.mapper.UserMapper;
  */
 public class CircularLabelsTest extends CrudTest {
 
-    /**
-     * 循环标签 测试
-     */
-    @org.junit.Test
-    public void test() {
-        SqlSession session = this.sqlSessionFactory().openSession();
-        UserMapper userMapper = session.getMapper(UserMapper.class);
-        Page<User> page = new Page<>(1, 6);
-        List<User> users = userMapper.forSelect(page, Arrays.asList("1", "2", "3"));
-        System.out.println(users.toString());
-        System.out.println(page);
-        User user = new User();
-        user.setId(1L);
-        User users1 = userMapper.selectOne(user);
-        System.out.println(users1);
-        TestMapper mapper = session.getMapper(TestMapper.class);
-        Test test = new Test();
-        test.setCreateTime(new Date());
-        test.setType("11111");
-        mapper.insert(test);
-        session.rollback();
-    }
+	/**
+	 * 循环标签 测试
+	 */
+	@org.junit.Test
+	public void test() {
+		SqlSession session = this.sqlSessionFactory().openSession();
+		UserMapper userMapper = session.getMapper(UserMapper.class);
+		Page<User> page = new Page<>(1, 6);
+		List<User> users = userMapper.forSelect(page, Arrays.asList("1", "2", "3"));
+		System.out.println(users.toString());
+		System.out.println(page);
+		User user = new User();
+		user.setId(1L);
+		User users1 = userMapper.selectOne(user);
+		System.out.println(users1);
+		TestMapper mapper = session.getMapper(TestMapper.class);
+		Test test = new Test();
+		test.setCreateTime(new Date());
+		test.setType("11111");
+		mapper.insert(test);
+		session.rollback();
+	}
 }

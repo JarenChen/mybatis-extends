@@ -19,7 +19,7 @@ public class LogicVersionUser implements Serializable {
 
 	@Version
 	private Short version;
-	
+
 	@TableLogic(value = "0", delval = "1")
 	private Integer isDelete;
 

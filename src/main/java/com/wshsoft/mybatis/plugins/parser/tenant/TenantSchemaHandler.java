@@ -10,7 +10,7 @@ package com.wshsoft.mybatis.plugins.parser.tenant;
  */
 public interface TenantSchemaHandler {
 
-    String getTenantSchema();
+	String getTenantSchema();
 
-    boolean doTableFilter(String tableName);
+	boolean doTableFilter(String tableName);
 }

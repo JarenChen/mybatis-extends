@@ -26,36 +26,34 @@ import lombok.experimental.Accessors;
 @KeySequence("SEQ_TEST")
 public class H2UserSequence {
 
+	public H2UserSequence() {
+	}
 
-    public H2UserSequence() {
-    }
+	public H2UserSequence(String name, Integer version) {
+		this.name = name;
+		this.version = version;
+	}
 
-    public H2UserSequence(String name, Integer version) {
-        this.name = name;
-        this.version = version;
-    }
+	/**
+	 * 主键ID
+	 */
+	@TableId(value = "TEST_ID", type = IdType.INPUT)
+	private Long id;
 
-    /**
-     * 主键ID
-     */
-    @TableId(value = "TEST_ID", type = IdType.INPUT)
-    private Long id;
+	private String name;
 
-    private String name;
+	private Integer age;
 
-    private Integer age;
+	/* BigDecimal 测试 */
+	private BigDecimal price;
 
-    /*BigDecimal 测试*/
-    private BigDecimal price;
+	/* 测试下划线字段命名类型, 字段填充 */
+	@TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
+	private Integer testType;
 
-    /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
-    private Integer testType;
+	private String desc;
 
-    private String desc;
-
-    @Version
-    private Integer version;
-
+	@Version
+	private Integer version;
 
 }

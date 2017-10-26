@@ -44,7 +44,7 @@ public class TableFieldInfo {
 	/**
 	 * 属性类型
 	 */
-    private Class<?> propertyType;
+	private Class<?> propertyType;
 
 	/**
 	 * 字段策略【 默认，自判断 null 】
@@ -61,52 +61,49 @@ public class TableFieldInfo {
 	 */
 	private String logicNotDeleteValue;
 
-    /**
-     * 字段忽略策略
-     */
-    private FieldFill fieldFill = FieldFill.DEFAULT;
+	/**
+	 * 字段忽略策略
+	 */
+	private FieldFill fieldFill = FieldFill.DEFAULT;
 
-    /**
-     * <p>
-     * 存在 TableField 注解构造函数
-     * </p>
-     */
-    public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, String column,
-                          String el, Field field, TableField tableField) {
-        this.property = field.getName();
-        this.propertyType = field.getType();
-        /*
-         * 1、注解 value 不存在，开启字段下划线申明<br>
-         * 2、没有开启下划线申明，但是column与property不等的情况<br>
-         * 设置 related 为 true
-         */
-        if (StringUtils.isEmpty(tableField.value())
-                && globalConfig.isDbColumnUnderline()) {
-             /* 开启字段下划线申明 */
-            this.related = true;
-            this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
-        } else {
-            this.setColumn(globalConfig, column);
-            if (!column.equals(this.property)) {
-                this.related = true;
-            }
-        }
-        this.el = el;
-        /*
-         * 优先使用单个字段注解，否则使用全局配置<br>
-         * 自定义字段验证策略 fixed-239
+	/**
+	 * <p>
+	 * 存在 TableField 注解构造函数
+	 * </p>
+	 */
+	public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, String column, String el, Field field,
+			TableField tableField) {
+		this.property = field.getName();
+		this.propertyType = field.getType();
+		/*
+		 * 1、注解 value 不存在，开启字段下划线申明<br> 2、没有开启下划线申明，但是column与property不等的情况<br>
+		 * 设置 related 为 true
 		 */
-        if (FieldStrategy.NOT_NULL != tableField.strategy()) {
-            this.fieldStrategy = tableField.strategy();
-        } else {
-            this.fieldStrategy = globalConfig.getFieldStrategy();
-        }
-        tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
-        /*
-         * 保存当前字段的填充策略
+		if (StringUtils.isEmpty(tableField.value()) && globalConfig.isDbColumnUnderline()) {
+			/* 开启字段下划线申明 */
+			this.related = true;
+			this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
+		} else {
+			this.setColumn(globalConfig, column);
+			if (!column.equals(this.property)) {
+				this.related = true;
+			}
+		}
+		this.el = el;
+		/*
+		 * 优先使用单个字段注解，否则使用全局配置<br> 自定义字段验证策略 fixed-239
 		 */
-        this.fieldFill = tableField.fill();
-    }
+		if (FieldStrategy.NOT_NULL != tableField.strategy()) {
+			this.fieldStrategy = tableField.strategy();
+		} else {
+			this.fieldStrategy = globalConfig.getFieldStrategy();
+		}
+		tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
+		/*
+		 * 保存当前字段的填充策略
+		 */
+		this.fieldFill = tableField.fill();
+	}
 
 	public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field) {
 		if (globalConfig.isDbColumnUnderline()) {
@@ -119,7 +116,7 @@ public class TableFieldInfo {
 		this.property = field.getName();
 		this.el = field.getName();
 		this.fieldStrategy = globalConfig.getFieldStrategy();
-        this.propertyType = field.getType();
+		this.propertyType = field.getType();
 		tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
 	}
 
@@ -201,13 +198,13 @@ public class TableFieldInfo {
 		this.fieldStrategy = fieldStrategy;
 	}
 
-    public Class<?> getPropertyType() {
-        return propertyType;
-    }
+	public Class<?> getPropertyType() {
+		return propertyType;
+	}
 
-    public void setPropertyType(Class<?> propertyType) {
-        this.propertyType = propertyType;
-    }
+	public void setPropertyType(Class<?> propertyType) {
+		this.propertyType = propertyType;
+	}
 
 	/**
 	 * 是否开启逻辑删除
@@ -232,11 +229,11 @@ public class TableFieldInfo {
 		this.logicNotDeleteValue = logicNotDeleteValue;
 	}
 
-    public FieldFill getFieldFill() {
-        return fieldFill;
-    }
+	public FieldFill getFieldFill() {
+		return fieldFill;
+	}
 
-    public void setFieldFill(FieldFill fieldFill) {
-        this.fieldFill = fieldFill;
-    }
+	public void setFieldFill(FieldFill fieldFill) {
+		this.fieldFill = fieldFill;
+	}
 }

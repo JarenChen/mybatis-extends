@@ -24,32 +24,32 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("h2user")
 public class H2User extends SuperEntity {
-    /**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/* 测试忽略验证 */
-    private String name;
+	private String name;
 
-    private Integer age;
+	private Integer age;
 
-    /*BigDecimal 测试*/
-    private BigDecimal price;
+	/* BigDecimal 测试 */
+	private BigDecimal price;
 
-    /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
-    private Integer testType;
+	/* 测试下划线字段命名类型, 字段填充 */
+	@TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
+	private Integer testType;
 
-    private String desc;
+	private String desc;
 
-    @TableField("last_updated_dt")
-    private Date lastUpdatedDt;
+	@TableField("last_updated_dt")
+	private Date lastUpdatedDt;
 
-    @Version
-    private Integer version;
-    
-    public Date getLastUpdatedDt() {
+	@Version
+	private Integer version;
+
+	public Date getLastUpdatedDt() {
 		return lastUpdatedDt;
 	}
 
@@ -107,42 +107,42 @@ public class H2User extends SuperEntity {
 
 	public H2User() {
 
-    }
+	}
 
-    public H2User(String name) {
-        this.name = name;
-    }
+	public H2User(String name) {
+		this.name = name;
+	}
 
-    public H2User(Integer testType) {
-        this.testType = testType;
-    }
+	public H2User(Integer testType) {
+		this.testType = testType;
+	}
 
-    public H2User(String name, Integer age) {
-        this.name = name;
-        this.age = age;
-    }
+	public H2User(String name, Integer age) {
+		this.name = name;
+		this.age = age;
+	}
 
-    public H2User(Long id, String name) {
-        this.setId(id);
-        this.name = name;
-    }
+	public H2User(Long id, String name) {
+		this.setId(id);
+		this.name = name;
+	}
 
-    public H2User(Long id, Integer age) {
-        this.setId(id);
-        this.age = age;
-    }
+	public H2User(Long id, Integer age) {
+		this.setId(id);
+		this.age = age;
+	}
 
-    public H2User(Long id, String name, Integer age, Integer testType) {
-        this.setId(id);
-        this.name = name;
-        this.age = age;
-        this.testType = testType;
-    }
+	public H2User(Long id, String name, Integer age, Integer testType) {
+		this.setId(id);
+		this.name = name;
+		this.age = age;
+		this.testType = testType;
+	}
 
-    public H2User(String name, Integer age, Integer testType) {
-        this.name = name;
-        this.age = age;
-        this.testType = testType;
-    }
+	public H2User(String name, Integer age, Integer testType) {
+		this.name = name;
+		this.age = age;
+		this.testType = testType;
+	}
 
 }

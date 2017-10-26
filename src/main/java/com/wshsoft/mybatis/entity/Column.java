@@ -43,17 +43,18 @@ public class Column implements Serializable {
 		return this;
 	}
 
-    public String getAs() {
-        if (StringUtils.isEmpty(getColumn()) || StringUtils.isEmpty(as)) {
-            return StringUtils.EMPTY;
-        }
-        String quote = null;
-        if (isEscape() && SqlRunner.FACTORY != null) {
-            GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(SqlRunner.FACTORY.getConfiguration());
-            quote = globalConfig.getIdentifierQuote() == null ? globalConfig.getDbType().getQuote() : globalConfig.getIdentifierQuote();
-        }
-        return AS + (StringUtils.isNotEmpty(quote) ? String.format(quote, as) : as);
-    }
+	public String getAs() {
+		if (StringUtils.isEmpty(getColumn()) || StringUtils.isEmpty(as)) {
+			return StringUtils.EMPTY;
+		}
+		String quote = null;
+		if (isEscape() && SqlRunner.FACTORY != null) {
+			GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(SqlRunner.FACTORY.getConfiguration());
+			quote = globalConfig.getIdentifierQuote() == null ? globalConfig.getDbType().getQuote()
+					: globalConfig.getIdentifierQuote();
+		}
+		return AS + (StringUtils.isNotEmpty(quote) ? String.format(quote, as) : as);
+	}
 
 	public Column as(String as) {
 		this.as = as;

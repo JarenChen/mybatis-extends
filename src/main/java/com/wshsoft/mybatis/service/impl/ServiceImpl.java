@@ -57,74 +57,75 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return SqlHelper.retBool(result);
 	}
 
-    @SuppressWarnings("unchecked")
-    protected Class<T> currentModelClass() {
-        return ReflectionKit.getSuperClassGenricType(getClass(), 1);
-    }
+	@SuppressWarnings("unchecked")
+	protected Class<T> currentModelClass() {
+		return ReflectionKit.getSuperClassGenricType(getClass(), 1);
+	}
 
-    /**
-     * <p>
-     * 批量操作 SqlSession
-     * </p>
-     */
-    protected SqlSession sqlSessionBatch() {
-        return SqlHelper.sqlSessionBatch(currentModelClass());
-    }
+	/**
+	 * <p>
+	 * 批量操作 SqlSession
+	 * </p>
+	 */
+	protected SqlSession sqlSessionBatch() {
+		return SqlHelper.sqlSessionBatch(currentModelClass());
+	}
 
-    /**
-     * 获取SqlStatement
-     *
-     * @param sqlMethod
-     * @return
-     */
-    protected String sqlStatement(SqlMethod sqlMethod) {
-        return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
-    }
+	/**
+	 * 获取SqlStatement
+	 *
+	 * @param sqlMethod
+	 * @return
+	 */
+	protected String sqlStatement(SqlMethod sqlMethod) {
+		return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
+	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	@Transactional
 	public boolean insert(T entity) {
 		return retBool(baseMapper.insert(entity));
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	@Transactional
 	public boolean insertAllColumn(T entity) {
 		return retBool(baseMapper.insertAllColumn(entity));
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	@Transactional
 	public boolean insertBatch(List<T> entityList) {
 		return insertBatch(entityList, 30);
 	}
 
-    /**
-     * 批量插入
-     *
-     * @param entityList
-     * @param batchSize
-     * @return
-     */
-    @Transactional
-    public boolean insertBatch(List<T> entityList, int batchSize) {
-        if (CollectionUtils.isEmpty(entityList)) {
-            throw new IllegalArgumentException("Error: entityList must not be empty");
-        }
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            int size = entityList.size();
-            String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
-            for (int i = 0; i < size; i++) {
-                batchSqlSession.insert(sqlStatement, entityList.get(i));
-                if (i >= 1 && i % batchSize == 0) {
-                    batchSqlSession.flushStatements();
-                }
-            }
-            batchSqlSession.flushStatements();
-        } catch (Throwable e) {
-            throw new MybatisExtendsException("Error: Cannot execute insertBatch Method. Cause", e);
-        }
-        return true;
+	/**
+	 * 批量插入
+	 *
+	 * @param entityList
+	 * @param batchSize
+	 * @return
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public boolean insertBatch(List<T> entityList, int batchSize) {
+		if (CollectionUtils.isEmpty(entityList)) {
+			throw new IllegalArgumentException("Error: entityList must not be empty");
+		}
+		try (SqlSession batchSqlSession = sqlSessionBatch()) {
+			int size = entityList.size();
+			String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
+			for (int i = 0; i < size; i++) {
+				batchSqlSession.insert(sqlStatement, entityList.get(i));
+				if (i >= 1 && i % batchSize == 0) {
+					batchSqlSession.flushStatements();
+				}
+			}
+			batchSqlSession.flushStatements();
+		} catch (Throwable e) {
+			throw new MybatisExtendsException("Error: Cannot execute insertBatch Method. Cause", e);
+		}
+		return true;
 
 	}
 
@@ -137,8 +138,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 *            实体对象
 	 * @return boolean
 	 */
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	@Transactional
 	public boolean insertOrUpdate(T entity) {
 		if (null != entity) {
 			Class<?> cls = entity.getClass();
@@ -160,87 +161,95 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return false;
 	}
 
-    @Transactional
-    public boolean insertOrUpdateAllColumn(T entity) {
-        if (null != entity) {
-            Class<?> cls = entity.getClass();
-            TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
-            if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
-                Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
-                if (StringUtils.checkValNull(idVal)) {
-                    return insertAllColumn(entity);
-                } else {
-                    /*
-                     * 更新成功直接返回，失败执行插入逻辑
-					 */
-                    return updateAllColumnById(entity) || insertAllColumn(entity);
-                }
-            } else {
-                throw new MybatisExtendsException("Error:  Can not execute. Could not find @TableId.");
-            }
-        }
-        return false;
-    }
-
-    @Transactional
-    public boolean insertOrUpdateBatch(List<T> entityList) {
-        return insertOrUpdateBatch(entityList, 30);
-    }
-
-    @Transactional
-    public boolean insertOrUpdateBatch(List<T> entityList, int batchSize) {
-        return insertOrUpdateBatch(entityList, batchSize, true);
-    }
-
-    @Transactional
-    public boolean insertOrUpdateAllColumnBatch(List<T> entityList) {
-        return insertOrUpdateBatch(entityList, 30, false);
-    }
-
-    @Transactional
-    public boolean insertOrUpdateAllColumnBatch(List<T> entityList, int batchSize) {
-        return insertOrUpdateBatch(entityList, batchSize, false);
-    }
-
-    /**
-     * 批量插入修改
-     *
-     * @param entityList 实体对象列表
-     * @param batchSize  批量刷新个数
-     * @param selective  是否滤掉空字段
-     * @return boolean
-     */
-    private boolean insertOrUpdateBatch(List<T> entityList, int batchSize, boolean selective) {
-        if (CollectionUtils.isEmpty(entityList)) {
-            throw new IllegalArgumentException("Error: entityList must not be empty");
-        }
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            int size = entityList.size();
-            for (int i = 0; i < size; i++) {
-                if (selective) {
-                    insertOrUpdate(entityList.get(i));
-                } else {
-                    insertOrUpdateAllColumn(entityList.get(i));
-                }
-                if (i >= 1 && i % batchSize == 0) {
-                    batchSqlSession.flushStatements();
-                }
-            }
-            batchSqlSession.flushStatements();
-        } catch (Throwable e) {
-            throw new MybatisExtendsException("Error: Cannot execute insertBatch Method. Cause", e);
-        }
-        return true;
-    }
-
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	@Transactional
+	public boolean insertOrUpdateAllColumn(T entity) {
+		if (null != entity) {
+			Class<?> cls = entity.getClass();
+			TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
+			if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
+				Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
+				if (StringUtils.checkValNull(idVal)) {
+					return insertAllColumn(entity);
+				} else {
+					/*
+					 * 更新成功直接返回，失败执行插入逻辑
+					 */
+					return updateAllColumnById(entity) || insertAllColumn(entity);
+				}
+			} else {
+				throw new MybatisExtendsException("Error:  Can not execute. Could not find @TableId.");
+			}
+		}
+		return false;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public boolean insertOrUpdateBatch(List<T> entityList) {
+		return insertOrUpdateBatch(entityList, 30);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public boolean insertOrUpdateBatch(List<T> entityList, int batchSize) {
+		return insertOrUpdateBatch(entityList, batchSize, true);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public boolean insertOrUpdateAllColumnBatch(List<T> entityList) {
+		return insertOrUpdateBatch(entityList, 30, false);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public boolean insertOrUpdateAllColumnBatch(List<T> entityList, int batchSize) {
+		return insertOrUpdateBatch(entityList, batchSize, false);
+	}
+
+	/**
+	 * 批量插入修改
+	 *
+	 * @param entityList
+	 *            实体对象列表
+	 * @param batchSize
+	 *            批量刷新个数
+	 * @param selective
+	 *            是否滤掉空字段
+	 * @return boolean
+	 */
+	private boolean insertOrUpdateBatch(List<T> entityList, int batchSize, boolean selective) {
+		if (CollectionUtils.isEmpty(entityList)) {
+			throw new IllegalArgumentException("Error: entityList must not be empty");
+		}
+		try (SqlSession batchSqlSession = sqlSessionBatch()) {
+			int size = entityList.size();
+			for (int i = 0; i < size; i++) {
+				if (selective) {
+					insertOrUpdate(entityList.get(i));
+				} else {
+					insertOrUpdateAllColumn(entityList.get(i));
+				}
+				if (i >= 1 && i % batchSize == 0) {
+					batchSqlSession.flushStatements();
+				}
+			}
+			batchSqlSession.flushStatements();
+		} catch (Throwable e) {
+			throw new MybatisExtendsException("Error: Cannot execute insertBatch Method. Cause", e);
+		}
+		return true;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
 	public boolean deleteById(Serializable id) {
 		return retBool(baseMapper.deleteById(id));
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	@Transactional
 	public boolean deleteByMap(Map<String, Object> columnMap) {
 		if (MapUtils.isEmpty(columnMap)) {
 			throw new MybatisExtendsException("deleteByMap columnMap is empty.");
@@ -248,87 +257,93 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return retBool(baseMapper.deleteByMap(columnMap));
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	@Transactional
 	public boolean delete(Wrapper<T> wrapper) {
 		return retBool(baseMapper.delete(wrapper));
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	@Transactional
 	public boolean deleteBatchIds(List<? extends Serializable> idList) {
 		return retBool(baseMapper.deleteBatchIds(idList));
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	@Transactional
 	public boolean updateById(T entity) {
 		return retBool(baseMapper.updateById(entity));
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	@Transactional
 	public boolean updateAllColumnById(T entity) {
 		return retBool(baseMapper.updateAllColumnById(entity));
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	@Transactional
 	public boolean update(T entity, Wrapper<T> wrapper) {
 		return retBool(baseMapper.update(entity, wrapper));
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
-	@Transactional
 	public boolean updateBatchById(List<T> entityList) {
 		return updateBatchById(entityList, 30);
 	}
 
-    @Transactional
-    public boolean updateBatchById(List<T> entityList, int batchSize) {
-        return updateBatchById(entityList, batchSize, true);
-    }
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public boolean updateBatchById(List<T> entityList, int batchSize) {
+		return updateBatchById(entityList, batchSize, true);
+	}
 
-    @Transactional
-    public boolean updateAllColumnBatchById(List<T> entityList) {
-        return updateAllColumnBatchById(entityList, 30);
-    }
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public boolean updateAllColumnBatchById(List<T> entityList) {
+		return updateAllColumnBatchById(entityList, 30);
+	}
 
-    @Transactional
-    public boolean updateAllColumnBatchById(List<T> entityList, int batchSize) {
-        return updateBatchById(entityList, batchSize, false);
-    }
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public boolean updateAllColumnBatchById(List<T> entityList, int batchSize) {
+		return updateBatchById(entityList, batchSize, false);
+	}
 
-    /**
-     * 根据主键ID进行批量修改
-     *
-     * @param entityList 实体对象列表
-     * @param batchSize  批量刷新个数
-     * @param selective  是否滤掉空字段
-     * @return boolean
-     */
-    private boolean updateBatchById(List<T> entityList, int batchSize, boolean selective) {
-        if (CollectionUtils.isEmpty(entityList)) {
-            throw new IllegalArgumentException("Error: entityList must not be empty");
-        }
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            int size = entityList.size();
-            SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
-            String sqlStatement = sqlStatement(sqlMethod);
-            for (int i = 0; i < size; i++) {
-                MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-                param.put("et",entityList.get(i));
-                batchSqlSession.update(sqlStatement, param);
-                if (i >= 1 && i % batchSize == 0) {
-                    batchSqlSession.flushStatements();
-                }
-            }
-            batchSqlSession.flushStatements();
-        } catch (Throwable e) {
-            throw new MybatisExtendsException("Error: Cannot execute insertBatch Method. Cause", e);
-        }
-        return true;
-    }
+	/**
+	 * 根据主键ID进行批量修改
+	 *
+	 * @param entityList
+	 *            实体对象列表
+	 * @param batchSize
+	 *            批量刷新个数
+	 * @param selective
+	 *            是否滤掉空字段
+	 * @return boolean
+	 */
+	private boolean updateBatchById(List<T> entityList, int batchSize, boolean selective) {
+		if (CollectionUtils.isEmpty(entityList)) {
+			throw new IllegalArgumentException("Error: entityList must not be empty");
+		}
+		try (SqlSession batchSqlSession = sqlSessionBatch()) {
+			int size = entityList.size();
+			SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
+			String sqlStatement = sqlStatement(sqlMethod);
+			for (int i = 0; i < size; i++) {
+				MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+				param.put("et", entityList.get(i));
+				batchSqlSession.update(sqlStatement, param);
+				if (i >= 1 && i % batchSize == 0) {
+					batchSqlSession.flushStatements();
+				}
+			}
+			batchSqlSession.flushStatements();
+		} catch (Throwable e) {
+			throw new MybatisExtendsException("Error: Cannot execute insertBatch Method. Cause", e);
+		}
+		return true;
+	}
 
 	@Override
 	public T selectById(Serializable id) {
@@ -371,7 +386,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Page<T> selectPage(Page<T> page) {
 		return selectPage(page, Condition.EMPTY);
 	}
@@ -387,7 +401,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper) {
 		SqlHelper.fillWrapper(page, wrapper);
 		page.setRecords(baseMapper.selectMapsPage(page, wrapper));

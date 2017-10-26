@@ -24,39 +24,38 @@ import com.wshsoft.mybatis.test.oracle.mapper.TestSequserMapper;
  * @date 2017/6/14
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {OracleDBConfig.class, OracleMybatisExtendsConfig.class})
+@ContextConfiguration(classes = { OracleDBConfig.class, OracleMybatisExtendsConfig.class })
 public class OracleUserTest {
 
-    @Autowired
-    TestSequserMapper sequserMapper;
+	@Autowired
+	TestSequserMapper sequserMapper;
 
-    @Test
-    public void testSelectListMp() {
-        List<TestSequser> list = sequserMapper.selectList(new EntityWrapper<TestSequser>());
-        for (TestSequser u : list) {
-            System.out.println(u);
-        }
-    }
+	@Test
+	public void testSelectListMp() {
+		List<TestSequser> list = sequserMapper.selectList(new EntityWrapper<TestSequser>());
+		for (TestSequser u : list) {
+			System.out.println(u);
+		}
+	}
 
-    @Test
-    public void testSelectListNative() {
-        List<TestSequser> list = sequserMapper.getList();
-        for (TestSequser u : list) {
-            System.out.println(u);
-        }
-    }
+	@Test
+	public void testSelectListNative() {
+		List<TestSequser> list = sequserMapper.getList();
+		for (TestSequser u : list) {
+			System.out.println(u);
+		}
+	}
 
-    @Test
-    public void testInsert(){
-        TestSequser user = new TestSequser();
-        user.setName("seqtest0627");
-        user.setAge(12);
-        user.setTestType(1);
-        sequserMapper.insert(user);
-        Long id = user.getId();
-        Assert.assertNotNull(id);
+	@Test
+	public void testInsert() {
+		TestSequser user = new TestSequser();
+		user.setName("seqtest0627");
+		user.setAge(12);
+		user.setTestType(1);
+		sequserMapper.insert(user);
+		Long id = user.getId();
+		Assert.assertNotNull(id);
 
-
-    }
+	}
 
 }

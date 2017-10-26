@@ -50,7 +50,7 @@ public class OptimisticLockerInterceptorTest {
 	public void setUp() throws Exception {
 		SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession();
 		Connection conn = session.getConnection();
-        Reader reader = Resources.getResourceAsReader("plugins/optimisticLocker.sql");
+		Reader reader = Resources.getResourceAsReader("plugins/optimisticLocker.sql");
 		ScriptRunner runner = new ScriptRunner(conn);
 		runner.setLogWriter(null);
 		runner.runScript(reader);
@@ -109,7 +109,7 @@ public class OptimisticLockerInterceptorTest {
 		dateVersionUserMapper.insert(versionUser);
 		// 更新数据
 		DateVersionUser q = dateVersionUserMapper.selectById(15);
-		q.setName("小锅盖");
+		q.setName("小馒头");
 		dateVersionUserMapper.updateById(q);
 		Assert.assertTrue(dateVersionUserMapper.selectById(15L).getVersion().after(originVersion));
 	}
@@ -125,7 +125,7 @@ public class OptimisticLockerInterceptorTest {
 		timestampVersionUserMapper.insert(versionUser);
 		// 更新数据
 		TimestampVersionUser q = timestampVersionUserMapper.selectById(15);
-		q.setName("小锅盖");
+		q.setName("小馒头");
 		timestampVersionUserMapper.updateById(q);
 		Assert.assertTrue(timestampVersionUserMapper.selectById(15L).getVersion().after(originVersion));
 	}
@@ -135,6 +135,7 @@ public class OptimisticLockerInterceptorTest {
 		final Random random = new Random();
 		for (int i = 50; i < 150; i++) {
 			new Thread(new Runnable() {
+				@Override
 				public void run() {
 					IntVersionUser intVersionUser = new IntVersionUser();
 					long id = random.nextLong();

@@ -10,5 +10,5 @@ package com.wshsoft.mybatis.test.h2.entity;
  */
 public interface SuperMapper<T> extends com.wshsoft.mybatis.mapper.BaseMapper<T> {
 
-    // 这里可以写 mapper 层公共方法、 注意！！ 不要让在 mapper 目录让 mp 扫描到!!
+	// 这里可以写 mapper 层公共方法、 注意！！ 不要让在 mapper 目录让 mp 扫描到!!
 }

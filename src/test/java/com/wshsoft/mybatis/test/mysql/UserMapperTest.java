@@ -33,36 +33,36 @@ import com.wshsoft.mybatis.toolkit.IdWorker;
  */
 public class UserMapperTest extends CrudTest {
 
-    @Override
-    public GlobalConfiguration globalConfiguration() {
-        GlobalConfiguration gc = super.globalConfiguration();
-        /**
-         * 设置，自定义 元对象填充器，实现公共字段自动写入
-         */
-        gc.setMetaObjectHandler(new MyMetaObjectHandler());
-        // gc.setCapitalMode(true);
-        gc.setDbColumnUnderline(true);
-        return gc;
-    }
+	@Override
+	public GlobalConfiguration globalConfiguration() {
+		GlobalConfiguration gc = super.globalConfiguration();
+		/**
+		 * 设置，自定义 元对象填充器，实现公共字段自动写入
+		 */
+		gc.setMetaObjectHandler(new MyMetaObjectHandler());
+		// gc.setCapitalMode(true);
+		gc.setDbColumnUnderline(true);
+		return gc;
+	}
 
-    /**
-     * RUN 测试
-     * <p>
-     * <p>
-     * MybatisPlus 加载 SQL 顺序：
-     * </p>
-     * 1、加载XML中的SQL<br>
-     * 2、加载sqlProvider中的SQL<br>
-     * 3、xmlSql 与 sqlProvider不能包含相同的SQL<br>
-     * <br>
-     * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql <br>
-     */
-    @Test
-    public void crudTest() {
-        SqlSession session = this.sqlSessionFactory().openSession();
-        UserMapper userMapper = session.getMapper(UserMapper.class);
-        System.err.println(" debug run 查询执行 user 表数据变化！ ");
-        userMapper.deleteAll();
+	/**
+	 * RUN 测试
+	 * <p>
+	 * <p>
+	 * MybatisPlus 加载 SQL 顺序：
+	 * </p>
+	 * 1、加载XML中的SQL<br>
+	 * 2、加载sqlProvider中的SQL<br>
+	 * 3、xmlSql 与 sqlProvider不能包含相同的SQL<br>
+	 * <br>
+	 * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql <br>
+	 */
+	@Test
+	public void crudTest() {
+		SqlSession session = this.sqlSessionFactory().openSession();
+		UserMapper userMapper = session.getMapper(UserMapper.class);
+		System.err.println(" debug run 查询执行 user 表数据变化！ ");
+		userMapper.deleteAll();
 
 		/**
 		 * sjy 测试@TableField的el属性
@@ -132,13 +132,13 @@ public class UserMapperTest extends CrudTest {
 		ul.add(new User(20L, "deleteByMap", 7, 0));
 
 		/* 使用 ID_WORKER 自动生成 ID */
-        ul.add(new User("8", 8, 1));
-        ul.add(new User("9", 9, 1));
-        for (User u : ul) {
-            rlt = userMapper.insert(u);
-        }
-        System.err.println("\n--------------insertBatch----------------" + rlt + "\n\n");
-        System.err.println("\n 自定义填充 testType=3 填充成功！" + userMapper.selectById(18L).toString());
+		ul.add(new User("8", 8, 1));
+		ul.add(new User("9", 9, 1));
+		for (User u : ul) {
+			rlt = userMapper.insert(u);
+		}
+		System.err.println("\n--------------insertBatch----------------" + rlt + "\n\n");
+		System.err.println("\n 自定义填充 testType=3 填充成功！" + userMapper.selectById(18L).toString());
 
 		/**
 		 * 提交，往下操作在一个事物中！！！
@@ -304,14 +304,14 @@ public class UserMapperTest extends CrudTest {
 		}
 	}
 
-    /*
-     * 慢点打印
-     */
-    private static void sleep() {
-        try {
-            Thread.sleep(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+	/*
+	 * 慢点打印
+	 */
+	private static void sleep() {
+		try {
+			Thread.sleep(1);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 }

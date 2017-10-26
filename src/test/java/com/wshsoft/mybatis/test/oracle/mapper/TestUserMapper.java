@@ -8,5 +8,4 @@ import com.wshsoft.mybatis.test.oracle.entity.TestUser;
  */
 public interface TestUserMapper extends BaseMapper<TestUser> {
 
-
 }

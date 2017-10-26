@@ -20,11 +20,11 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public abstract class BaseIntVersionEntity implements Serializable {
 
-    /* 主键ID 注解，value 字段名，type 用户输入ID */
-    @TableId(value = "test_id")
-    private Long id;
+	/* 主键ID 注解，value 字段名，type 用户输入ID */
+	@TableId(value = "test_id")
+	private Long id;
 
-    public Long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -41,5 +41,5 @@ public abstract class BaseIntVersionEntity implements Serializable {
 	}
 
 	@Version
-    private Integer version;
+	private Integer version;
 }

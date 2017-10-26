@@ -32,8 +32,8 @@ public abstract class Model<T extends Model> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-     * <p>
-     * 插入（字段选择插入）
+	 * <p>
+	 * 插入（字段选择插入）
 	 * </p>
 	 */
 	@Transactional
@@ -143,10 +143,10 @@ public abstract class Model<T extends Model> implements Serializable {
 			throw new MybatisExtendsException("updateById primaryKey is null.");
 		}
 		// updateById
-        Map<String, Object> map = new HashMap<>();
-        map.put("et", this);
-        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
-    }
+		Map<String, Object> map = new HashMap<>();
+		map.put("et", this);
+		return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
+	}
 
 	/**
 	 * <p>
@@ -158,10 +158,10 @@ public abstract class Model<T extends Model> implements Serializable {
 		if (StringUtils.checkValNull(pkVal())) {
 			throw new MybatisExtendsException("updateAllColumnById primaryKey is null.");
 		}
-        // updateAllColumnById
-        Map<String, Object> map = new HashMap<>();
-        map.put("et", this);
-        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_ALL_COLUMN_BY_ID), map));
+		// updateAllColumnById
+		Map<String, Object> map = new HashMap<>();
+		map.put("et", this);
+		return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_ALL_COLUMN_BY_ID), map));
 	}
 
 	/**

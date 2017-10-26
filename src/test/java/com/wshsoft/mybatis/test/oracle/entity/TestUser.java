@@ -21,27 +21,27 @@ public class TestUser implements Serializable {
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键ID
-     */
-    @TableId(value = "TEST_ID", type = IdType.UUID)
-    private String testId;
+	/**
+	 * 主键ID
+	 */
+	@TableId(value = "TEST_ID", type = IdType.UUID)
+	private String testId;
 
-    /**
-     * 名称
-     */
-    private String name;
+	/**
+	 * 名称
+	 */
+	private String name;
 
-    /**
-     * 年龄
-     */
-    private Integer age;
+	/**
+	 * 年龄
+	 */
+	private Integer age;
 
-    /**
-     * 测试下划线字段命名类型
-     */
-    @TableField(value = "TEST_TYPE")
-    private Integer testType;
+	/**
+	 * 测试下划线字段命名类型
+	 */
+	@TableField(value = "TEST_TYPE")
+	private Integer testType;
 
 	public TestUser(String testId, String name, Integer age, Integer testType) {
 		this.testId = testId;

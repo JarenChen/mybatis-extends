@@ -21,23 +21,23 @@ import com.wshsoft.mybatis.toolkit.TableInfoHelper;
  */
 public class ActiveRecordTest extends CrudTest {
 
-    @org.junit.Test
-    public void test() {
-        TableInfoHelper.initSqlSessionFactory(this.sqlSessionFactory());
-        // 保存一条记录
-        Test t1 = new Test();
-        t1.setType("test10");
-        boolean rlt = t1.insert();
-        print(" ar save=" + rlt + ", id=" + t1.getId());
+	@org.junit.Test
+	public void test() {
+		TableInfoHelper.initSqlSessionFactory(this.sqlSessionFactory());
+		// 保存一条记录
+		Test t1 = new Test();
+		t1.setType("test10");
+		boolean rlt = t1.insert();
+		print(" ar save=" + rlt + ", id=" + t1.getId());
 
-        // 根据ID更新
-        t1.setType("t1001");
-        rlt = t1.updateAllColumnById();
-        print(" ar updateAllColumnById:" + rlt);
+		// 根据ID更新
+		t1.setType("t1001");
+		rlt = t1.updateAllColumnById();
+		print(" ar updateAllColumnById:" + rlt);
 
-        t1.setType("t1023");
-        rlt = t1.updateById();
-        print(" ar updateById:" + rlt);
+		t1.setType("t1023");
+		rlt = t1.updateById();
+		print(" ar updateById:" + rlt);
 
 		// 更新 SQL
 		Test t11 = new Test();
