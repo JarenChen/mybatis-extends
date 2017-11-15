@@ -57,6 +57,8 @@ public class StringEscape {
 			case '\032': /* This gives problems on Win32 */
 				needsHexEscape = true;
 				break;
+                default:
+                    break;
 			}
 
 			if (needsHexEscape) {

@@ -194,10 +194,10 @@ public class StrategyConfig {
 		return tablePrefix;
 	}
 
-	public StrategyConfig setTablePrefix(String[] tablePrefix) {
-		this.tablePrefix = tablePrefix;
-		return this;
-	}
+    public StrategyConfig setTablePrefix(String... tablePrefix) {
+        this.tablePrefix = tablePrefix;
+        return this;
+    }
 
 	public String getSuperEntityClass() {
 		return superEntityClass;
@@ -223,10 +223,10 @@ public class StrategyConfig {
 		return superEntityColumns;
 	}
 
-	public StrategyConfig setSuperEntityColumns(String[] superEntityColumns) {
-		this.superEntityColumns = superEntityColumns;
-		return this;
-	}
+    public StrategyConfig setSuperEntityColumns(String... superEntityColumns) {
+        this.superEntityColumns = superEntityColumns;
+        return this;
+    }
 
 	public String getSuperMapperClass() {
 		return superMapperClass;
@@ -268,19 +268,19 @@ public class StrategyConfig {
 		return include;
 	}
 
-	public StrategyConfig setInclude(String[] include) {
-		this.include = include;
-		return this;
-	}
+    public StrategyConfig setInclude(String... include) {
+        this.include = include;
+        return this;
+    }
 
 	public String[] getExclude() {
 		return exclude;
 	}
 
-	public StrategyConfig setExclude(String[] exclude) {
-		this.exclude = exclude;
-		return this;
-	}
+    public StrategyConfig setExclude(String... exclude) {
+        this.exclude = exclude;
+        return this;
+    }
 
 	public boolean isEntityColumnConstant() {
 		return entityColumnConstant;

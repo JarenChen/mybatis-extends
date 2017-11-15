@@ -87,69 +87,69 @@ public class LogicSqlInjector extends AutoSqlInjector {
 		}
 	}
 
-	/**
-	 * <p>
-	 * 注入查询 SQL 语句
-	 * </p>
-	 *
-	 * @param batch
-	 *            是否为批量插入
-	 * @param mapperClass
-	 * @param modelClass
-	 * @param table
-	 */
-	@Override
-	protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		if (table.isLogicDelete()) {
-			SqlMethod sqlMethod = SqlMethod.LOGIC_SELECT_BY_ID;
-			SqlSource sqlSource;
-			if (batch) {
-				sqlMethod = SqlMethod.LOGIC_SELECT_BATCH_BY_IDS;
-				StringBuilder ids = new StringBuilder();
-				ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
-				ids.append("#{item}");
-				ids.append("\n</foreach>");
-				sqlSource = languageDriver.createSqlSource(
-						configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
-								table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)),
-						modelClass);
-			} else {
-				sqlSource = new RawSqlSource(configuration,
-						String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(),
-								table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)),
-						Object.class);
-			}
-			this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
-		} else {
-			// 正常查询
-			super.injectSelectByIdSql(batch, mapperClass, modelClass, table);
-		}
-	}
+    /**
+     * <p>
+     * 注入查询 SQL 语句
+     * </p>
+     *
+     * @param batch       是否为批量插入
+     * @param mapperClass
+     * @param modelClass
+     * @param table
+     */
+    @Override
+    protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+        if (table.isLogicDelete()) {
+            SqlMethod sqlMethod = SqlMethod.LOGIC_SELECT_BY_ID;
+            SqlSource sqlSource;
+            if (batch) {
+                sqlMethod = SqlMethod.LOGIC_SELECT_BATCH_BY_IDS;
+                StringBuilder ids = new StringBuilder();
+                ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
+                ids.append("#{item}");
+                ids.append("\n</foreach>");
+                sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
+                        table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)), modelClass);
+            } else {
+                sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(),
+                        table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)), Object.class);
+            }
+            this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
+        } else {
+            // 正常查询
+            super.injectSelectByIdSql(batch, mapperClass, modelClass, table);
+        }
+    }
 
-	/**
-	 * <p>
-	 * 注入更新 SQL 语句
-	 * </p>
-	 *
-	 * @param mapperClass
-	 * @param modelClass
-	 * @param table
-	 */
-	@Override
-	protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		if (table.isLogicDelete()) {
-			SqlMethod sqlMethod = selective ? SqlMethod.LOGIC_UPDATE_BY_ID : SqlMethod.LOGIC_UPDATE_ALL_COLUMN_BY_ID;
-			String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et."),
-					table.getKeyColumn(), "et." + table.getKeyProperty(),
-					"<if test=\"et instanceof java.util.Map\">" + "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
-							+ "and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}" + "</if>"
-							+ "</if>" + getLogicDeleteSql(table));
-			SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-			this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
-		} else {
-			super.injectUpdateByIdSql(selective, mapperClass, modelClass, table);
-		}
-	}
+    /**
+     * <p>
+     * 注入更新 SQL 语句
+     * </p>
+     *
+     * @param mapperClass
+     * @param modelClass
+     * @param table
+     */
+    @Override
+    protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+        if (table.isLogicDelete()) {
+            SqlMethod sqlMethod = selective ? SqlMethod.LOGIC_UPDATE_BY_ID : SqlMethod.LOGIC_UPDATE_ALL_COLUMN_BY_ID;
+            String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et."),
+                    table.getKeyColumn(),
+                    "et." + table.getKeyProperty(),
+                    "<if test=\"et instanceof java.util.Map\">" +
+                            "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
+                            + "and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
+                            + "</if>"
+                            + "</if>" +
+                            getLogicDeleteSql(table)
+            );
+            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+            this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
+        } else {
+            super.injectUpdateByIdSql(selective, mapperClass, modelClass, table);
+        }
+    }
 
 	/**
 	 * <p>

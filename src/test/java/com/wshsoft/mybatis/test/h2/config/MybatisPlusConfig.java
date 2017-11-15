@@ -32,8 +32,7 @@ import com.wshsoft.mybatis.test.h2.H2MetaObjectHandler;
 public class MybatisPlusConfig {
 
 	@Bean("mybatisSqlSession")
-	public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader,
-			GlobalConfiguration globalConfiguration) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
 		MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
 		sqlSessionFactory.setDataSource(dataSource);
 		// sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
@@ -47,7 +46,11 @@ public class MybatisPlusConfig {
 		sqlSessionFactory.setConfiguration(configuration);
 		PaginationInterceptor pagination = new PaginationInterceptor();
 		OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
-		sqlSessionFactory.setPlugins(new Interceptor[] { pagination, optLock, new PerformanceInterceptor() });
+        sqlSessionFactory.setPlugins(new Interceptor[]{
+                pagination,
+                optLock,
+                new PerformanceInterceptor()
+        });
 		globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
 		sqlSessionFactory.setGlobalConfig(globalConfiguration);
 		return sqlSessionFactory.getObject();

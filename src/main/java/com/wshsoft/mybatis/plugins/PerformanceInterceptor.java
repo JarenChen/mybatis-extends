@@ -28,10 +28,9 @@ import java.util.Properties;
  * @author Carry xie
  * @Date 2016-07-07
  */
-@Intercepts({
-		@Signature(type = StatementHandler.class, method = "query", args = { Statement.class, ResultHandler.class }),
-		@Signature(type = StatementHandler.class, method = "update", args = { Statement.class }),
-		@Signature(type = StatementHandler.class, method = "batch", args = { Statement.class }) })
+@Intercepts({@Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
+        @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
+        @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
 public class PerformanceInterceptor implements Interceptor {
 	private static final Log logger = LogFactory.getLog(PerformanceInterceptor.class);
 
@@ -73,53 +72,48 @@ public class PerformanceInterceptor implements Interceptor {
 			// do nothing
 		}
 
-		String originalSql = null;
-		String stmtClassName = statement.getClass().getName();
-		if (DruidPooledPreparedStatement.equals(stmtClassName)) {
-			try {
-				if (druidGetSQLMethod == null) {
-					Class<?> clazz = Class.forName(DruidPooledPreparedStatement);
-					druidGetSQLMethod = clazz.getMethod("getSql");
-				}
-				Object stmtSql = druidGetSQLMethod.invoke(statement);
-				if (stmtSql != null && stmtSql instanceof String) {
-					originalSql = (String) stmtSql;
-				}
-			} catch (Exception ignored) {
-			}
-		} else if (T4CPreparedStatement.equals(stmtClassName) || OraclePreparedStatementWrapper.equals(stmtClassName)) {
-			try {
-				if (oracleGetOriginalSqlMethod != null) {
-					Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
-					if (stmtSql != null && stmtSql instanceof String) {
-						originalSql = (String) stmtSql;
-					}
-				} else {
-					Class<?> clazz = Class.forName(stmtClassName);
-					oracleGetOriginalSqlMethod = getMethodRegular(clazz, "getOriginalSql");
-					if (oracleGetOriginalSqlMethod != null) {
-						oracleGetOriginalSqlMethod.setAccessible(true);// OraclePreparedStatementWrapper
-																		// is
-																		// not a
-																		// public
-																		// class,
-																		// need
-																		// set
-																		// this.
-						if (oracleGetOriginalSqlMethod != null) {
-							Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
-							if (stmtSql != null && stmtSql instanceof String) {
-								originalSql = (String) stmtSql;
-							}
-						}
-					}
-				}
-			} catch (Exception e) {// ignore
-			}
-		}
-		if (originalSql == null) {
-			originalSql = statement.toString();
-		}
+        String originalSql = null;
+        String stmtClassName = statement.getClass().getName();
+        if (DruidPooledPreparedStatement.equals(stmtClassName)) {
+            try {
+                if (druidGetSQLMethod == null) {
+                    Class<?> clazz = Class.forName(DruidPooledPreparedStatement);
+                    druidGetSQLMethod = clazz.getMethod("getSql");
+                }
+                Object stmtSql = druidGetSQLMethod.invoke(statement);
+                if (stmtSql != null && stmtSql instanceof String) {
+                    originalSql = (String) stmtSql;
+                }
+            } catch (Exception ignored) {
+            }
+        } else if (T4CPreparedStatement.equals(stmtClassName)
+                || OraclePreparedStatementWrapper.equals(stmtClassName)) {
+            try {
+                if (oracleGetOriginalSqlMethod != null) {
+                    Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
+                    if (stmtSql != null && stmtSql instanceof String) {
+                        originalSql = (String) stmtSql;
+                    }
+                } else {
+                    Class<?> clazz = Class.forName(stmtClassName);
+                    oracleGetOriginalSqlMethod = getMethodRegular(clazz, "getOriginalSql");
+                    if(oracleGetOriginalSqlMethod!=null) {
+                        oracleGetOriginalSqlMethod.setAccessible(true);//OraclePreparedStatementWrapper is not a public class, need set this.
+                        if (oracleGetOriginalSqlMethod != null) {
+                            Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
+                            if (stmtSql != null && stmtSql instanceof String) {
+                                originalSql = (String) stmtSql;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                //ignore
+            }
+        }
+        if (originalSql == null) {
+            originalSql = statement.toString();
+        }
 
 		int index = originalSql.indexOf(':');
 		if (index > 0) {

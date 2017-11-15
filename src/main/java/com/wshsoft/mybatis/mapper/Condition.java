@@ -18,13 +18,6 @@ public class Condition extends Wrapper {
 	 */
 	public static final Condition EMPTY = Condition.create();
 
-	/**
-	 * 获取实例
-	 */
-	@Deprecated
-	public static Condition instance() {
-		return Condition.create();
-	}
 
 	/**
 	 * 获取实例
@@ -44,15 +37,14 @@ public class Condition extends Wrapper {
 		/*
 		 * 无条件
 		 */
-		String sqlWhere = sql.toString();
-		if (StringUtils.isEmpty(sqlWhere)) {
-			return null;
-		}
-		/*
-		 * 根据当前实体判断是否需要将WHERE替换成 AND 增加实体不为空但所有属性为空的情况
+        String sqlWhere = sql.toString();
+        if (StringUtils.isEmpty(sqlWhere)) {
+            return null;
+        }
+         /*
+         * 根据当前实体判断是否需要将WHERE替换成 AND 增加实体不为空但所有属性为空的情况
 		 */
-		return isWhere != null ? (isWhere ? sqlWhere : sqlWhere.replaceFirst("WHERE", AND_OR))
-				: sqlWhere.replaceFirst("WHERE", AND_OR);
+        return isWhere != null ? (isWhere ? sqlWhere : sqlWhere.replaceFirst("WHERE", AND_OR)) : sqlWhere.replaceFirst("WHERE", AND_OR);
 
 	}
 }

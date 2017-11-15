@@ -2,12 +2,9 @@ package com.wshsoft.mybatis.toolkit;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -31,7 +28,6 @@ import com.wshsoft.mybatis.annotations.TableName;
 import com.wshsoft.mybatis.entity.GlobalConfiguration;
 import com.wshsoft.mybatis.entity.TableFieldInfo;
 import com.wshsoft.mybatis.entity.TableInfo;
-import com.wshsoft.mybatis.enums.FieldFill;
 import com.wshsoft.mybatis.enums.IdType;
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.incrementer.IKeyGenerator;
@@ -47,44 +43,27 @@ import com.wshsoft.mybatis.mapper.SqlRunner;
  */
 public class TableInfoHelper {
 
-	private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
-	/**
-	 * 缓存反射类表信息
-	 */
-	private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<>();
-	/**
-	 * 自动填充字段信息
-	 */
-	private static final Map<FieldFill, Map<Class<?>, Set<String>>> fieldFillMap = new ConcurrentHashMap<>();
-	/**
-	 * 默认表主键
-	 */
-	private static final String DEFAULT_ID_NAME = "id";
+    private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
+    /**
+     * 缓存反射类表信息
+     */
+    private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<>();
+    /**
+     * 默认表主键
+     */
+    private static final String DEFAULT_ID_NAME = "id";
 
-	/**
-	 * <p>
-	 * 获取自动填充信息
-	 * <p>
-	 *
-	 * @param fieldFill
-	 * @return
-	 */
-	public static Map<Class<?>, Set<String>> getFieldFillMap(FieldFill fieldFill) {
-		return fieldFillMap.get(fieldFill);
-	}
-
-	/**
-	 * <p>
-	 * 获取实体映射表信息
-	 * <p>
-	 *
-	 * @param clazz
-	 *            反射实体类
-	 * @return
-	 */
-	public static TableInfo getTableInfo(Class<?> clazz) {
-		return tableInfoCache.get(ClassUtils.getUserClass(clazz).getName());
-	}
+    /**
+     * <p>
+     * 获取实体映射表信息
+     * <p>
+     *
+     * @param clazz 反射实体类
+     * @return
+     */
+    public static TableInfo getTableInfo(Class<?> clazz) {
+        return tableInfoCache.get(ClassUtils.getUserClass(clazz).getName());
+    }
 
 	/**
 	 * <p>
@@ -204,91 +183,42 @@ public class TableInfoHelper {
 		return tableInfo;
 	}
 
-	/**
-	 * 初始化填充字段缓存信息
-	 *
-	 * @param clazz
-	 * @param tableInfo
-	 */
-	private static void initFieldFillCache(Class<?> clazz, TableInfo tableInfo) {
-		clazz = ClassUtils.getUserClass(clazz);
-		List<TableFieldInfo> tableFieldInfos = tableInfo.getFieldList();
-		for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
-			FieldFill fieldFill = tableFieldInfo.getFieldFill();
-			if (null == fieldFill || FieldFill.DEFAULT.equals(fieldFill)) {
-				continue;
-			}
-			switch (fieldFill) {
-			case INSERT:
-				initFieldFill(FieldFill.INSERT, clazz, tableFieldInfo);
-				break;
-			case UPDATE:
-				initFieldFill(FieldFill.UPDATE, clazz, tableFieldInfo);
-				break;
-			case INSERT_UPDATE:
-				initFieldFill(FieldFill.INSERT, clazz, tableFieldInfo);
-				initFieldFill(FieldFill.UPDATE, clazz, tableFieldInfo);
-				break;
-			}
-		}
-	}
+    /**
+     * <p>
+     * 判断主键注解是否存在
+     * </p>
+     *
+     * @param list 字段列表
+     * @return
+     */
+    public static boolean existTableId(List<Field> list) {
+        boolean exist = false;
+        for (Field field : list) {
+            TableId tableId = field.getAnnotation(TableId.class);
+            if (tableId != null) {
+                exist = true;
+                break;
+            }
+        }
+        return exist;
+    }
 
-	/**
-	 * 初始化填充
-	 *
-	 * @param fieldFill
-	 * @param clazz
-	 * @param tableFieldInfo
-	 */
-	private static void initFieldFill(FieldFill fieldFill, Class<?> clazz, TableFieldInfo tableFieldInfo) {
-		Map<Class<?>, Set<String>> fillFieldMap = fieldFillMap.get(fieldFill);
-		if (MapUtils.isEmpty(fillFieldMap)) {
-			fillFieldMap = new HashMap<>();
-			fillFieldMap.put(clazz, new TreeSet<String>());
-			fieldFillMap.put(fieldFill, fillFieldMap);
-		}
-		Set<String> properties = fillFieldMap.get(clazz);
-		properties.add(tableFieldInfo.getProperty());
-	}
-
-	/**
-	 * <p>
-	 * 判断主键注解是否存在
-	 * </p>
-	 *
-	 * @param list
-	 *            字段列表
-	 * @return
-	 */
-	public static boolean existTableId(List<Field> list) {
-		boolean exist = false;
-		for (Field field : list) {
-			TableId tableId = field.getAnnotation(TableId.class);
-			if (tableId != null) {
-				exist = true;
-				break;
-			}
-		}
-		return exist;
-	}
-
-	/**
-	 * <p>
-	 * 主键属性初始化
-	 * </p>
-	 *
-	 * @param tableInfo
-	 * @param field
-	 * @param clazz
-	 * @return true 继续下一个属性判断，返回 continue;
-	 */
-	private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
-			Class<?> clazz) {
-		TableId tableId = field.getAnnotation(TableId.class);
-		if (tableId != null) {
-			if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
-				/*
-				 * 主键策略（ 注解 > 全局 > 默认 ）
+    /**
+     * <p>
+     * 主键属性初始化
+     * </p>
+     *
+     * @param tableInfo
+     * @param field
+     * @param clazz
+     * @return true 继续下一个属性判断，返回 continue;
+     */
+    private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
+        TableId tableId = field.getAnnotation(TableId.class);
+        if (tableId != null) {
+            if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
+                /*
+                 * 主键策略（ 注解 > 全局 > 默认 ）
 				 */
 				if (IdType.NONE != tableId.type()) {
 					tableInfo.setIdType(tableId.type());
@@ -321,34 +251,33 @@ public class TableInfoHelper {
 		return false;
 	}
 
-	/**
-	 * <p>
-	 * 主键属性初始化
-	 * </p>
-	 *
-	 * @param tableInfo
-	 * @param field
-	 * @param clazz
-	 * @return true 继续下一个属性判断，返回 continue;
-	 */
-	private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
-			Class<?> clazz) {
-		String column = field.getName();
-		if (globalConfig.isCapitalMode()) {
-			column = column.toUpperCase();
-		}
-		if (DEFAULT_ID_NAME.equalsIgnoreCase(column)) {
-			if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
-				tableInfo.setIdType(globalConfig.getIdType());
-				tableInfo.setKeyColumn(column);
-				tableInfo.setKeyProperty(field.getName());
-				return true;
-			} else {
-				throwExceptionId(clazz);
-			}
-		}
-		return false;
-	}
+    /**
+     * <p>
+     * 主键属性初始化
+     * </p>
+     *
+     * @param tableInfo
+     * @param field
+     * @param clazz
+     * @return true 继续下一个属性判断，返回 continue;
+     */
+    private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
+        String column = field.getName();
+        if (globalConfig.isCapitalMode()) {
+            column = column.toUpperCase();
+        }
+        if (DEFAULT_ID_NAME.equalsIgnoreCase(column)) {
+            if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
+                tableInfo.setIdType(globalConfig.getIdType());
+                tableInfo.setKeyColumn(column);
+                tableInfo.setKeyProperty(field.getName());
+                return true;
+            } else {
+                throwExceptionId(clazz);
+            }
+        }
+        return false;
+    }
 
 	/**
 	 * <p>
@@ -362,32 +291,28 @@ public class TableInfoHelper {
 		throw new MybatisExtendsException(errorMsg.toString());
 	}
 
-	/**
-	 * <p>
-	 * 字段属性初始化
-	 * </p>
-	 *
-	 * @param globalConfig
-	 *            全局配置
-	 * @param tableInfo
-	 *            表信息
-	 * @param fieldList
-	 *            字段列表
-	 * @param clazz
-	 *            当前表对象类
-	 * @return true 继续下一个属性判断，返回 continue;
-	 */
-	private static boolean initTableField(GlobalConfiguration globalConfig, TableInfo tableInfo,
-			List<TableFieldInfo> fieldList, Field field, Class<?> clazz) {
-		/* 获取注解属性，自定义字段 */
-		TableField tableField = field.getAnnotation(TableField.class);
-		if (tableField != null) {
-			String columnName = field.getName();
-			if (StringUtils.isNotEmpty(tableField.value())) {
-				columnName = tableField.value();
-			}
-			/*
-			 * el 语法支持，可以传入多个参数以逗号分开
+    /**
+     * <p>
+     * 字段属性初始化
+     * </p>
+     *
+     * @param globalConfig 全局配置
+     * @param tableInfo    表信息
+     * @param fieldList    字段列表
+     * @param clazz        当前表对象类
+     * @return true 继续下一个属性判断，返回 continue;
+     */
+    private static boolean initTableField(GlobalConfiguration globalConfig, TableInfo tableInfo, List<TableFieldInfo> fieldList,
+                                          Field field, Class<?> clazz) {
+        /* 获取注解属性，自定义字段 */
+        TableField tableField = field.getAnnotation(TableField.class);
+        if (tableField != null) {
+            String columnName = field.getName();
+            if (StringUtils.isNotEmpty(tableField.value())) {
+                columnName = tableField.value();
+            }
+            /*
+             * el 语法支持，可以传入多个参数以逗号分开
 			 */
 			String el = field.getName();
 			if (StringUtils.isNotEmpty(tableField.el())) {
@@ -453,32 +378,32 @@ public class TableInfoHelper {
 		}
 	}
 
-	/**
-	 * <p>
-	 * 自定义 KEY 生成器
-	 * </p>
-	 */
-	public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
-			String baseStatementId, LanguageDriver languageDriver) {
-		IKeyGenerator keyGenerator = GlobalConfigUtils.getKeyGenerator(builderAssistant.getConfiguration());
-		if (null == keyGenerator) {
-			throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
-		}
-		String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-		Class<?> resultTypeClass = tableInfo.getKeySequence().clazz();
-		StatementType statementType = StatementType.PREPARED;
-		String keyProperty = tableInfo.getKeyProperty();
-		String keyColumn = tableInfo.getKeyColumn();
-		SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(),
-				keyGenerator.executeSql(tableInfo.getKeySequence().value()), null);
-		builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null, null,
-				null, resultTypeClass, null, false, false, false, new NoKeyGenerator(), keyProperty, keyColumn, null,
-				languageDriver, null);
-		id = builderAssistant.applyCurrentNamespace(id, false);
-		MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
-		SelectKeyGenerator selectKeyGenerator = new SelectKeyGenerator(keyStatement, true);
-		builderAssistant.getConfiguration().addKeyGenerator(id, selectKeyGenerator);
-		return selectKeyGenerator;
-	}
+    /**
+     * <p>
+     * 自定义 KEY 生成器
+     * </p>
+     */
+    public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
+                                               String baseStatementId, LanguageDriver languageDriver) {
+        IKeyGenerator keyGenerator = GlobalConfigUtils.getKeyGenerator(builderAssistant.getConfiguration());
+        if (null == keyGenerator) {
+            throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
+        }
+        String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
+        Class<?> resultTypeClass = tableInfo.getKeySequence().clazz();
+        StatementType statementType = StatementType.PREPARED;
+        String keyProperty = tableInfo.getKeyProperty();
+        String keyColumn = tableInfo.getKeyColumn();
+        SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(),
+                keyGenerator.executeSql(tableInfo.getKeySequence().value()), null);
+        builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null,
+                null, null, resultTypeClass, null, false, false, false,
+                new NoKeyGenerator(), keyProperty, keyColumn, null, languageDriver, null);
+        id = builderAssistant.applyCurrentNamespace(id, false);
+        MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
+        SelectKeyGenerator selectKeyGenerator = new SelectKeyGenerator(keyStatement, true);
+        builderAssistant.getConfiguration().addKeyGenerator(id, selectKeyGenerator);
+        return selectKeyGenerator;
+    }
 
 }

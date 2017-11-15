@@ -120,7 +120,7 @@ public class OptimisticLockerInterceptorTest {
 		TimestampVersionUser versionUser = new TimestampVersionUser();
 		versionUser.setId(15L);
 		versionUser.setName("建哥");
-		Timestamp originVersion = new Timestamp(new Date().getTime());
+		Timestamp originVersion = new Timestamp(System.currentTimeMillis());
 		versionUser.setVersion(originVersion);
 		timestampVersionUserMapper.insert(versionUser);
 		// 更新数据

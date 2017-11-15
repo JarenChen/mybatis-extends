@@ -16,26 +16,30 @@ import java.sql.Statement;
  */
 public class H2Test {
 
-	public static void executeSql(Statement stmt, String sqlFilename) throws SQLException, IOException {
-		String filePath = H2Test.class.getResource("/h2/" + sqlFilename).getPath();
-		try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				stmt.execute(line.replace(";", ""));
-			}
-		}
-	}
+    public static void executeSql(Statement stmt, String sqlFilename) throws SQLException, IOException {
+        String filePath = H2Test.class.getResource("/h2/" + sqlFilename).getPath();
+        try (
+                BufferedReader reader = new BufferedReader(new FileReader(filePath))
+        ) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stmt.execute(line.replace(";", ""));
+            }
+        }
+    }
 
-	public static String readFile(String filename) {
-		StringBuilder builder = new StringBuilder();
-		String filePath = H2UserNoOptLockTest.class.getResource("/h2/" + filename).getPath();
-		try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-			String line;
-			while ((line = reader.readLine()) != null)
-				builder.append(line).append(" ");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return builder.toString();
-	}
+    public static String readFile(String filename) {
+        StringBuilder builder = new StringBuilder();
+        String filePath = H2UserNoOptLockTest.class.getResource("/h2/" + filename).getPath();
+        try (
+                BufferedReader reader = new BufferedReader(new FileReader(filePath))
+        ) {
+            String line;
+            while ((line = reader.readLine()) != null)
+                builder.append(line).append(" ");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return builder.toString();
+    }
 }

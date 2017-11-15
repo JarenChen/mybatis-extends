@@ -10,7 +10,7 @@ package com.wshsoft.mybatis.generator.config;
  */
 public class TemplateConfig {
 
-	private String entity = ConstVal.TEMPLATE_ENTITY;
+    private String entity = ConstVal.TEMPLATE_ENTITY_JAVA;
 
 	private String service = ConstVal.TEMPLATE_SERVICE;
 
@@ -22,9 +22,9 @@ public class TemplateConfig {
 
 	private String controller = ConstVal.TEMPLATE_CONTROLLER;
 
-	public String getEntity() {
-		return entity;
-	}
+    public String getEntity(boolean kotlin) {
+        return kotlin ? ConstVal.TEMPLATE_ENTITY_KT : entity;
+    }
 
 	public TemplateConfig setEntity(String entity) {
 		this.entity = entity;

@@ -47,23 +47,22 @@ public class DialectFactory {
 		return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, page.getOffsetCurrent(), page.getSize());
 	}
 
-	/**
-	 * Physical Pagination Interceptor for all the queries with parameter
-	 * {@link org.apache.ibatis.session.RowBounds}
-	 *
-	 * @param rowBounds
-	 * @param buildSql
-	 * @param dialectType
-	 * @param dialectClazz
-	 * @return
-	 * @throws Exception
-	 */
-	public static String buildPaginationSql(RowBounds rowBounds, String buildSql, DBType dbType, String dialectClazz)
-			throws Exception {
-		// fix #196
-		return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(),
-				rowBounds.getLimit());
-	}
+    /**
+     * Physical Pagination Interceptor for all the queries with parameter
+     * {@link org.apache.ibatis.session.RowBounds}
+     *
+     * @param rowBounds
+     * @param buildSql
+     * @param dbType
+     * @param dialectClazz
+     * @return
+     * @throws Exception
+     */
+    public static String buildPaginationSql(RowBounds rowBounds, String buildSql, DBType dbType, String dialectClazz)
+            throws Exception {
+        // fix #196
+        return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(), rowBounds.getLimit());
+    }
 
 	/**
 	 * <p>

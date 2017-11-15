@@ -32,8 +32,7 @@ import com.wshsoft.mybatis.spring.MybatisSqlSessionFactoryBean;
 public class MybatisPlusSequenceConfig {
 
 	@Bean("mybatisSqlSession")
-	public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader,
-			GlobalConfiguration globalConfiguration) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
 		MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
 		sqlSessionFactory.setDataSource(dataSource);
 		// sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
@@ -44,8 +43,11 @@ public class MybatisPlusSequenceConfig {
 		configuration.setMapUnderscoreToCamelCase(true);
 		sqlSessionFactory.setConfiguration(configuration);
 		PaginationInterceptor pagination = new PaginationInterceptor();
-		sqlSessionFactory.setPlugins(
-				new Interceptor[] { pagination, new OptimisticLockerInterceptor(), new PerformanceInterceptor() });
+        sqlSessionFactory.setPlugins(new Interceptor[]{
+                pagination,
+                new OptimisticLockerInterceptor(),
+                new PerformanceInterceptor()
+        });
 		sqlSessionFactory.setGlobalConfig(globalConfiguration);
 		return sqlSessionFactory.getObject();
 	}

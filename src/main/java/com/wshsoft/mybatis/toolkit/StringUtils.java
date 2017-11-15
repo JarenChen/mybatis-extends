@@ -242,32 +242,31 @@ public class StringUtils {
 		return srcStr;
 	}
 
-	/**
-	 * <p>
-	 * 使用单引号包含字符串
-	 * </p>
-	 *
-	 * @param coll
-	 *            集合
-	 * @return 单引号包含的原字符串的集合形式
-	 */
-	public static String quotaMarkList(Collection<?> coll) {
-		StringBuilder sqlBuild = new StringBuilder();
-		sqlBuild.append("(");
-		int _size = coll.size();
-		int i = 0;
-		Iterator<?> iterator = coll.iterator();
-		while (iterator.hasNext()) {
-			String tempVal = StringUtils.quotaMark(iterator.next());
-			sqlBuild.append(tempVal);
-			if (i + 1 < _size) {
-				sqlBuild.append(",");
-			}
-			i++;
-		}
-		sqlBuild.append(")");
-		return sqlBuild.toString();
-	}
+    /**
+     * <p>
+     * 使用单引号包含字符串
+     * </p>
+     *
+     * @param coll 集合
+     * @return 单引号包含的原字符串的集合形式
+     */
+    public static String quotaMarkList(Collection<?> coll) {
+        StringBuilder sqlBuild = new StringBuilder();
+        sqlBuild.append("(");
+        int size = coll.size();
+        int i = 0;
+        Iterator<?> iterator = coll.iterator();
+        while (iterator.hasNext()) {
+            String tempVal = StringUtils.quotaMark(iterator.next());
+            sqlBuild.append(tempVal);
+            if (i + 1 < size) {
+                sqlBuild.append(",");
+            }
+            i++;
+        }
+        sqlBuild.append(")");
+        return sqlBuild.toString();
+    }
 
 	/**
 	 * <p>
@@ -649,18 +648,17 @@ public class StringUtils {
 		}
 	}
 
-	/**
-	 * <p>
-	 * 是否为Boolean类型(包含普通类型)
-	 * </p>
-	 *
-	 * @param propertyCls
-	 * @return
-	 */
-	public static Boolean isBoolean(Class<?> propertyCls) {
-		return propertyCls != null
-				&& (boolean.class.isAssignableFrom(propertyCls) || Boolean.class.isAssignableFrom(propertyCls));
-	}
+    /**
+     * <p>
+     * 是否为Boolean类型(包含普通类型)
+     * </p>
+     *
+     * @param propertyCls
+     * @return
+     */
+    public static Boolean isBoolean(Class<?> propertyCls) {
+        return propertyCls != null && (boolean.class.isAssignableFrom(propertyCls) || Boolean.class.isAssignableFrom(propertyCls));
+    }
 
 	/**
 	 * <p>
@@ -726,42 +724,41 @@ public class StringUtils {
 		return wordsToHyphenCase(wordsAndHyphenAndCamelToConstantCase(input));
 	}
 
-	private static String wordsAndHyphenAndCamelToConstantCase(String input) {
-		boolean _betweenUpperCases = false;
-		boolean containsLowerCase = containsLowerCase(input);
+    private static String wordsAndHyphenAndCamelToConstantCase(String input) {
+        boolean betweenUpperCases = false;
+        boolean containsLowerCase = containsLowerCase(input);
 
-		StringBuilder buf = new StringBuilder();
-		char previousChar = ' ';
-		char[] chars = input.toCharArray();
-		for (int i = 0; i < chars.length; i++) {
-			char c = chars[i];
-			boolean isUpperCaseAndPreviousIsUpperCase = (Character.isUpperCase(previousChar))
-					&& (Character.isUpperCase(c));
-			boolean isUpperCaseAndPreviousIsLowerCase = (Character.isLowerCase(previousChar))
-					&& (Character.isUpperCase(c));
+        StringBuilder buf = new StringBuilder();
+        char previousChar = ' ';
+        char[] chars = input.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            boolean isUpperCaseAndPreviousIsUpperCase = (Character.isUpperCase(previousChar)) && (Character.isUpperCase(c));
+            boolean isUpperCaseAndPreviousIsLowerCase = (Character.isLowerCase(previousChar)) && (Character.isUpperCase(c));
 
-			boolean previousIsWhitespace = Character.isWhitespace(previousChar);
-			boolean lastOneIsNotUnderscore = (buf.length() > 0) && (buf.charAt(buf.length() - 1) != '_');
-			boolean isNotUnderscore = c != '_';
-			if ((lastOneIsNotUnderscore) && ((isUpperCaseAndPreviousIsLowerCase) || (previousIsWhitespace)
-					|| ((_betweenUpperCases) && (containsLowerCase) && (isUpperCaseAndPreviousIsUpperCase)))) {
-				buf.append("_");
-			} else if (((separatorAfterDigit) && (Character.isDigit(previousChar)) && (Character.isLetter(c)))
-					|| ((separatorBeforeDigit) && (Character.isDigit(c)) && (Character.isLetter(previousChar)))) {
-				buf.append('_');
-			}
-			if ((shouldReplace(c)) && (lastOneIsNotUnderscore)) {
-				buf.append('_');
-			} else if ((!Character.isWhitespace(c)) && ((isNotUnderscore) || (lastOneIsNotUnderscore))) {
-				buf.append(Character.toUpperCase(c));
-			}
-			previousChar = c;
-		}
-		if (Character.isWhitespace(previousChar)) {
-			buf.append("_");
-		}
-		return buf.toString();
-	}
+            boolean previousIsWhitespace = Character.isWhitespace(previousChar);
+            boolean lastOneIsNotUnderscore = (buf.length() > 0) && (buf.charAt(buf.length() - 1) != '_');
+            boolean isNotUnderscore = c != '_';
+            if ((lastOneIsNotUnderscore) && ((isUpperCaseAndPreviousIsLowerCase) || (previousIsWhitespace) || ((betweenUpperCases)
+                    && (containsLowerCase) && (isUpperCaseAndPreviousIsUpperCase)))) {
+                buf.append("_");
+            } else if (((separatorAfterDigit) && (Character.isDigit(previousChar))
+                    && (Character.isLetter(c))) || ((separatorBeforeDigit) && (Character
+                    .isDigit(c)) && (Character.isLetter(previousChar)))) {
+                buf.append('_');
+            }
+            if ((shouldReplace(c)) && (lastOneIsNotUnderscore)) {
+                buf.append('_');
+            } else if ((!Character.isWhitespace(c)) && ((isNotUnderscore) || (lastOneIsNotUnderscore))) {
+                buf.append(Character.toUpperCase(c));
+            }
+            previousChar = c;
+        }
+        if (Character.isWhitespace(previousChar)) {
+            buf.append("_");
+        }
+        return buf.toString();
+    }
 
 	public static boolean containsLowerCase(String s) {
 		for (char c : s.toCharArray()) {
@@ -776,26 +773,27 @@ public class StringUtils {
 		return (c == '.') || (c == '_') || (c == '-');
 	}
 
-	private static String wordsToHyphenCase(String s) {
-		StringBuilder buf = new StringBuilder();
-		char lastChar = 'a';
-		for (char c : s.toCharArray()) {
-			if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c)) && ('-' != c) && (buf.length() > 0)
-					&& (buf.charAt(buf.length() - 1) != '-')) {
-				buf.append("-");
-			}
-			if ('_' == c) {
-				buf.append('-');
-			} else if ('.' == c) {
-				buf.append('-');
-			} else if (!Character.isWhitespace(c)) {
-				buf.append(Character.toLowerCase(c));
-			}
-			lastChar = c;
-		}
-		if (Character.isWhitespace(lastChar)) {
-			buf.append("-");
-		}
-		return buf.toString();
-	}
+    private static String wordsToHyphenCase(String s) {
+        StringBuilder buf = new StringBuilder();
+        char lastChar = 'a';
+        for (char c : s.toCharArray()) {
+            if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c))
+                    && ('-' != c) && (buf.length() > 0)
+                    && (buf.charAt(buf.length() - 1) != '-')) {
+                buf.append("-");
+            }
+            if ('_' == c) {
+                buf.append('-');
+            } else if ('.' == c) {
+                buf.append('-');
+            } else if (!Character.isWhitespace(c)) {
+                buf.append(Character.toLowerCase(c));
+            }
+            lastChar = c;
+        }
+        if (Character.isWhitespace(lastChar)) {
+            buf.append("-");
+        }
+        return buf.toString();
+    }
 }

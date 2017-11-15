@@ -116,8 +116,7 @@ public class MybatisMapperRefresh implements Runnable {
 		this.run();
 	}
 
-	public MybatisMapperRefresh(SqlSessionFactory sqlSessionFactory, int delaySeconds, int sleepSeconds,
-			boolean enabled) throws Exception {
+    public MybatisMapperRefresh(SqlSessionFactory sqlSessionFactory, int delaySeconds, int sleepSeconds, boolean enabled) throws Exception {
 		this.sqlSessionFactory = sqlSessionFactory;
 		this.delaySeconds = delaySeconds;
 		this.sleepSeconds = sleepSeconds;
@@ -144,10 +143,9 @@ public class MybatisMapperRefresh implements Runnable {
 						if (mapperLocations != null) {
 							for (Resource mapperLocation : mapperLocations) {
 								try {
-									if (ResourceUtils.isJarURL(mapperLocation.getURL())) {
-										String key = new UrlResource(
-												ResourceUtils.extractJarFileURL(mapperLocation.getURL())).getFile()
-														.getPath();
+                                    if (ResourceUtils.isJarURL(mapperLocation.getURL())) {
+                                        String key = new UrlResource(ResourceUtils.extractJarFileURL(mapperLocation.getURL()))
+                                                .getFile().getPath();
 										fileSet.add(key);
 										if (jarMapper.get(key) != null) {
 											jarMapper.get(key).add(mapperLocation);
@@ -211,13 +209,11 @@ public class MybatisMapperRefresh implements Runnable {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
-	private void refresh(Resource resource)
-			throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+    private void refresh(Resource resource) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
 		this.configuration = sqlSessionFactory.getConfiguration();
 		boolean isSupper = configuration.getClass().getSuperclass() == Configuration.class;
 		try {
-			Field loadedResourcesField = isSupper
-					? configuration.getClass().getSuperclass().getDeclaredField("loadedResources")
+            Field loadedResourcesField = isSupper ? configuration.getClass().getSuperclass().getDeclaredField("loadedResources")
 					: configuration.getClass().getDeclaredField("loadedResources");
 			loadedResourcesField.setAccessible(true);
 			Set loadedResourcesSet = ((Set) loadedResourcesField.get(configuration));
@@ -280,11 +276,11 @@ public class MybatisMapperRefresh implements Runnable {
 			if ("association".equals(resultChild.getName()) || "collection".equals(resultChild.getName())
 					|| "case".equals(resultChild.getName())) {
 				if (resultChild.getStringAttribute("select") == null) {
-					configuration.getResultMapNames()
-							.remove(resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
-					configuration.getResultMapNames().remove(namespace + "."
-							+ resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
-					if (resultChild.getChildren() != null && !resultChild.getChildren().isEmpty()) {
+                    configuration.getResultMapNames().remove(
+                            resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
+                    configuration.getResultMapNames().remove(
+                            namespace + "." + resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
+                    if (resultChild.getChildren() != null && !resultChild.getChildren().isEmpty()) {
 						clearResultMap(resultChild, namespace);
 					}
 				}

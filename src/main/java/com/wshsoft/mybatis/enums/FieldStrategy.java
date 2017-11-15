@@ -9,10 +9,14 @@ package com.wshsoft.mybatis.enums;
  * @Date 2016-09-09
  */
 public enum FieldStrategy {
-	IGNORED(0, "忽略判断"), NOT_NULL(1, "非 NULL 判断"), NOT_EMPTY(2, "非空判断");
+    IGNORED(0, "忽略判断"),
+    NOT_NULL(1, "非 NULL 判断"),
+    NOT_EMPTY(2, "非空判断");
 
-	/** 主键 */
-	private final int key;
+    /**
+     * 主键
+     */
+    private final int key;
 
 	/** 描述 */
 	private final String desc;

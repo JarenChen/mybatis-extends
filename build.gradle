@@ -118,15 +118,15 @@ uploadArchives {
             pom.artifactId = "$project.name"
             pom.groupId = "$project.group"
             pom.project {
-                name 'kisso'
+                name 'mybatis-extends'
                 packaging 'jar'
-                description 'kisso is a lightweight Java SSO Framework and reusable components.'
-                url 'https://github.com/baomidou/kisso'
+                description 'An enhanced toolkit of Mybatis to simplify development.'
+                url 'https://github.com/larry838/mybatis-extends'
 
                 scm {
                     connection 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
                     developerConnection 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
-                    url 'https://github.com/baomidou/kisso'
+                    url 'https://github.com/larry838/mybatis-extends'
                 }
 
                 licenses {
@@ -138,7 +138,9 @@ uploadArchives {
 
                 developers {
                     developer {
-
+                        id 'larry838'
+                        name 'Carry xie'
+                        email 'larry838@126.com'
                     }
                 }
             }

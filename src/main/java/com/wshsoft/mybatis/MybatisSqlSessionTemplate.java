@@ -62,9 +62,9 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
 	 * @param executorType
 	 */
 	public MybatisSqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType) {
-		this(sqlSessionFactory, executorType, new MyBatisExceptionTranslator(
-				sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true));
-	}
+        this(sqlSessionFactory, executorType, new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration()
+                .getEnvironment().getDataSource(), true));
+    }
 
 	/**
 	 * Constructs a Spring managed {@code SqlSession} with the given

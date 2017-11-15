@@ -54,18 +54,19 @@ public class H2MetaObjectHandlerTest extends H2Test {
 		}
 	}
 
-	@Test
-	public void testMetaObjectHandler() {
-		H2UserMetaObj user = new H2UserMetaObj();
-		user.setName("metaobjtest");
-		user.setVersion(1);
-		user.setAge(12);
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, -1);
-		user.setLastUpdatedDt(new Timestamp(cal.getTimeInMillis()));
-		user.setDesc("abc");
-		userMapper.insert(user);
-		System.out.println("before update: getLastUpdatedDt=" + user.getLastUpdatedDt());
+    @Test
+    public void testMetaObjectHandler() {
+        H2UserMetaObj user = new H2UserMetaObj();
+        user.setName("metaobjtest");
+        user.setVersion(1);
+        user.setAge(12);
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        user.setLastUpdatedDt(new Timestamp(cal.getTimeInMillis()));
+        user.setDesc("abc");
+        userMapper.insert(user);
+        System.out.println("before update: getLastUpdatedDt=" + user.getLastUpdatedDt());
+        Assert.assertNotNull(userMapper.selectById(user.getId()).getTestType());
 
 		user.setName("999");
 		userMapper.updateById(user);
@@ -77,12 +78,35 @@ public class H2MetaObjectHandlerTest extends H2Test {
 		Assert.assertEquals(3, userDB.getTestType().intValue());
 		Assert.assertEquals("999", userDB.getName());
 
-		Date lastUpdatedDt = userDB.getLastUpdatedDt();
-		System.out.println("after update: testDate=" + lastUpdatedDt);
-		String versionDateStr = sdf.format(lastUpdatedDt);
-		// MyMetaObjectHandler.updateFill() : set
-		Assert.assertEquals(sdf.format(new Date()), versionDateStr);
-	}
+        Date lastUpdatedDt = userDB.getLastUpdatedDt();
+        System.out.println("after update: testDate=" + lastUpdatedDt);
+        String versionDateStr = sdf.format(lastUpdatedDt);
+        //MyMetaObjectHandler.updateFill() : set lastUpdatedDt=currentTimestamp
+        Assert.assertEquals(sdf.format(new Date()), versionDateStr);//before update: lastUpdatedDt=currentTimestamp-1day
+    }
+
+    @Test
+    public void testMetaObjectHandlerNullInsert4Update() {
+        H2UserMetaObj user = new H2UserMetaObj();
+        user.setName("metaobjtest");
+        user.setVersion(1);
+        user.setAge(12);
+        user.setDesc("abc");
+        userMapper.insert(user);
+        System.out.println("before update: getLastUpdatedDt=" + user.getLastUpdatedDt());
+        Assert.assertNotNull(userMapper.selectById(user.getId()).getTestType());
+        user.setName("999");
+        userMapper.updateById(user);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
+        Long id = user.getId();
+        H2UserMetaObj userDB = userMapper.selectById(id);
+        Date lastUpdatedDt = userDB.getLastUpdatedDt();
+        System.out.println("after update: testDate=" + lastUpdatedDt);
+        String versionDateStr = sdf.format(lastUpdatedDt);
+        //MyMetaObjectHandler.updateFill() : set lastUpdatedDt=currentTimestamp
+        Assert.assertEquals(sdf.format(new Date()), versionDateStr);//before update: lastUpdatedDt=currentTimestamp-1day
+    }
+
 
 	@Test
 	public void testInsertMy() {

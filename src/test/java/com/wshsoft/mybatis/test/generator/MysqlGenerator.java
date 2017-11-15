@@ -1,6 +1,7 @@
 package com.wshsoft.mybatis.test.generator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,11 +10,14 @@ import com.wshsoft.mybatis.enums.FieldFill;
 import com.wshsoft.mybatis.generator.AutoGenerator;
 import com.wshsoft.mybatis.generator.InjectionConfig;
 import com.wshsoft.mybatis.generator.config.DataSourceConfig;
+import com.wshsoft.mybatis.generator.config.FileOutConfig;
 import com.wshsoft.mybatis.generator.config.GlobalConfig;
 import com.wshsoft.mybatis.generator.config.PackageConfig;
 import com.wshsoft.mybatis.generator.config.StrategyConfig;
+import com.wshsoft.mybatis.generator.config.TemplateConfig;
 import com.wshsoft.mybatis.generator.config.converts.MySqlTypeConvert;
 import com.wshsoft.mybatis.generator.config.po.TableFill;
+import com.wshsoft.mybatis.generator.config.po.TableInfo;
 import com.wshsoft.mybatis.generator.config.rules.DbColumnType;
 import com.wshsoft.mybatis.generator.config.rules.DbType;
 import com.wshsoft.mybatis.generator.config.rules.NamingStrategy;
@@ -49,6 +53,7 @@ public class MysqlGenerator {
 		gc.setEnableCache(false);// XML 二级缓存
 		gc.setBaseResultMap(true);// XML ResultMap
 		gc.setBaseColumnList(true);// XML columList
+        //gc.setKotlin(true) 是否生成 kotlin 代码
 		gc.setAuthor("Carry xie");
 
 		// 自定义文件命名，注意 %s 会自动填充表实体属性！
@@ -90,8 +95,8 @@ public class MysqlGenerator {
 		// 自定义实体父类
 		// strategy.setSuperEntityClass("com.wshsoft.demo.TestEntity");
 		// 自定义实体，公共字段
-		// strategy.setSuperEntityColumns(new String[] { "test_id", "age" });
-		// strategy.setTableFillList(tableFillList);
+		 strategy.setSuperEntityColumns(new String[] { "test_id"});
+		 strategy.setTableFillList(tableFillList);
 		// 自定义 mapper 父类
 		// strategy.setSuperMapperClass("com.wshsoft.demo.TestMapper");
 		// 自定义 service 父类

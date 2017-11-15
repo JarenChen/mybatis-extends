@@ -90,17 +90,19 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	 */
 	protected static Object processBatch(MappedStatement ms, Object parameterObject) {
 		// 检查parameterObject
-		if (null == parameterObject)
-			return null;
+        if (null == parameterObject) {
+            return null;
+        }
 		boolean isFill = false;
 		// 全局配置是否配置填充器
 		MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
 		/* 只处理插入或更新操作 */
 		if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
 			isFill = true;
-		} else if (ms.getSqlCommandType() == SqlCommandType.UPDATE && metaObjectHandler.openUpdateFill()) {
-			isFill = true;
-		}
+        } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE
+                && metaObjectHandler.openUpdateFill()) {
+            isFill = true;
+        }
 		if (isFill) {
 			Collection<Object> parameters = getParameters(parameterObject);
 			if (null != parameters) {
@@ -127,11 +129,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 							if (et instanceof Map) {
 								Map realEtMap = (Map) et;
 								if (realEtMap.containsKey("MP_OPTLOCK_ET_ORIGINAL")) {// refer
-																						// to
-																						// OptimisticLockerInterceptor.MP_OPTLOCK_ET_ORIGINAL
-									tableInfo = TableInfoHelper
-											.getTableInfo(realEtMap.get("MP_OPTLOCK_ET_ORIGINAL").getClass());
-								}
+                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get("MP_OPTLOCK_ET_ORIGINAL").getClass());
+                                }
 							} else {
 								tableInfo = TableInfoHelper.getTableInfo(et.getClass());
 							}
@@ -192,8 +191,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	 *            插入数据库对象
 	 * @return Object
 	 */
-	protected static Object populateKeys(MetaObjectHandler metaObjectHandler, TableInfo tableInfo, MappedStatement ms,
-			Object parameterObject) {
+    protected static Object populateKeys(MetaObjectHandler metaObjectHandler, TableInfo tableInfo,
+                                         MappedStatement ms, Object parameterObject) {
 		if (null == tableInfo || StringUtils.isEmpty(tableInfo.getKeyProperty()) || null == tableInfo.getIdType()) {
 			/* 不处理 */
 			return parameterObject;

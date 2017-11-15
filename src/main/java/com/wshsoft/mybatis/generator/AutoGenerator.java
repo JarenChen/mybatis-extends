@@ -16,8 +16,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
 
 import com.wshsoft.mybatis.generator.config.ConstVal;
 import com.wshsoft.mybatis.generator.config.DataSourceConfig;
@@ -184,48 +184,51 @@ public class AutoGenerator {
 				ctx.put("controllerMappingHyphen", StringUtils.camelToHyphen(tableInfo.getEntityPath()));
 			}
 
-			ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
-			ctx.put("package", packageInfo);
-			ctx.put("author", config.getGlobalConfig().getAuthor());
-			ctx.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
-			ctx.put("versionFieldName", config.getStrategyConfig().getVersionFieldName());
-			ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
-			ctx.put("date", date);
-			ctx.put("table", tableInfo);
-			ctx.put("enableCache", config.getGlobalConfig().isEnableCache());
-			ctx.put("baseResultMap", config.getGlobalConfig().isBaseResultMap());
-			ctx.put("baseColumnList", config.getGlobalConfig().isBaseColumnList());
-			ctx.put("entity", tableInfo.getEntityName());
-			ctx.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
-			ctx.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
-			ctx.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
-			ctx.put("entityBooleanColumnRemoveIsPrefix",
-					config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
-			ctx.put("superEntityClass", superEntityClass);
-			ctx.put("superMapperClassPackage", config.getSuperMapperClass());
-			ctx.put("superMapperClass", superMapperClass);
-			ctx.put("superServiceClassPackage", config.getSuperServiceClass());
-			ctx.put("superServiceClass", superServiceClass);
-			ctx.put("superServiceImplClassPackage", config.getSuperServiceImplClass());
-			ctx.put("superServiceImplClass", superServiceImplClass);
-			ctx.put("superControllerClassPackage", config.getSuperControllerClass());
-			ctx.put("superControllerClass", superControllerClass);
-			ctxData.put(tableInfo.getEntityName(), ctx);
-		}
-		return ctxData;
-	}
+            ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
+            ctx.put("package", packageInfo);
+            ctx.put("author", config.getGlobalConfig().getAuthor());
+            ctx.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
+            ctx.put("versionFieldName", config.getStrategyConfig().getVersionFieldName());
+            ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
+            ctx.put("kotlin", config.getGlobalConfig().isKotlin());
+            ctx.put("date", date);
+            ctx.put("table", tableInfo);
+            ctx.put("enableCache", config.getGlobalConfig().isEnableCache());
+            ctx.put("baseResultMap", config.getGlobalConfig().isBaseResultMap());
+            ctx.put("baseColumnList", config.getGlobalConfig().isBaseColumnList());
+            ctx.put("entity", tableInfo.getEntityName());
+            ctx.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
+            ctx.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
+            ctx.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
+            ctx.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
+            ctx.put("superEntityClass", superEntityClass);
+            ctx.put("superMapperClassPackage", config.getSuperMapperClass());
+            ctx.put("superMapperClass", superMapperClass);
+            ctx.put("superServiceClassPackage", config.getSuperServiceClass());
+            ctx.put("superServiceClass", superServiceClass);
+            ctx.put("superServiceImplClassPackage", config.getSuperServiceImplClass());
+            ctx.put("superServiceImplClass", superServiceImplClass);
+            ctx.put("superControllerClassPackage", config.getSuperControllerClass());
+            ctx.put("superControllerClass", superControllerClass);
+            ctxData.put(tableInfo.getEntityName(), ctx);
+        }
+        return ctxData;
+    }
 
-	/**
-	 * 获取类名
-	 *
-	 * @param classPath
-	 * @return
-	 */
-	private String getSuperClassName(String classPath) {
-		if (StringUtils.isEmpty(classPath))
-			return null;
-		return classPath.substring(classPath.lastIndexOf(".") + 1);
-	}
+    /**
+     * <p>
+     * 获取类名
+     * </p>
+     *
+     * @param classPath
+     * @return
+     */
+    private String getSuperClassName(String classPath) {
+        if (StringUtils.isEmpty(classPath)) {
+            return null;
+        }
+        return classPath.substring(classPath.lastIndexOf(".") + 1);
+    }
 
 	/**
 	 * 处理输出目录
@@ -245,116 +248,117 @@ public class AutoGenerator {
 		}
 	}
 
-	/**
-	 * 合成上下文与模板
-	 *
-	 * @param context
-	 *            vm上下文
-	 */
-	private void batchOutput(String entityName, VelocityContext context) {
-		try {
-			TableInfo tableInfo = (TableInfo) context.get("table");
-			Map<String, String> pathInfo = config.getPathInfo();
-			String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + ConstVal.ENTITY_NAME), entityName);
-			String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator
-					+ tableInfo.getMapperName() + ConstVal.JAVA_SUFFIX), entityName);
-			String xmlFile = String.format(
-					(pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX),
-					entityName);
-			String serviceFile = String.format((pathInfo.get(ConstVal.SERIVCE_PATH) + File.separator
-					+ tableInfo.getServiceName() + ConstVal.JAVA_SUFFIX), entityName);
-			String implFile = String.format((pathInfo.get(ConstVal.SERVICEIMPL_PATH) + File.separator
-					+ tableInfo.getServiceImplName() + ConstVal.JAVA_SUFFIX), entityName);
-			String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator
-					+ tableInfo.getControllerName() + ConstVal.JAVA_SUFFIX), entityName);
+    /**
+     * <p>
+     * 合成上下文与模板
+     * </p>
+     *
+     * @param context vm上下文
+     */
+    private void batchOutput(String entityName, VelocityContext context) {
+        try {
+            TableInfo tableInfo = (TableInfo) context.get("table");
+            Map<String, String> pathInfo = config.getPathInfo();
+            String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + File.separator + "%s" + this.suffixJavaOrKt()), entityName);
+            String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator + tableInfo.getMapperName() + this.suffixJavaOrKt()), entityName);
+            String xmlFile = String.format((pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX), entityName);
+            String serviceFile = String.format((pathInfo.get(ConstVal.SERIVCE_PATH) + File.separator + tableInfo.getServiceName() + this.suffixJavaOrKt()), entityName);
+            String implFile = String.format((pathInfo.get(ConstVal.SERVICEIMPL_PATH) + File.separator + tableInfo.getServiceImplName() + this.suffixJavaOrKt()), entityName);
+            String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + this.suffixJavaOrKt()), entityName);
 
 			TemplateConfig template = config.getTemplate();
 
-			// 根据override标识来判断是否需要创建文件
-			if (isCreate(entityFile)) {
-				vmToFile(context, template.getEntity(), entityFile);
-			}
-			if (isCreate(mapperFile)) {
-				vmToFile(context, template.getMapper(), mapperFile);
-			}
-			if (isCreate(xmlFile)) {
-				vmToFile(context, template.getXml(), xmlFile);
-			}
-			if (isCreate(serviceFile)) {
-				vmToFile(context, template.getService(), serviceFile);
-			}
-			if (isCreate(implFile)) {
-				vmToFile(context, template.getServiceImpl(), implFile);
-			}
-			if (isCreate(controllerFile)) {
-				vmToFile(context, template.getController(), controllerFile);
-			}
-			if (injectionConfig != null) {
-				/**
-				 * 输出自定义文件内容
-				 */
-				List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
-				if (CollectionUtils.isNotEmpty(focList)) {
-					for (FileOutConfig foc : focList) {
-						// 判断自定义文件是否存在
-						if (isCreate(foc.outputFile(tableInfo))) {
-							vmToFile(context, foc.getTemplatePath(), foc.outputFile(tableInfo));
-						}
-					}
-				}
-			}
+            // 根据override标识来判断是否需要创建文件
+            if (isCreate(entityFile)) {
+                vmToFile(context, template.getEntity(config.getGlobalConfig().isKotlin()), entityFile);
+            }
+            if (isCreate(mapperFile)) {
+                vmToFile(context, template.getMapper(), mapperFile);
+            }
+            if (isCreate(xmlFile)) {
+                vmToFile(context, template.getXml(), xmlFile);
+            }
+            if (isCreate(serviceFile)) {
+                vmToFile(context, template.getService(), serviceFile);
+            }
+            if (isCreate(implFile)) {
+                vmToFile(context, template.getServiceImpl(), implFile);
+            }
+            if (isCreate(controllerFile)) {
+                vmToFile(context, template.getController(), controllerFile);
+            }
+            if (injectionConfig != null) {
+                /**
+                 * 输出自定义文件内容
+                 */
+                List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
+                if (CollectionUtils.isNotEmpty(focList)) {
+                    for (FileOutConfig foc : focList) {
+                        // 判断自定义文件是否存在
+                        if (isCreate(foc.outputFile(tableInfo))) {
+                            vmToFile(context, foc.getTemplatePath(), foc.outputFile(tableInfo));
+                        }
+                    }
+                }
+            }
 
 		} catch (IOException e) {
 			logger.error("无法创建文件，请检查配置信息！", e);
 		}
 	}
 
-	/**
-	 * 将模板转化成为文件
-	 * 
-	 * @param context
-	 *            内容对象
-	 * @param templatePath
-	 *            模板文件
-	 * @param outputFile
-	 *            文件生成的目录
-	 */
-	private void vmToFile(VelocityContext context, String templatePath, String outputFile) throws IOException {
-		if (StringUtils.isEmpty(templatePath)) {
-			return;
-		}
-		VelocityEngine velocity = getVelocityEngine();
-		Template template = velocity.getTemplate(templatePath, ConstVal.UTF8);
-		File file = new File(outputFile);
-		if (!file.getParentFile().exists()) {
-			// 如果文件所在的目录不存在，则创建目录
-			if (!file.getParentFile().mkdirs()) {
-				logger.debug("创建文件所在的目录失败!");
-				return;
-			}
-		}
-		FileOutputStream fos = new FileOutputStream(outputFile);
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos, ConstVal.UTF8));
-		template.merge(context, writer);
-		writer.close();
-		logger.debug("模板:" + templatePath + ";  文件:" + outputFile);
-	}
+    /**
+     * 文件后缀
+     */
+    protected String suffixJavaOrKt() {
+        return config.getGlobalConfig().isKotlin() ? ConstVal.KT_SUFFIX : ConstVal.JAVA_SUFFIX;
+    }
 
-	/**
-	 * 设置模版引擎，主要指向获取模版路径
-	 */
-	private VelocityEngine getVelocityEngine() {
-		if (engine == null) {
-			Properties p = new Properties();
-			p.setProperty(ConstVal.VM_LOADPATH_KEY, ConstVal.VM_LOADPATH_VALUE);
-			p.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, "");
-			p.setProperty(RuntimeConstants.ENCODING_DEFAULT, ConstVal.UTF8);
-			p.setProperty(RuntimeConstants.INPUT_ENCODING, ConstVal.UTF8);
-			p.setProperty("file.resource.loader.unicode", "true");
-			engine = new VelocityEngine(p);
-		}
-		return engine;
-	}
+    /**
+     * <p>
+     * 将模板转化成为文件
+     * </p>
+     *
+     * @param context      内容对象
+     * @param templatePath 模板文件
+     * @param outputFile   文件生成的目录
+     */
+    private void vmToFile(VelocityContext context, String templatePath, String outputFile) throws IOException {
+        if (StringUtils.isEmpty(templatePath)) {
+            return;
+        }
+        VelocityEngine velocity = getVelocityEngine();
+        Template template = velocity.getTemplate(templatePath, ConstVal.UTF8);
+        File file = new File(outputFile);
+        if (!file.getParentFile().exists()) {
+            // 如果文件所在的目录不存在，则创建目录
+            if (!file.getParentFile().mkdirs()) {
+                logger.debug("创建文件所在的目录失败!");
+                return;
+            }
+        }
+        FileOutputStream fos = new FileOutputStream(outputFile);
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos, ConstVal.UTF8));
+        template.merge(context, writer);
+        writer.close();
+        logger.debug("模板:" + templatePath + ";  文件:" + outputFile);
+    }
+
+    /**
+     * 设置模版引擎，主要指向获取模版路径
+     */
+    private VelocityEngine getVelocityEngine() {
+        if (engine == null) {
+            Properties p = new Properties();
+            p.setProperty(ConstVal.VM_LOADPATH_KEY, ConstVal.VM_LOADPATH_VALUE);
+            p.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "");
+            p.setProperty(Velocity.ENCODING_DEFAULT, ConstVal.UTF8);
+            p.setProperty(Velocity.INPUT_ENCODING, ConstVal.UTF8);
+            p.setProperty("file.resource.loader.unicode", "true");
+            engine = new VelocityEngine(p);
+        }
+        return engine;
+    }
 
 	/**
 	 * 检测文件是否存在

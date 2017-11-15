@@ -29,8 +29,7 @@ import com.wshsoft.mybatis.spring.MybatisSqlSessionFactoryBean;
 public class MybatisPlusNoOptLockConfig {
 
 	@Bean("mybatisSqlSession")
-	public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader,
-			GlobalConfiguration globalConfiguration) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
 		MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
 		sqlSessionFactory.setDataSource(dataSource);
 		// sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
@@ -40,7 +39,9 @@ public class MybatisPlusNoOptLockConfig {
 		configuration.setJdbcTypeForNull(JdbcType.NULL);
 		sqlSessionFactory.setConfiguration(configuration);
 		PaginationInterceptor pagination = new PaginationInterceptor();
-		sqlSessionFactory.setPlugins(new Interceptor[] { pagination, });
+        sqlSessionFactory.setPlugins(new Interceptor[]{
+                pagination,
+        });
 		sqlSessionFactory.setGlobalConfig(globalConfiguration);
 		return sqlSessionFactory.getObject();
 	}

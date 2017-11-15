@@ -41,8 +41,7 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
  * @author Carry xie
  * @Date 2016-01-23
  */
-@Intercepts({
-		@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
+@Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PaginationInterceptor extends SqlParserHandler implements Interceptor {
 
 	// 日志
@@ -91,8 +90,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
 		BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
 		String originalSql = boundSql.getSql();
 		Connection connection = (Connection) invocation.getArgs()[0];
-		DBType dbType = StringUtils.isNotEmpty(dialectType) ? DBType.getDBType(dialectType)
-				: JdbcUtils.getDbType(connection.getMetaData().getURL());
+        DBType dbType = StringUtils.isNotEmpty(dialectType) ? DBType.getDBType(dialectType) : JdbcUtils.getDbType(connection.getMetaData().getURL());
 		if (rowBounds instanceof Pagination) {
 			Pagination page = (Pagination) rowBounds;
 			boolean orderBy = true;
@@ -120,29 +118,27 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
 		return invocation.proceed();
 	}
 
-	/**
-	 * 查询总记录条数
-	 *
-	 * @param sql
-	 * @param mappedStatement
-	 * @param boundSql
-	 * @param page
-	 */
-	protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql,
-			Pagination page, Connection connection) {
-		try (PreparedStatement statement = connection.prepareStatement(sql)) {
-			DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement,
-					boundSql.getParameterObject(), boundSql);
-			parameterHandler.setParameters(statement);
-			int total = 0;
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (resultSet.next()) {
-					total = resultSet.getInt(1);
-				}
-			}
-			page.setTotal(total);
-			/*
-			 * 溢出总页数，设置第一页
+    /**
+     * 查询总记录条数
+     *
+     * @param sql
+     * @param mappedStatement
+     * @param boundSql
+     * @param page
+     */
+    protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page, Connection connection) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
+            parameterHandler.setParameters(statement);
+            int total = 0;
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    total = resultSet.getInt(1);
+                }
+            }
+            page.setTotal(total);
+            /*
+             * 溢出总页数，设置第一页
 			 */
 			int pages = page.getPages();
 			if (overflowCurrent && (page.getCurrent() > pages)) {

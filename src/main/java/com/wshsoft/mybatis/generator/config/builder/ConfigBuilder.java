@@ -209,27 +209,27 @@ public class ConfigBuilder {
 		packageInfo.put(ConstVal.SERVICEIMPL, joinPackage(config.getParent(), config.getServiceImpl()));
 		packageInfo.put(ConstVal.CONTROLLER, joinPackage(config.getParent(), config.getController()));
 
-		// 生成路径信息
-		pathInfo = new HashMap<>();
-		if (StringUtils.isNotEmpty(template.getEntity())) {
-			pathInfo.put(ConstVal.ENTITY_PATH, joinPath(outputDir, packageInfo.get(ConstVal.ENTITY)));
-		}
-		if (StringUtils.isNotEmpty(template.getMapper())) {
-			pathInfo.put(ConstVal.MAPPER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.MAPPER)));
-		}
-		if (StringUtils.isNotEmpty(template.getXml())) {
-			pathInfo.put(ConstVal.XML_PATH, joinPath(outputDir, packageInfo.get(ConstVal.XML)));
-		}
-		if (StringUtils.isNotEmpty(template.getService())) {
-			pathInfo.put(ConstVal.SERIVCE_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERIVCE)));
-		}
-		if (StringUtils.isNotEmpty(template.getServiceImpl())) {
-			pathInfo.put(ConstVal.SERVICEIMPL_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERVICEIMPL)));
-		}
-		if (StringUtils.isNotEmpty(template.getController())) {
-			pathInfo.put(ConstVal.CONTROLLER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.CONTROLLER)));
-		}
-	}
+        // 生成路径信息
+        pathInfo = new HashMap<>();
+        if (StringUtils.isNotEmpty(template.getEntity(getGlobalConfig().isKotlin()))) {
+            pathInfo.put(ConstVal.ENTITY_PATH, joinPath(outputDir, packageInfo.get(ConstVal.ENTITY)));
+        }
+        if (StringUtils.isNotEmpty(template.getMapper())) {
+            pathInfo.put(ConstVal.MAPPER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.MAPPER)));
+        }
+        if (StringUtils.isNotEmpty(template.getXml())) {
+            pathInfo.put(ConstVal.XML_PATH, joinPath(outputDir, packageInfo.get(ConstVal.XML)));
+        }
+        if (StringUtils.isNotEmpty(template.getService())) {
+            pathInfo.put(ConstVal.SERIVCE_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERIVCE)));
+        }
+        if (StringUtils.isNotEmpty(template.getServiceImpl())) {
+            pathInfo.put(ConstVal.SERVICEIMPL_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERVICEIMPL)));
+        }
+        if (StringUtils.isNotEmpty(template.getController())) {
+            pathInfo.put(ConstVal.CONTROLLER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.CONTROLLER)));
+        }
+    }
 
 	/**
 	 * 处理数据源配置
@@ -279,49 +279,47 @@ public class ConfigBuilder {
 		superControllerClass = config.getSuperControllerClass();
 	}
 
-	/**
-	 * 处理表对应的类名称
-	 *
-	 * @param tableList
-	 *            表名称
-	 * @param strategy
-	 *            命名策略
-	 * @param tablePrefix
-	 * @return 补充完整信息后的表
-	 */
-	private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, String[] tablePrefix) {
-		for (TableInfo tableInfo : tableList) {
-			tableInfo.setEntityName(strategyConfig,
-					NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
-			if (StringUtils.isNotEmpty(globalConfig.getMapperName())) {
-				tableInfo.setMapperName(String.format(globalConfig.getMapperName(), tableInfo.getEntityName()));
-			} else {
-				tableInfo.setMapperName(tableInfo.getEntityName() + ConstVal.MAPPER);
-			}
-			if (StringUtils.isNotEmpty(globalConfig.getXmlName())) {
-				tableInfo.setXmlName(String.format(globalConfig.getXmlName(), tableInfo.getEntityName()));
-			} else {
-				tableInfo.setXmlName(tableInfo.getEntityName() + ConstVal.MAPPER);
-			}
-			if (StringUtils.isNotEmpty(globalConfig.getServiceName())) {
-				tableInfo.setServiceName(String.format(globalConfig.getServiceName(), tableInfo.getEntityName()));
-			} else {
-				tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERIVCE);
-			}
-			if (StringUtils.isNotEmpty(globalConfig.getServiceImplName())) {
-				tableInfo.setServiceImplName(
-						String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
-			} else {
-				tableInfo.setServiceImplName(tableInfo.getEntityName() + ConstVal.SERVICEIMPL);
-			}
-			if (StringUtils.isNotEmpty(globalConfig.getControllerName())) {
-				tableInfo.setControllerName(String.format(globalConfig.getControllerName(), tableInfo.getEntityName()));
-			} else {
-				tableInfo.setControllerName(tableInfo.getEntityName() + ConstVal.CONTROLLER);
-			}
-		}
-		return tableList;
-	}
+    /**
+     * <p>
+     * 处理表对应的类名称
+     * </P>
+     *
+     * @param tableList   表名称
+     * @param strategy    命名策略
+     * @param tablePrefix
+     * @return 补充完整信息后的表
+     */
+    private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, String[] tablePrefix) {
+        for (TableInfo tableInfo : tableList) {
+            tableInfo.setEntityName(strategyConfig, NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
+            if (StringUtils.isNotEmpty(globalConfig.getMapperName())) {
+                tableInfo.setMapperName(String.format(globalConfig.getMapperName(), tableInfo.getEntityName()));
+            } else {
+                tableInfo.setMapperName(tableInfo.getEntityName() + ConstVal.MAPPER);
+            }
+            if (StringUtils.isNotEmpty(globalConfig.getXmlName())) {
+                tableInfo.setXmlName(String.format(globalConfig.getXmlName(), tableInfo.getEntityName()));
+            } else {
+                tableInfo.setXmlName(tableInfo.getEntityName() + ConstVal.MAPPER);
+            }
+            if (StringUtils.isNotEmpty(globalConfig.getServiceName())) {
+                tableInfo.setServiceName(String.format(globalConfig.getServiceName(), tableInfo.getEntityName()));
+            } else {
+                tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERIVCE);
+            }
+            if (StringUtils.isNotEmpty(globalConfig.getServiceImplName())) {
+                tableInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
+            } else {
+                tableInfo.setServiceImplName(tableInfo.getEntityName() + ConstVal.SERVICEIMPL);
+            }
+            if (StringUtils.isNotEmpty(globalConfig.getControllerName())) {
+                tableInfo.setControllerName(String.format(globalConfig.getControllerName(), tableInfo.getEntityName()));
+            } else {
+                tableInfo.setControllerName(tableInfo.getEntityName() + ConstVal.CONTROLLER);
+            }
+        }
+        return tableList;
+    }
 
 	/**
 	 * 获取所有的数据库表信息

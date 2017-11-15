@@ -28,7 +28,8 @@ public class EnumUtils {
 	public static <E extends Enum<?> & IEnum> E valueOf(Class<E> enumClass, Object value) {
 		E[] es = enumClass.getEnumConstants();
 		for (E e : es) {
-			if ((value instanceof String && e.getValue().equals(value)) || e.getValue() == value) {
+            if ((value instanceof String && e.getValue().equals(value))
+                    || e.getValue() == value) {
 				return e;
 			}
 		}

@@ -247,17 +247,17 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
 		Assert.assertEquals(1, user.getVersion().intValue());
 	}
 
-	@Test
-	public void testCondition() {
-		Page<H2UserVersionAndLogicDeleteEntity> page = new Page<>(1, 3);
-		Map<String, Object> condition = new HashMap<>();
-		condition.put("test_type", 1);
-		page.setCondition(condition);
-		List<H2UserVersionAndLogicDeleteEntity> pageResult = userMapper.selectPage(page,
-				new EntityWrapper<H2UserVersionAndLogicDeleteEntity>());
-		for (H2UserVersionAndLogicDeleteEntity u : pageResult) {
-			System.out.println(u);
-		}
+
+    @Test
+    public void testCondition() {
+        Page<H2UserVersionAndLogicDeleteEntity> page = new Page<>(1, 3);
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("test_type", 1);
+        page.setCondition(condition);
+        List<H2UserVersionAndLogicDeleteEntity> pageResult = userMapper.selectPage(page, new EntityWrapper<H2UserVersionAndLogicDeleteEntity>());
+        for (H2UserVersionAndLogicDeleteEntity u : pageResult) {
+            System.out.println(u);
+        }
 
 	}
 }

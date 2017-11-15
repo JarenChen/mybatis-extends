@@ -1,8 +1,7 @@
 package com.wshsoft.mybatis.mapper;
 
 import org.apache.ibatis.reflection.MetaObject;
-
-import com.wshsoft.mybatis.toolkit.StringUtils;
+import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
  * <p>
@@ -34,31 +33,32 @@ public abstract class MetaObjectHandler {
 	 */
 	public abstract void updateFill(MetaObject metaObject);
 
-	/**
-	 * <p>
-	 * Common method to set value for java bean.
-	 * </p>
-	 * <p>
-	 * 如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);
-	 * </p>
-	 *
-	 * @param fieldName
-	 *            java bean property name
-	 * @param fieldVal
-	 *            java bean property value
-	 * @param metaObject
-	 *            meta object parameter
-	 */
-	public MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
-		if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName)) {
-			metaObject.setValue(fieldName, fieldVal);
-		} else if (metaObject.hasGetter(META_OBJ_PREFIX)
-				&& StringUtils.checkValNotNull(metaObject.getValue(META_OBJ_PREFIX))
-				&& metaObject.hasSetter(META_OBJ_PREFIX + "." + fieldName)) {
-			metaObject.setValue(META_OBJ_PREFIX + "." + fieldName, fieldVal);
-		}
-		return this;
-	}
+    /**
+     * <p>
+     * Common method to set value for java bean.
+     * </p>
+     * <p>
+     * 如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);
+     * </p>
+     *
+     * @param fieldName  java bean property name
+     * @param fieldVal   java bean property value
+     * @param metaObject meta object parameter
+     */
+    public MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
+        if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName)) {
+            metaObject.setValue(fieldName, fieldVal);
+        } else if (metaObject.hasGetter(META_OBJ_PREFIX)) {
+            Object et = metaObject.getValue(META_OBJ_PREFIX);
+            if (et != null) {
+                MetaObject etMeta = SystemMetaObject.forObject(et);
+                if (etMeta.hasSetter(fieldName)) {
+                    etMeta.setValue(fieldName, fieldVal);
+                }
+            }
+        }
+        return this;
+    }
 
 	/**
 	 * <p>

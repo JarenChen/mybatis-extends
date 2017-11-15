@@ -61,8 +61,7 @@ import com.wshsoft.mybatis.toolkit.PackageHelper;
  * @author Carry xie
  * @Date 2016-01-23
  */
-public class MybatisSqlSessionFactoryBean
-		implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
+public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
 
 	private static final Log LOGGER = LogFactory.getLog(SqlSessionFactoryBean.class);
 
@@ -410,13 +409,11 @@ public class MybatisSqlSessionFactoryBean
 				configuration.getVariables().putAll(this.configurationProperties);
 			}
 		} else if (this.configLocation != null) {
-			xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null,
-					this.configurationProperties);
+            xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
 			configuration = xmlConfigBuilder.getConfiguration();
 		} else {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(
-						"Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
+                LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
 			}
 			// TODO 使用自定义配置
 			configuration = new MybatisConfiguration();
@@ -462,7 +459,8 @@ public class MybatisSqlSessionFactoryBean
 		// TODO 自定义枚举类扫描处理
 		if (hasLength(this.typeEnumsPackage)) {
 			Set<Class> classes = null;
-			if (typeEnumsPackage.contains("*") && !typeEnumsPackage.contains(",") && !typeEnumsPackage.contains(";")) {
+            if (typeEnumsPackage.contains("*") && !typeEnumsPackage.contains(",")
+                    && !typeEnumsPackage.contains(";")) {
 				classes = PackageHelper.scanTypePackage(typeEnumsPackage);
 			} else {
 				String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
@@ -571,7 +569,8 @@ public class MybatisSqlSessionFactoryBean
 		if (!isEmpty(this.mapperLocations)) {
 			if (globalConfig.isRefresh()) {
 				// TODO 设置自动刷新配置 减少配置
-				new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2, 2, true);
+                new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2,
+                        2, true);
 			}
 			for (Resource mapperLocation : this.mapperLocations) {
 				if (mapperLocation == null) {
