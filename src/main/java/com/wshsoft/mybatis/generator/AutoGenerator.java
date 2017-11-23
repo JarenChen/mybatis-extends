@@ -12,12 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
 
 import com.wshsoft.mybatis.generator.config.ConstVal;
 import com.wshsoft.mybatis.generator.config.DataSourceConfig;
@@ -31,6 +30,8 @@ import com.wshsoft.mybatis.generator.config.po.TableField;
 import com.wshsoft.mybatis.generator.config.po.TableInfo;
 import com.wshsoft.mybatis.toolkit.CollectionUtils;
 import com.wshsoft.mybatis.toolkit.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 生成文件
@@ -40,7 +41,7 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
  */
 public class AutoGenerator {
 
-	private static final Log logger = LogFactory.getLog(AutoGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(AutoGenerator.class);
 
 	protected ConfigBuilder config;
 	protected InjectionConfig injectionConfig;
@@ -351,9 +352,9 @@ public class AutoGenerator {
         if (engine == null) {
             Properties p = new Properties();
             p.setProperty(ConstVal.VM_LOADPATH_KEY, ConstVal.VM_LOADPATH_VALUE);
-            p.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "");
-            p.setProperty(Velocity.ENCODING_DEFAULT, ConstVal.UTF8);
-            p.setProperty(Velocity.INPUT_ENCODING, ConstVal.UTF8);
+            p.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, "");
+            p.setProperty(RuntimeConstants.ENCODING_DEFAULT, ConstVal.UTF8);
+            p.setProperty(RuntimeConstants.INPUT_ENCODING, ConstVal.UTF8);
             p.setProperty("file.resource.loader.unicode", "true");
             engine = new VelocityEngine(p);
         }

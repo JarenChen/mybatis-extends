@@ -1,10 +1,10 @@
 package com.wshsoft.mybatis.toolkit;
 
 import com.wshsoft.mybatis.enums.SqlLike;
+import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
 import com.wshsoft.mybatis.plugins.parser.ISqlParser;
 import com.wshsoft.mybatis.plugins.parser.SqlInfo;
 import com.wshsoft.mybatis.plugins.pagination.Pagination;
-import com.wshsoft.mybatis.plugins.pagination.optimize.JsqlParserCountOptimize;
 
 /**
  * <p>
@@ -19,7 +19,15 @@ public class SqlUtils {
 	private final static SqlFormatter sqlFormatter = new SqlFormatter();
 	public final static String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s ) TOTAL";
 	public static ISqlParser COUNT_SQL_PARSER = null;
+    private static Class<ISqlParser> DEFAULT_CLASS = null;
 
+    static {
+        try {
+            DEFAULT_CLASS = (Class<ISqlParser>) Class.forName("com.wshsoft.mybatis.plugins.pagination.optimize.JsqlParserCountOptimize");
+        } catch (ClassNotFoundException e) {
+            //skip
+        }
+    }
 	/**
 	 * <p>
 	 * 获取CountOptimize
@@ -39,9 +47,14 @@ public class SqlUtils {
 				COUNT_SQL_PARSER = sqlParser;
 			} else {
 				// 默认 JsqlParser 优化 COUNT
-				COUNT_SQL_PARSER = new JsqlParserCountOptimize();
-			}
-		}
+                try {
+                    // TODO: 2017/11/20 这里我改动了下.
+                    COUNT_SQL_PARSER =  DEFAULT_CLASS.newInstance();
+                } catch (Exception e) {
+                    throw new MybatisExtendsException(e);
+                }
+            }
+        }
 		return COUNT_SQL_PARSER.optimizeSql(null, originalSql);
 	}
 

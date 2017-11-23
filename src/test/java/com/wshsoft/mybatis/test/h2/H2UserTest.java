@@ -15,10 +15,8 @@ import javax.sql.DataSource;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -41,8 +39,7 @@ import com.wshsoft.mybatis.test.h2.service.IH2UserService;
  * @date 2017/4/1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:h2/spring-test-h2.xml" })
-@FixMethodOrder(value = MethodSorters.DEFAULT)
+@ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 public class H2UserTest extends H2Test {
 
 	@Autowired

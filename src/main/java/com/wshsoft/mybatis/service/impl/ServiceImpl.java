@@ -340,7 +340,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			}
 			batchSqlSession.flushStatements();
 		} catch (Throwable e) {
-			throw new MybatisExtendsException("Error: Cannot execute insertBatch Method. Cause", e);
+			throw new MybatisExtendsException("Error: Cannot execute updateBatchById Method. Cause", e);
 		}
 		return true;
 	}

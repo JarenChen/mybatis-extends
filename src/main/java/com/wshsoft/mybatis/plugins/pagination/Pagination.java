@@ -20,20 +20,30 @@ public class Pagination extends RowBounds implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	/* 总数 */
-	private int total;
+    /**
+     * 总数
+     */
+    private int total;
 
-	/* 每页显示条数，默认 10 */
-	private int size = 10;
+    /**
+     * 每页显示条数，默认 10
+     */
+    private int size = 10;
 
-	/* 总页数 */
-	private int pages;
+    /**
+     * 总页数
+     */
+    private int pages;
 
-	/* 当前页 */
-	private int current = 1;
+    /**
+     * 当前页
+     */
+    private int current = 1;
 
-	/* 查询总记录数（默认 true） */
-	private boolean searchCount = true;
+    /**
+     * 查询总记录数（默认 true）
+     */
+    private boolean searchCount = true;
 
 	/**
 	 * 开启排序（默认 true） 只在代码逻辑判断 并不截取sql分析

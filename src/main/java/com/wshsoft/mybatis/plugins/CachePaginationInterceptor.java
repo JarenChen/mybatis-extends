@@ -19,7 +19,6 @@ import com.wshsoft.mybatis.plugins.pagination.Pagination;
 import com.wshsoft.mybatis.plugins.parser.ISqlParser;
 import com.wshsoft.mybatis.plugins.parser.SqlInfo;
 import com.wshsoft.mybatis.toolkit.SqlUtils;
-import com.wshsoft.mybatis.toolkit.StringUtils;
 
 /**
  * <p>
@@ -33,14 +32,14 @@ import com.wshsoft.mybatis.toolkit.StringUtils;
         @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class CachePaginationInterceptor extends PaginationInterceptor implements Interceptor {
 
-	/* 溢出总页数，设置第一页 */
+    /**
+     * COUNT SQL 解析
+     */
+    private ISqlParser sqlParser;
+    /**
+     * 溢出总页数，设置第一页
+     */
 	private boolean overflowCurrent = false;
-	// COUNT SQL 解析
-	private ISqlParser sqlParser;
-	/* 方言类型 */
-	private String dialectType;
-	/* 方言实现类 */
-	private String dialectClazz;
 
 	/**
 	 * Physical Pagination Interceptor for all the queries with parameter
@@ -90,19 +89,11 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 
 	@Override
 	public void setProperties(Properties prop) {
-		String dialectType = prop.getProperty("dialectType");
-		String dialectClazz = prop.getProperty("dialectClazz");
-		if (StringUtils.isNotEmpty(dialectType)) {
-			this.dialectType = dialectType;
-		}
-		if (StringUtils.isNotEmpty(dialectClazz)) {
-			this.dialectClazz = dialectClazz;
-		}
-	}
+
+    }
 
 	@Override
 	public CachePaginationInterceptor setDialectType(String dialectType) {
-		this.dialectType = dialectType;
 		return this;
 	}
 

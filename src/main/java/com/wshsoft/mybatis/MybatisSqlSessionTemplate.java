@@ -1,8 +1,6 @@
 package com.wshsoft.mybatis;
 
 import static java.lang.reflect.Proxy.newProxyInstance;
-import static org.springframework.util.Assert.notNull;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -22,6 +20,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 
 import com.wshsoft.mybatis.exceptions.MybatisExtendsException;
+import org.springframework.util.Assert;
 
 /**
  * <p>
@@ -82,8 +81,8 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
 	public MybatisSqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType,
 			PersistenceExceptionTranslator exceptionTranslator) {
 
-		notNull(sqlSessionFactory, "Property 'sqlSessionFactory' is required");
-		notNull(executorType, "Property 'executorType' is required");
+        Assert.notNull(sqlSessionFactory, "Property 'sqlSessionFactory' is required");
+        Assert.notNull(executorType, "Property 'executorType' is required");
 
 		this.sqlSessionFactory = sqlSessionFactory;
 		this.executorType = executorType;
